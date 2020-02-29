@@ -86,7 +86,7 @@ TEST UNION di policy
         rootChild3.setParent(root);
 
         Rule display = new Permission(Action.DISPLAY);
-        Rule play = new Permission(Action.PLAY);
+        Rule play = new Prohibition(Action.PLAY);
         ArrayList<Rule> ruleRoot = new ArrayList<Rule>();
         ArrayList<Rule> ruleChild2 = new ArrayList<Rule>();
         ruleRoot.add(display);
@@ -101,6 +101,23 @@ TEST UNION di policy
         for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
+
+        Set intPolicy = new Set(ruleRoot,rootChild2);
+        tree.intersectPolicy(intPolicy);
+        System.out.println("\nAFTER INTERSECT\n");
+        for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+
+        ArrayList<Rule> ruleuse= new ArrayList<Rule>();
+        ruleuse.add(new Permission(Action.USE));
+        Set allPolicy = new Set(ruleuse,rootChild2);
+        tree.unitePolicy(allPolicy);
+        System.out.println("\nAFTER INTERSECT\n");
+        for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+
 
     }
 

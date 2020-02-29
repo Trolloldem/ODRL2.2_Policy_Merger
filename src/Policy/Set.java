@@ -22,20 +22,20 @@ public class Set implements Policy {
 
     public Set(ArrayList<Rule> RuleList){
         this.RuleList=RuleList;
-
         for(Rule r:this.RuleList){
             if(r instanceof Permission){
-
                 useTree.setActionPermitted(r.getAction());
                 transferTree.setActionPermitted(r.getAction());
 
-            }else if(r instanceof Prohibition){
 
+            }else if(r instanceof Prohibition){
                 useTree.setActionProhibited(r.getAction());
                 transferTree.setActionProhibited(r.getAction());
                 listProhib.add((Prohibition)r);
+
             }
         }
+
     }
 
 

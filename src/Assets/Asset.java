@@ -19,7 +19,7 @@ public class Asset implements AssetCollection{
     }
 
 
-    private void resetPolicy(){
+    protected void resetPolicy(){
         this.policy = null;
     }
 

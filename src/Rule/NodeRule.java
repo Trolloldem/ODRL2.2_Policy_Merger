@@ -54,12 +54,15 @@ public class NodeRule {
     public void setPermitted(){
         if (!(this.stato.equals("Prohibited"))){
             this.stato="Permitted";
+
             NodeRule node=null;
             for(Action included:azione.getIncludedBy()){
                 node=includedActions.get(included);
                 node.setPermitted();
             }
         }
+        if(prohibIncluded>0 && !(this.stato.equals("Prohibited")))
+            this.stato="Undefined";
     }
     /**
      * Setta l'azione rappresentata dal nodo come "Prohibited", inoltre incrementa il conteggio delle azioni incluse
@@ -68,6 +71,7 @@ public class NodeRule {
      */
     public void setProhibited(){
         if (!(this.stato.equals("Prohibited"))){
+
             this.stato="Prohibited";
             NodeRule node=null;
             for(Action included:azione.getIncludedBy()){
@@ -79,6 +83,7 @@ public class NodeRule {
                 this.father.addProhibitedCount();
             }
         }
+
     }
     /**
      * Setta l'azione rappresentata dal nodo come "Undefined" a meno che questa non fosse esplicitamente vietata.
