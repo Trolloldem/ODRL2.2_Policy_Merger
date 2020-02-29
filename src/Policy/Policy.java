@@ -1,6 +1,8 @@
 package Policy;
 
 import java.util.ArrayList;
+
+import Assets.AssetCollection;
 import Rule.Rule;
 
 public interface Policy {
@@ -27,4 +29,16 @@ public interface Policy {
      * @return Policy creata tramite intersezione
      */
     public Policy IntersectWith(Policy p);
+
+    /**
+     * Getter dell'asset target della policy
+     * @return AssetCollection target della policy
+     */
+    public AssetCollection getTarget();
+
+    /**
+     * Setter dell'asset target della policy
+     * @param target: AssetCollection target della policy
+     */
+    public void setTarget(AssetCollection target);
 }

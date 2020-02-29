@@ -1,18 +1,23 @@
 package com.company;
 
 import Actions.Action;
+import Assets.Asset;
+import Assets.AssetTree;
 import Policy.Set;
 import Rule.Rule;
 import Rule.Permission;
 import Rule.Prohibition;
 import Rule.RuleTree;
+import javafx.beans.property.SetProperty;
+
 import java.util.Map;
 import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-/** uso generico su singole regole
+/** TEST GENERICO
+
         Set p=new Set(new ArrayList<Rule>());
         RuleTree tree=p.getUseTree();
         tree.setActionPermitted(Action.SHARING);
@@ -34,6 +39,7 @@ public class Main {
         }
 
 TEST UNION di policy
+
         Rule share = new Permission(Action.USE);
         Rule allowDelete = new Permission(Action.DELETE);
         Rule denyPlay = new Prohibition(Action.PLAY);
@@ -48,7 +54,8 @@ TEST UNION di policy
         for (Map.Entry<Action, String> entry : p3.getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
- **/
+
+ TEST INTERSEZIONE
         Rule play = new Permission(Action.PLAY);
         Rule share = new Permission(Action.SHARING);
         Rule allowDisplay = new Permission(Action.DISPLAY);
@@ -66,6 +73,37 @@ TEST UNION di policy
         for (Map.Entry<Action, String> entry : p3.getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
+
+
+ **/
+
+        Asset root = new Asset();
+        Asset rootChild1 = new Asset();
+        rootChild1.setParent(root);
+        Asset rootChild2 = new Asset();
+        rootChild2.setParent(root);
+        Asset rootChild3 = new Asset();
+        rootChild3.setParent(root);
+
+        Rule display = new Permission(Action.DISPLAY);
+        Rule play = new Permission(Action.PLAY);
+        ArrayList<Rule> ruleRoot = new ArrayList<Rule>();
+        ArrayList<Rule> ruleChild2 = new ArrayList<Rule>();
+        ruleRoot.add(display);
+        ruleChild2.add(play);
+        Set policyChild2 = new Set(ruleChild2,rootChild2);
+        Set policyRoot = new Set(ruleRoot,root);
+        AssetTree tree = new AssetTree(root);
+
+        tree.setPolicy(policyChild2);
+        tree.setPolicy(policyRoot,false);
+
+        for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+
     }
+
+
 
 }
