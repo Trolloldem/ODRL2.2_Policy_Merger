@@ -140,7 +140,7 @@ TEST UNION di policy
         ArrayList<Rule> ruleuse= new ArrayList<Rule>();
         ruleuse.add(new Permission(Action.USE));
         Set allPolicy = new Set(ruleuse,rootChild2);
-        tree.intersectPolicy(allPolicy);
+        tree.unitePolicy(allPolicy);
         System.out.println("\nAFTER INTERSECT\n");
         for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
