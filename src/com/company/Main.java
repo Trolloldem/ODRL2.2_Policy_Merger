@@ -74,7 +74,35 @@ TEST UNION di policy
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
 
+        TEST SEQUENZA INTERSECT E UNION
 
+        Rule play = new Permission(Action.PLAY);
+        Rule share = new Permission(Action.SHARING);
+        Rule transform = new Prohibition(Action.PLAY);
+        ArrayList<Rule> rule1=new ArrayList<Rule>();
+        ArrayList<Rule> rule2=new ArrayList<Rule>();
+        rule1.add(play);
+        rule2.add(share);
+        Set p1=new Set(rule1);
+        Set p2=new Set(rule2);
+        Set p3=p1.UniteWith(p2);
+        for (Map.Entry<Action, String> entry : p3.getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+        ArrayList<Rule> rule4=new ArrayList<Rule>();
+        rule4.add(share);
+        rule4.add(transform);
+        Set p4 = new Set(rule4);
+        p3 = p3.IntersectWith(p4);
+        for (Map.Entry<Action, String> entry : p3.getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+        p3 = p3.UniteWith(p1);
+        for (Map.Entry<Action, String> entry : p3.getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+
+       TEST EREDITà ASSET
  **/
 
         Asset root = new Asset();
@@ -112,7 +140,7 @@ TEST UNION di policy
         ArrayList<Rule> ruleuse= new ArrayList<Rule>();
         ruleuse.add(new Permission(Action.USE));
         Set allPolicy = new Set(ruleuse,rootChild2);
-        tree.unitePolicy(allPolicy);
+        tree.intersectPolicy(allPolicy);
         System.out.println("\nAFTER INTERSECT\n");
         for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());

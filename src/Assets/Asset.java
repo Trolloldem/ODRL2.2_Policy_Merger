@@ -6,6 +6,9 @@ import Rule.Rule;
 
 import java.util.ArrayList;
 
+/**
+ * Classe relativa alla gestione di un asset singolo
+ */
 public class Asset implements AssetCollection{
 
     private AssetCollection parent;
@@ -18,7 +21,9 @@ public class Asset implements AssetCollection{
         policy = null;
     }
 
-
+    /**
+     * Resetta a null la policy dell'Asset
+     */
     protected void resetPolicy(){
         this.policy = null;
     }
