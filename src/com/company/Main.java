@@ -7,11 +7,10 @@ import Policy.Set;
 import Rule.Rule;
 import Rule.Permission;
 import Rule.Prohibition;
-import Rule.RuleTree;
-import javafx.beans.property.SetProperty;
-
 import java.util.Map;
 import java.util.ArrayList;
+
+import Parser.policyReader;
 
 public class Main {
 
@@ -113,12 +112,14 @@ TEST UNION di policy
         Asset rootChild3 = new Asset();
         rootChild3.setParent(root);
 
-        Rule display = new Permission(Action.DISPLAY);
-        Rule play = new Prohibition(Action.PLAY);
+        Rule display = new Permission(Action.PLAY);
+        Rule anon = new Permission(Action.ANONYMIZE);
+        Rule play = new Prohibition(Action.DISPLAY);
         ArrayList<Rule> ruleRoot = new ArrayList<Rule>();
         ArrayList<Rule> ruleChild2 = new ArrayList<Rule>();
         ruleRoot.add(display);
         ruleChild2.add(play);
+        ruleChild2.add(anon);
         Set policyChild2 = new Set(ruleChild2,rootChild2);
         Set policyRoot = new Set(ruleRoot,root);
         AssetTree tree = new AssetTree(root);
@@ -145,6 +146,8 @@ TEST UNION di policy
         for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
+
+       policyReader.readFileQuery();
 
 
     }
