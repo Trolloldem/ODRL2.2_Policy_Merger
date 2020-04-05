@@ -1,0 +1,35 @@
+"Dimensionalità" del problema:
+-Comprensione dei requisiti e rappresentazione: dalla specifica ad alto
+livello alle policy
+-Forzamento delle tecnologie: 2 approcci complementari per il trattamento
+dei dati, "data wrapping"(porzione similare a k-anonimity) e "data sanitisation"
+(porzione similare a differential privacy)
+-fase di Forzamento: 3 fasi di vita dei dati, "ingestion"=>passaggio da
+possessore del dato al mercato; "storage"=>controllo dal provider del mercato;
+"analytics"=>dato processato nel mercato.
+
+Interazione nelle fasi di vita:
+-"Ingestion": il possessore può specificare le policy sui dati+possibilità
+di applicare protezione al dato PRIMA che questo interagisca col mercato
+-"Storage": effettivo enforcing delle policy, sia internamento che durante
+lo sharing; sia in ambienti MOSAICO che non.
+-"analytics": effettiva applicazione degli algoritmi in maniera efficace ed
+efficiente secondo le richieste del possessore, dipendente dall'attore che
+richiede l'accesso al dato.
+
+La soluzione è MODULARE, con pacchetti che si concentrano nel seguente ordine:
+1)policy: DEFINIZIONE E GESTIONE
+2)data wrapping e sanitisation
+=>entrambe le parti devono comunque tenere conto della vita che attraversa il
+dato
+
+WP2: Policy specification:
+Problema 1) Identificare tutti i requisiti di protezione rilevanti. Tale
+obiettivo è affrontato mediante l'analisi dei casi d'uso proposti, estreando
+i requisiti dei vari scenari. Dai requisiti alla specifica=>richiede di
+catturare i concetti che devono essere espressi nel metadato. Il risultato
+è un modello formale ed un linguaggio dichiarativo per policy. Il linaguaggio
+deve essere disegnato per tener conto dell'intero ciclo di vita del dato,
+rimanendo compatibile con le attuali tecnologie. Siccome possono essere
+necessarie operazioni di collezioni appartenenti a più possessori=>
+matching, composition, orchestration delle varie policy.
