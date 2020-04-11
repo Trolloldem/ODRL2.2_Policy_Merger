@@ -71,6 +71,7 @@
 \title{Documento merging di policy}
 \date{Work in progress}
 \author{Gianluca Oldani}
+
 \begin{document}
 
 \pagenumbering{gobble}
@@ -80,6 +81,7 @@
 \chapter{Possibili casi di merging}
 \paragraph{Casi base}\mbox{}\\
 \subparagraph{Asset diffrenti}\mbox{}\\
+
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1010 permette di riprodurre l'asset 9898.movie a chiunque},captionpos=b]
 {
 "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -90,7 +92,12 @@
 "action": "play"
 }]
 }
+
 \end{lstlisting}
+
+\cite{einstein}\cite{latexcompanion}
+
+
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1011 consente la riproduzione dell'asset 1349.mp3 a chiunque},captionpos=b]
 {
 "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -355,4 +362,8 @@ Problematiche relative alla gestione di questo tipo di merging, non più necessa
 	\item limiti relativi al tipo di dato trattato(dimensione dell'immagine, durata del video).
 \end{itemize}
 A causa di questa varietà, la gestione di questo tipo di merging può facilmente esplodere. Vi è anche da contare che un ``constraint'' può essere ottenuto come operazione in logica booleana di altri ``constraint''. Questo tipo di merging non va necessariamente a risolvere conflitti nelle policy, ma può rilevare quando un numero eccessivo di constraint va a rendere la collezione di asset inutilizzabile(una policy permette l'uso di un asset solo la mattina, la seconda solo la sera, unendole l'asset risulta inutilizzabile).
+
+\bibliography{cit}{}
+\bibliographystyle{plain}
+
 \end{document}
