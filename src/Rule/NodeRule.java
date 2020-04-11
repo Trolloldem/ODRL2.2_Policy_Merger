@@ -11,7 +11,11 @@ public class NodeRule {
     private String stato;
     private HashMap<Action,NodeRule> includedActions=new HashMap<Action, NodeRule>();
     private int prohibIncluded=0;
+    private Boolean prohibIncludedByChild=false;
     private NodeRule father=null;
+
+
+
     /**
      * Metodo per il recupero dell'azione rappresentata dal nodo
      * @return Azione rappresentata dal nodo
@@ -28,6 +32,19 @@ public class NodeRule {
         prohibIncluded++;
         if(prohibIncluded==azione.getIncludedBy().length){
             this.setProhibited();
+        }
+        if(this.father!=null){
+            this.father.setProhibIncludedByChild();
+        }
+    }
+
+    /**
+     * Set a true della flag che indica se a più di un solo nodo di profondità è stata proibita un'azione inclusa
+     */
+    public void setProhibIncludedByChild(){
+        this.prohibIncludedByChild=true;
+        if(this.father!=null){
+            this.father.setProhibIncludedByChild();
         }
     }
     public NodeRule(Action a){
@@ -61,7 +78,7 @@ public class NodeRule {
                 node.setPermitted();
             }
         }
-        if(prohibIncluded>0 && !(this.stato.equals("Prohibited")))
+        if(prohibIncludedByChild && prohibIncluded>0 && !(this.stato.equals("Prohibited")))
             this.stato="Undefined";
     }
     /**
@@ -81,6 +98,7 @@ public class NodeRule {
             if(this.father!=null){
                 this.father.setUndefined();
                 this.father.addProhibitedCount();
+                this.father.setProhibIncludedByChild();
             }
         }
 
