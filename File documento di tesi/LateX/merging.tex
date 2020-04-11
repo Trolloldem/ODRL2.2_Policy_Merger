@@ -1,0 +1,358 @@
+\documentclass[12pt,a4paper,twoside]{book}
+\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage{times}
+\usepackage{fancyhdr}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\graphicspath{ {imgTesi/} }
+\fancyhf{} % clear all header and footers
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\fancyfoot[LE,RO]{\thepage} % Left side on Even pages; Right side on Odd pages
+\pagestyle{fancy}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyhf[lef,rof]{\thepage}%
+}
+
+\usepackage{pdfpages}
+\usepackage[english,italian]{babel}
+\usepackage[hyphens,spaces,obeyspaces]{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[T1]{fontenc}
+
+
+\usepackage{titlesec}
+\titleformat{\chapter}[hang] 
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter:}{1em}{} 
+\renewcommand{\chaptername}{Capitolo}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+\lstdefinelanguage{json}{
+	basicstyle=\normalfont\ttfamily,
+	numbers=left,
+	numberstyle=\scriptsize,
+	stepnumber=1,
+	numbersep=8pt,
+	showstringspaces=false,
+	breaklines=true,
+	frame=lines,
+	backgroundcolor=\color{background},
+	literate=
+	*{0}{{{\color{numb}0}}}{1}
+	{1}{{{\color{numb}1}}}{1}
+	{2}{{{\color{numb}2}}}{1}
+	{3}{{{\color{numb}3}}}{1}
+	{4}{{{\color{numb}4}}}{1}
+	{5}{{{\color{numb}5}}}{1}
+	{6}{{{\color{numb}6}}}{1}
+	{7}{{{\color{numb}7}}}{1}
+	{8}{{{\color{numb}8}}}{1}
+	{9}{{{\color{numb}9}}}{1}
+	{:}{{{\color{punct}{:}}}}{1}
+	{,}{{{\color{punct}{,}}}}{1}
+	{\{}{{{\color{delim}{\{}}}}{1}
+	{\}}{{{\color{delim}{\}}}}}{1}
+	{[}{{{\color{delim}{[}}}}{1}
+	{]}{{{\color{delim}{]}}}}{1},
+}
+
+
+
+\geometry{a4paper,top=3cm,bottom=3cm,left=3cm,right=3cm,heightrounded,bindingoffset=5mm}
+\onehalfspacing
+\title{Documento merging di policy}
+\date{Work in progress}
+\author{Gianluca Oldani}
+\begin{document}
+
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+\chapter{Possibili casi di merging}
+\paragraph{Casi base}\mbox{}\\
+\subparagraph{Asset diffrenti}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1010 permette di riprodurre l'asset 9898.movie a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Set",
+"uid": "http://example.com/policy:1010",
+"permission": [{
+"target": "http://example.com/asset:9898.movie",
+"action": "play"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1011 consente la riproduzione dell'asset 1349.mp3 a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Set",
+"uid": "http://example.com/policy:1011",
+"permission": [{
+"target": "http://example.com/asset:1349.mp3",
+"action": "play"
+}]
+}
+\end{lstlisting}
+Le due policy mostrate si riferiscono ad asset differenti, farne il merging porta semplicemente ad una policy avente entrambe le \textit{permission} già enunciate.
+\subparagraph{Rule incompatibili}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1010 consente la riproduzione dell'asset 9898.movie a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Set",
+"uid": "http://example.com/policy:1010",
+"permission": [{
+"target": "http://example.com/asset:9898.movie",
+"action": "play"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1011 proibisce la distribuzione dell'asset 9898.movie a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Set",
+"uid": "http://example.com/policy:1011",
+"prohibition": [{
+"target": "http://example.com/asset:9898.movie",
+"action": "distribute"
+}]
+}
+\end{lstlisting}
+Nonostante le due policy si riferiscano allo stesso asset, anche in questo caso, non è possibile combinare le due regole, poiché si riferiscono a domini diversi. Un eventuale merging delle due policy avrebbe 2 regole distinte uguali a quelle di partenza.\newpage
+\subparagraph{Attori designati differenti}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 da parte del soggetto Billie},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"permission": [{
+	"target": "http://example.com/asset:1212",
+	"action": "use",
+	"assigner": "http://example.com/owner:181",
+	"assignee": 
+	   "http://example.com/party:person:billie"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 proibisce la riproduzione dell'asset 1212 da parte del soggetto Alice},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0002",
+"prohibition": [{
+"target": "http://example.com/asset:1212",
+"action": "play",
+"assigner": "http://example.com/owner:181",
+"assignee": 
+"http://example.com/party:person:alice"
+}]
+}
+\end{lstlisting}
+In questo caso, le regole espresse dalle 2 policy sarebbero in conflitto, poiché ``use'', permesso dalla prima policy, comprende al suo interno anche ``play''\footnote{Per le dipendenze tra le azioni, si fa riferimento all'ODRL Core Vocabulary}, proibito dalla seconda. Siccome però le due regole riguardano due soggetti diversi,un eventuale merging delle policy avrebbe 2 regole distinte uguali a quelle di partenza.
+\paragraph{Conflitti senza strategia risolutiva indicata}\label{noStrat}\mbox{}\\
+Nel caso si presentino 2 policy in conflitto, se non viene indicato alcun processo di risoluzione dei conflitti, secondo lo standard ODRL entrambe le policy sono da considerarsi non valide. Attuando policy merging è possibile formulare una terza policy che racchiude entrambe le casistiche.
+\subparagraph{Conflitti permesso-permesso}\label{permperm}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"permission": [{
+"target": "http://example.com/asset:1212",
+"action": "play"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 permette la riproduzione dell'asset 1212 a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0002",
+"permission": [{
+"target": "http://example.com/asset:1212",
+"action": "display"
+}]
+}
+\end{lstlisting}
+La seconda policy risulta in conflitto con la prima, poiché quest'ultima permette un numero maggiore di utilizzi. Seguendo la procedura standard, entrambe le 2 policy dovrebbero essere considerate invalidate. Nella realtà dei fatti, facendo policy merging, si otterrebbe solamente la policy più restrittiva, ovvero la seconda. La procedura di policy merging in questione sarebbe quindi: 
+\begin{enumerate}
+	\item invalidare le policy 0001 e 0002;
+	\item creare una terza policy 0003, uguale alla 0002(la più restrittiva delle due), con indicato il procedimento di merging;
+	\item l'indicazione è opportuna per fare il processo inverso al merging qualora una delle 2 policy originarie venga ritirata.
+\end{enumerate}
+\subparagraph{Conflitti divieto-divieto}\label{divdiv}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 proibisce un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"prohibition": [{
+"target": "http://example.com/asset:1212",
+"action": "play"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 proibisce la riproduzione dell'asset 1212 a chiunque},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0002",
+"prohibition": [{
+"target": "http://example.com/asset:1212",
+"action": "display"
+}]
+}
+\end{lstlisting}
+Caso duale del precedente; in questo caso una delle due policy proibisce un numero maggiore di utilizzi rispetto all'altra. La procedura da seguire risulta essere:
+\begin{enumerate}
+	\item invalidare le policy 0001 e 0002;
+	\item creare una terza policy 0003, uguale alla 0001(la più ampia delle due), con indicato il procedimento di merging;
+	\item l'indicazione è opportuna per fare il processo inverso al merging qualora una delle 2 policy originarie venga ritirata.
+\end{enumerate}
+\subparagraph{Conflitti permesso-divieto}\label{permdiv}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette il trasferimento dell'asset 1212 al soggetto Alice},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"permission": [{
+"target": "http://example.com/asset:1212",
+"assigner": "http://example.com/owner:181",
+"assignee": 
+"http://example.com/party:person:alice",
+"action": "transfer"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 proibisce la vendita dell'asset 1212 al soggetto Alice},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0002",
+"prohibition": [{
+"target": "http://example.com/asset:1212",
+"assigner": "http://example.com/owner:181",
+"assignee": 
+"http://example.com/party:person:alice",
+"action": "sell"
+}]
+}
+\end{lstlisting}
+In questo caso, l'azione ``transfer'', nell'ODRL Core Vocabulary, è inclusa in 2 sotto-azioni: ``give'' e ``sell''; delle 2 sotto-azioni, solamente ``sell'' è esplicitamente proibita dalla policy 0002, di conseguenza la seguente policy permette solo azioni che soddisfano entrambe le policy precedenti:\newpage
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0003 consente al soggetto Alice di cedere l'asset 1212 senza richiedere un compenso e cancellando l'asset dal proprio insieme di dati},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0002",
+"permission": [{
+"target": "http://example.com/asset:1212",
+"assigner": "http://example.com/owner:181",
+"assignee": 
+"http://example.com/party:person:alice",
+"action": "give"
+}]
+}
+\end{lstlisting}
+Sono necessarie alcune valutazioni su questa casistica:
+\begin{itemize}
+	\item il numero di regole all'interno della policy ottenuta per merging non è necessariamente minore rispetto al numero di regole di partenza; tale numero, dipende dal numero di sotto-azioni esistenti e da come è formulato il divieto di partenza;
+	\item è necessario un meccanismo per notificare che il le sotto-azioni presentate in realtà indicano ``tutte le sotto-azioni possibili, escluse quelle esplicitamente vietate'';
+	\item se ``prohibition'' e ``permission'' fossero invertite tra la policy 0001 e la 0002, la policy 0003 risulterebbe una policy non valida.
+\end{itemize}
+\paragraph{Conflitti con strategia risolutiva indicata}\mbox{}\\
+Le strategie risolutive indicabili all'interno di ODRL utilizzando il Core Vocabulary sono le seguenti:
+\begin{enumerate}
+	\item ``perm'': tutte le ``permission'' hanno la precedenza sulle ``prohibition'';
+	\item ``prohibit'': tutte le ``prohibition'' hanno la precedenza sulle ``permission'';
+	\item ``invalid'': qualsiasi conflitto invalida la policy;
+\end{enumerate}
+La casistica ``invalid'' è già stata trattata all'interno del paragrafo ``Conflitti senza strategia risolutiva indicata''[\ref{noStrat}].\newpage
+\subparagraph{Strategia concorde}\mbox{}\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 consente qualsiasi utilizzo dell'asset 1212 a chiunque, dando precedenza ai permessi in caso di conflitto},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"conflict":{"@type": "perm"},
+"permission": [{
+"target": "http://example.com/asset:1212",
+"action": "use",
+"assigner": "http://example.com/owner:181"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 permette la riproduzione dell'asset 1212 a chiunque, mentre ne vieta la proiezione, dando precedenza ai permessi in caso di conflitto},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"conflict":{"@type": "perm"},
+"permission": [{
+"target": "http://example.com/asset:1212",
+"action": "play",
+"assigner": "http://example.com/owner:182"
+}],
+"prohibition": [{
+"target": "http://example.com/asset:1212",
+"action": "display",
+"assigner": "http://example.com/owner:181"
+}]
+}
+\end{lstlisting}
+In questo caso è possibile ricondursi alla procedura indicata nel sottoparagrafo ``Conflitti permesso-permesso''[\ref{permperm}] ignorando tutti i divieti espressi nelle policy. In seguito al merging delle policy si ottiene:
+\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0003 risulta essere uguale ai permessi della policy 0002, più restrittiva},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Policy",
+"uid": "http://example.com/policy:0001",
+"conflict":{"@type": "perm"},
+"permission": [{
+"target": "http://example.com/asset:1212",
+"action": "play",
+"assigner": "http://example.com/owner:182"
+}]
+}
+\end{lstlisting}
+Dando la precedenza ai permessi, rimane comunque da tener in conto che nella policy 0002 il permesso è più ristretto rispetto a quello espresso nella policy 0001.\\
+Dualmente, nel caso di strategia di conflitto concorde di tipo ``prohibit'', ci si riconduce al caso mostrato nel sottoparagrafo ``Conflitti divieto-divieto''[\ref{divdiv}], tenendo conto solo dei divieti.
+\subparagraph{Strategia discorde}\mbox{}\\
+Utilizzando il normale sistema di ereditarietà delle policy di ODRL, una policy contenente 2 strategie di risoluzione dei conflitti dovrebbe essere considerata non valida. Questa casistica si può però ridurre al caso mostrato nel sottoparagrafo ``Conflitti permesso-divieto'' [\ref{permdiv}]. In questo modo, entrambe le policy risultano rispettate. Un'aggiunta che può essere fatta a questa casistica, rispetto a quella già mostrata, sarebbe considerare solamente i divieti o i permessi della singola policy, in base alla strategia indicata; quest'ultima opzione porterebbe ad un ibrido tra le due soluzioni precedenti.
+\paragraph{Restrizioni su regole, asset, party}\mbox{}\\
+Possono essere poste delle restrizioni sulla validità di una regola o sulla composizione di una collezione di asset o gruppo di soggetti. Anche queste restrizioni possono essere composte similarmente alle regole a sé stanti.\newpage
+\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di limite temporale per una regola, può essere composto similarmente ai limiti sull'azione regolata},captionpos=b]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Offer",
+"uid": "http://example.com/policy:6163",
+"profile": "http://example.com/odrl:profile:10",
+"permission": [{
+	"target": "http://example.com/document:1234",
+	"assigner": "http://example.com/org:616",
+	"action": "distribute",
+	"constraint": [{
+		"leftOperand": "dateTime",
+		"operator": "lt",
+		"rightOperand": 
+		  { "@value": "2018-01-01",
+		    "@type": "xsd:date" }
+		}]
+	}]
+}
+\end{lstlisting}
+Problematiche relative alla gestione di questo tipo di merging, non più necessariamente relativo a conflitti, possono essere rilevate nella grande varietà che può assumere:
+\begin{itemize}
+	\item limiti di tipo temporale;
+	\item limiti di tipo spaziale;
+	\item limiti di tipo quantitativo(numero di volte che un permesso può essere sfruttato);
+	\item limiti relativi al tipo di dato trattato(dimensione dell'immagine, durata del video).
+\end{itemize}
+A causa di questa varietà, la gestione di questo tipo di merging può facilmente esplodere. Vi è anche da contare che un ``constraint'' può essere ottenuto come operazione in logica booleana di altri ``constraint''. Questo tipo di merging non va necessariamente a risolvere conflitti nelle policy, ma può rilevare quando un numero eccessivo di constraint va a rendere la collezione di asset inutilizzabile(una policy permette l'uso di un asset solo la mattina, la seconda solo la sera, unendole l'asset risulta inutilizzabile).
+\end{document}
