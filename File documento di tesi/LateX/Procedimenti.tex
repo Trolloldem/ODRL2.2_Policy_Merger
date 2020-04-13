@@ -20,7 +20,7 @@
 }
 
 \usepackage{pdfpages}
-\usepackage[english,italian]{babel}
+\usepackage[italian,english]{babel}
 \usepackage[hyphens,spaces,obeyspaces]{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage[T1]{fontenc}
@@ -102,8 +102,8 @@ Nonostante questi principi siano più indicati per un'implementazione graph-base
 	\centering
 	\def\svgwidth{\columnwidth}
 	\scalebox{0.5}{\includegraphics{ODRLModel.pdf}}
-	\label{ODRLModelSchema}
-	\caption{Schema del modello ODRL\cite{ODRLinfMod}}
+	
+	\caption{Schema del modello ODRL\cite{ODRLinfMod}\label{ODRLModelSchema}}
 \end{figure}
 Come visibile all'interno dello schema in figura \ref{ODRLModelSchema}, il modello è basato sulle seguenti entità principali:
 \begin{itemize}
@@ -126,10 +126,11 @@ Una delle principali differenze tra i due vocabolari, la si ha all'interno delle
 \begin{figure}[H]
 	\centering
 	\def\svgwidth{\columnwidth}
-	\scalebox{0.5}{\includegraphics{useTree.png}}
-	\label{imgUseTransfer}
-	\caption{Tutte le azioni mostrate sono figlie di use, ad eccezioni di trasfer e le sue sottoazioni\cite{ODRLBestPract}}
+	\scalebox{0.35}{\includegraphics{useTree.png}}
+	
+	\caption{Tutte le azioni mostrate sono figlie di use, ad eccezioni di trasfer e le sue sottoazioni\cite{ODRLBestPract}\label{imgUseTransfer}}
 \end{figure}
+
 
 \paragraph{Policy}\mbox{}\\
 Come definito nel modello presente nella sezione \ref{modello}, una policy è un gruppo non vuoto di \textbf{regole} e, quindi, di \textbf{permessi}, \textbf{divieti} o \textbf{obblighi}. Una policy deve soddisfare i seguenti requisiti:
@@ -164,8 +165,299 @@ La policy mostrata nel listing \ref{esmpioPolicy} presenta i campi:
 	\item @context : serve ad indicare che il file deve essere conforme ad ODRL, rappresentato dall'URL da cui si può ottenere l'ODRL Common Vocabulary\cite{ODRLCV};
 	\item nel contesto sono presenti altri link per le altre proprietà, ad esempio quello per la descrizione di \textit{Set} e per \textit{use};
 	\item non usando termini fuori dai 2 vocabolari principali, non necessita la definizione di un profilo;
-	\item l'id univoco è rappresentato da un URL con le informazioni relative alla risorsa;
+	\item l'id univoco è rappresentato da un URL che porta alle informazioni relative la risorsa.
 \end{itemize}
+\paragraph{Asset}\mbox{}\\
+Come definito nel modello presente nella sezione \ref{modello}, un asset è una risorsa o una collezione di risorse soggette a regole. Un asset può essere una qualunque risorsa identificabile. Ha \textbf{AssetCollection} come sottoclasse, la quale rappresenta una collezione di asset. La classe asset può avere:
+\begin{itemize}
+\item un identificativo univoco, il quale può essere omesso se l'asset è fornito direttamente con la policy; le specifiche di ODRL, pur supportando questo caso d'uso, sconsigliano questa pratica;
+\item una o più proprietà denominate \textbf{partOf}: identifica le collezioni di cui fa parte l'asset, il quale può essere a sua volta una collezione.
+\end{itemize}
+Esempio di utilizzo in una regola:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Utilizzo di asset nella proprietà \textbf{target} di una regola},captionpos=b,label=esempioAsset]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Offer",
+ "uid": "http://example.com/policy:3333",
+ "profile": "http://example.com/odrl:profile:02",
+ "permission": [{
+	"target": "http://example.com/asset:3333",
+	"action": "display",
+	"assigner": "http://example.com/party:0001"
+ }]
+}
+\end{lstlisting}
+La sottoclasse \textbf{AssetCollection} può avere i seguenti 2 campi aggiuntivi:
+\begin{itemize}
+	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe AssetCollection all'interno di un \textbf{refinement};
+	\item una o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
+\end{itemize}
+Esempio di utilizzo della proprietà \textbf{partOf}:
+\begin{lstlisting}[language=json,firstnumber=1,caption={L'asset definito è parte del target presente nel listing \ref{esempioAsset}},captionpos=b,label=esempioAssetColl]
+{
+	"@type": "dc:Document",
+	"@id": "http://example.com/asset:111.doc",
+	"dc:title": "Annual Report",
+	...
+	"odrl:partOf": "http://example.com/archive1011",
+	...
+}
+\end{lstlisting}
+In quest'ultimo esempio si ha che l'asset con id ``\url{http://example.com/asset:111.doc}'' è definito come parte della collezione ``\url{http://example.com/archive1011}''. Questa definizione ha come effetto l'applicarsi della policy presente nel listing \ref{esempioAsset} anche all'asset che fa parte della collezione.
+\paragraph{Party}\mbox{}\\
+Come definito nel modello presente nella sezione \ref{modello}, un party è una entità o una collezione di entità con una funzione determinata in una regola. Un party può essere un qualunque soggetto con un ruolo attivo nelle regole o che produce un effetto specifico, ad esempio controlla che le azione relative ad un dovere vengano effettuate. Ha \textbf{PartyCollection} come sottoclasse, la quale rappresenta una collezione di entità. La classe party può avere:
+\begin{itemize}
+	\item un identificativo univoco, il quale può essere omesso se è possibile definire in altro modo l'entità; le specifiche di ODRL, pur supportando questo caso d'uso, sconsigliano questa pratica;
+	\item una o più proprietà denominate \textbf{partOf}: identifica le collezioni di cui fa parte l'entità, la quale può essere a sua volta una collezione.
+\end{itemize}
+Esempio di utilizzo in una regola:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Utilizzo di party nelle proprietà \textbf{assigner} ed \textbf{assignee} di una regola},captionpos=b,label=esempioParty]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Agreement",
+"uid": "http://example.com/policy:8888",
+"profile": "http://example.com/odrl:profile:04",
+"permission": [{
+"target": "http://example.com/music/1999.mp3",
+"assigner": "http://example.com/org/sony-music",
+"assignee": "http://example.com/people/billie",
+"action": "play"
+}]
+}  
+\end{lstlisting}
+La sottoclasse \textbf{PartyCollection} può avere i seguenti 2 campi aggiuntivi:
+\begin{itemize}
+	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe PartyCollection all'interno di un \textbf{refinement};
+	\item una o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
+\end{itemize}
+Esempio di utilizzo della proprietà \textbf{partOf}:
+\begin{lstlisting}[language=json,firstnumber=1,caption={L'entità definita è parte di una PartyCollection},captionpos=b,label=esempioPartyColl]
+{
+"@type": "vcard:Individual",
+"@id": "http://example.com/person/murphy",
+"vcard:fn": "Murphy",
+"vcard:hasEmail": "murphy@example.com",
+...
+"odrl:partOf": "http://example.com/team/A",
+...
+}
+\end{lstlisting}
+In quest'ultimo esempio si ha che l'entità con id ``\url{http://example.com/person/murphy}'' è definita come parte della collezione ``\url{http://example.com/team/A}''. Questa definizione ha come effetto l'affidare le funzioni di quest'ultima collezione anche alla singola entità che ne fa parte.
+\paragraph{Action}\mbox{}\\
+Come definito nel modello presente nella sezione \ref{modello}, \textbf{action} è una classe che rappresenta un'operazione che può essere esercitata su un asset, al quale viene associata mediante la propietà \textbf{action} di una regola. Nell' ODRL Core Vocabulary sono presenti 2 azioni principali:
+\begin{itemize}
+	\item use: un qualsiasi utilizzo dell'asset;
+	\item transfer: una qualsiasi azione che preveda il trasferimento di proprietà dell'asset;
+\end{itemize}
+Un'azione può avere le seguenti proprietà:
+\begin{itemize}
+	\item refinement: raffinamenti semantici sull'azione, come ad esempio l'ammontare di un pagamento, il luogo nel quale l'azione può essere eseguita o il tempo massimo di esecuzione;
+	\item includedIn: esprime l'azione padre; la conseguenza di questa dichiarazione risulta essere che tutte le regole applicate all'azione padre, devono valere anche per l'azione figlia;
+	\item implies: esprime un'azione che non deve essere vietata per permettere l'azione con questa proprietà, ma le 2 azioni non hanno una relazione espressa tramite \textit{includedIn}\footnote{attualmente né l'ODRL Core Vocabulary né l'ODRL Common Vocabulary presentano azioni con questa proprietà}. 
+\end{itemize}
+Come anticipato nel paragrafo \ref{profili} relativo ai profili, l'ORDL Common Vocabulary utilizza la proprietà \textit{includedIn} per aggiungere azioni figlie sia ad \textit{use} che \textit{transfer}, come già mostrato nella figura \ref{imgUseTransfer}.\\
+Di seguito un esempio di azione in una regola:
+\begin{lstlisting}[language=json,firstnumber=1,caption={L'azione \textbf{play} è presente nella proprietà \textbf{action} della regola},captionpos=b,label=esempioAction]
+
+{
+	"@context": "http://www.w3.org/ns/odrl.jsonld",
+	"@type": "Offer",
+	"uid": "http://example.com/policy:1012",
+	"profile": "http://example.com/odrl:profile:06",
+	"permission": [{
+		"target": "http://example.com/music:1012",
+		"assigner": "http://example.com/org:abc",
+		"action": "play"
+	}]
+}
+\end{lstlisting}
+\paragraph{Constraint e Logical Constraint}\mbox{}\\
+Come definito nel modello presente nella sezione \ref{modello}, \textbf{constraint} è una classe usata per comparare 2 espressioni che non sono constraint a loro volta, utilizzando un operatore relazionale. Rappresentano una limitazione tramite un confronto, la quale può essere soddisfatta o non soddisfatta. La classe presenta le seguenti proprietà:
+\begin{itemize}
+	\item uno o nessun identificativo univoco, qualora si volesse riutilizzare l'espressione di confronto definita;
+	\item un \textbf{leftOperand}: elemento a sinistra dell'operatore di confronto;
+	\item un sottotitpo \textbf{operator}: operatore di confronto;
+	\item uno tra: 
+	\begin{itemize}
+		\item \textbf{rightOperand}: elemento a destra dell'operatore di confronto, identificato direttamente;
+		\item \textbf{rightOperand}: elemento a destra dell'operatore di confronto, identificato con un riferimento; 
+	\end{itemize} 
+	\item uno o nessun \textbf{dataType}: definisce il tipo dell'operando di destra;
+	\item una o nessuna \textbf{unit}: unità di misura dell'operando di destra;
+	\item uno o nessun \textbf{status}: per l'elemento di sinistra.
+\end{itemize}
+Oltre ai normali constraint, il modello definisce anche dei logical constraint, ovvero operazioni logiche su altri constraint già definiti. In questo caso le proprietà sono:
+\begin{itemize}
+	\item uno o nessun identificativo univoco, qualora si volesse riutilizzare l'espressione di confronto definita;
+	\item un sottotipo di \textbf{operand}: operatore logico tra i constraint espressi come lista al suo interno.
+\end{itemize}
+Esempi di utilizzi dei constraint: 
+\begin{lstlisting}[language=json,firstnumber=1,caption={Constraint su azione: l'azione \textbf{print} è permessa solo per risoluzioni minori di 1200 dpi},captionpos=b,label=esempioRef]
+{
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Offer",
+ "uid": "http://example.com/policy:6161",
+ "profile": "http://example.com/odrl:profile:10",
+ "permission": [{
+  "target": "http://example.com/document:1234",
+   "assigner": "http://example.com/org:616",
+   "action": [{
+  	"rdf:value": { "@id": "odrl:print" },
+  	"refinement": [{
+  		"leftOperand": "resolution",
+  		"operator": "lteq",
+  		"rightOperand": { "@value": "1200", "@type": "xsd:integer" },
+  		"unit": "http://dbpedia.org/resource/Dots_per_inch"
+    	}]
+ 	}]
+  }]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={Constraint logico su azione: l'azione \textbf{reproduce} è permessa solo nella forma di uno dei due constraint listati},captionpos=b,label=esempioLogRef]
+{
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Offer",
+ "uid": "http://example.com/policy:88",
+ "profile": "http://example.com/odrl:profile:10",
+ "permission": [{
+  "target": "http://example.com/book/1999",
+  "assigner": "http://example.com/org/paisley-park",
+  "action": [{
+    "rdf:value": { "@id": "odrl:reproduce" },
+	"refinement": {
+	  "xone": { 
+	    "@list": [ 
+		 { "@id": "http://example.com/p:88/C1" },
+		 { "@id": "http://example.com/p:88/C2" } 
+		]}
+	}
+  }]
+ }]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={Constraint su asset: l'azione \textbf{play} è permessa solo sui target di durata strettamente inferiore a 60 minuti},captionpos=b,label=esempioConAss]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Offer",
+"uid": "http://example.com/policy:4444",
+"profile": "http://example.com/odrl:profile:11",
+"permission": [{
+ "assigner": "http://example.com/org88",
+ "target": {
+ 	"@type": "AssetCollection",
+ 	"source":  "http://example.com/media-catalogue",
+ 	"refinement": [{
+ 		"leftOperand": "runningTime",
+ 		"operator": "lt",
+ 		"rightOperand": { 
+ 		 "@value": "60",
+ 		 "@type": "xsd:integer"
+ 		 },
+ 		"unit": "http://qudt.org/vocab/unit/MinuteTime"
+ 	}]
+ },
+ "action": "play"
+}]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={Constraint su party: l'azione \textbf{view} è permessa solo alle entità con età strettamente superiore a 17 anni},captionpos=b,label=esempioConParty]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Agreement",
+"uid": "http://example.com/policy:4444",
+"profile": "http://example.com/odrl:profile:12",
+"permission": [{
+  "target": "http://example.com/myPhotos:BdayParty",
+  "assigner": "http://example.com/user44",
+  "assignee": {
+     "@type": "PartyCollection",
+ 	 "source":  "http://example.com/user44/friends",
+ 	 "refinement": [{
+ 	 	"leftOperand": "foaf:age",
+ 	 	"operator": "gt",
+ 	 	"rightOperand": { 
+ 	 	 "@value": "17",
+ 	 	 "@type": "xsd:integer"
+ 		 }
+ 	 }]
+ 	},
+  "action": { "@id": "ex:view" }
+}]
+}
+\end{lstlisting}
+\paragraph{Rule}\mbox{}\\
+Come definito nel modello presente nella sezione \ref{modello}, \textbf{rule} è una classe astratta che raccoglie gli aspetti comuni della classi  \textbf{permission}, \textbf{prohibition}, and \textbf{duty}. Rappresenta una delle regole all'interno della policy. Presenta le seguenti proprietà:
+\begin{itemize}
+	\item una \textbf{action}: azione regolamentata;
+	\item una o nessuna \textbf{relation}: asset sul quale si applica la regola;
+	\item una, nessuna o più \textbf{function}: funzioni che un party può avere all'interno di una regola;
+	\item uno, nessuno o più \textbf{constraint }: limiti applicati alla validità della regola;
+	\item uno o nessun identificativo univoco, necessario solo qualora si usare la regola per ereditarne le proprietà;
+\end{itemize}
+Le sottoclassi sono così definite:
+\begin{itemize}
+	\item \textbf{permission}: permette un'azione sull'asset specificato, con tutti i \textbf{refinement} di quest'ultima soddisfatti; inoltre l'azione può essere eseguita solo se tutti i limiti della regola sono soddisfatti e ogni dovere espresso come \textbf{duty} è stato rispettato. Un permesso rende obbligatoria la \textbf{relation} denominata \textbf{target};
+	\item \textbf{prohibition}: vieta un'azione sull'asset specificato, con tutti i \textbf{refinement} di quest'ultima soddisfatti; inoltre l'azione non può essere eseguita solo se tutti i limiti della regola sono soddisfatti; se si infrange il divieto, ogni dovere espresso come \textbf{remedy} deve essere eseguito. Un divieto rende obbligatoria la \textbf{relation} denominata \textbf{target};
+	\item \textbf{duty}: obbligo di eseguire un'azione, con tutti i \textbf{refinement} di quest'ultima soddisfatti; un dovere è compiuto se tutti i suoi limiti sono soddisfatti e la sua azione effettuata, con tutti i \textbf{refinement} definiti. Se un dovere non è stato compiuto, bisogna eseguirne le \textbf{consequences}, ovvero altri doveri da compiere.
+\end{itemize}
+Esempi di regole all'interno di policy:
+\begin{lstlisting}[language=json,firstnumber=1,caption={La regola esprime il permesso di eseguire l'azione \textbf{play} sul target fino al giorno 2017-12-31 compreso},captionpos=b,label=esempioPerm]
+{
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Offer",
+ "uid": "http://example.com/policy:9090",
+ "profile": "http://example.com/odrl:profile:07",
+ "permission": [{
+    "target": "http://example.com/game:9090",
+    "assigner": "http://example.com/org:xyz",
+    "action": "play",
+    "constraint": [{
+        "leftOperand": "dateTime",
+        "operator": "lteq",
+        "rightOperand": { "@value": "2017-12-31", "@type": "xsd:date" }
+    }]
+  }]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={La regola esprime il divieto di eseguire l'azione \textbf{archive} sul target},captionpos=b,label=esempioPro]
+{
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Agreement",
+ "uid": "http://example.com/policy:5555",
+ "profile": "http://example.com/odrl:profile:08",
+ "prohibition": [{
+	"target": "http://example.com/photoAlbum:55",
+	"action": "archive",
+	"assigner": "http://example.com/MyPix:55",
+	"assignee": "http://example.com/assignee:55"
+ }]
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=json,firstnumber=1,caption={La regola esprime l'obbligo di eseguire l'azione \textbf{compensate}, specificando come \textbf{refinement} l'ammontare del pagamento},captionpos=b,label=esempioDuty]
+{
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "Agreement",
+"uid": "http://example.com/policy:42",
+"profile": "http://example.com/odrl:profile:09",
+"obligation": [{
+ "assigner": "http://example.com/org:43",
+ "assignee": "http://example.com/person:44",
+ "action": [{
+   "rdf:value": {
+     "@id": "odrl:compensate"
+   },
+   "refinement": [
+     {
+     "leftOperand": "payAmount",
+     "operator": "eq",
+     "rightOperand": { "@value": "500.00", "@type": "xsd:decimal" },
+     "unit": "http://dbpedia.org/resource/Euro"
+   }]
+  }]
+ }]
+}
+\end{lstlisting}
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
