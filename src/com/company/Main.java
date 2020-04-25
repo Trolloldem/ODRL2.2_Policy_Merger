@@ -5,6 +5,7 @@ import Assets.Asset;
 import Assets.AssetTree;
 import Policy.Set;
 import Rule.Rule;
+import Rule.RuleTree;
 import Rule.Permission;
 import Rule.Prohibition;
 import java.util.Map;
@@ -16,15 +17,17 @@ public class Main {
 
     public static void main(String[] args) {
 /** TEST GENERICO
-
+**/
         Set p=new Set(new ArrayList<Rule>());
         RuleTree tree=p.getUseTree();
         tree.setActionPermitted(Action.SHARING);
         tree.setActionProhibited(Action.SHARING);
         System.out.println(tree.getActionState(Action.SHARING));
-        tree.setActionProhibited(Action.PLAY);
+        tree.setActionPermitted(Action.USE);
         tree.setActionPermitted(Action.PLAY);
-        System.out.println(tree.getActionState(Action.PLAY));
+        tree.setActionProhibited(Action.DISPLAY);
+        tree.setActionPermitted(Action.USE);
+        System.out.println("USE è: "+tree.getActionState(Action.USE));
         RuleTree tt=p.getTransferTree();
         tt.setActionPermitted(Action.TRANSFER);
         tt.setActionProhibited(Action.SELL);
@@ -36,7 +39,7 @@ public class Main {
         for (Map.Entry<Action, String> entry : tt.getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
-
+/**
 TEST UNION di policy
 
         Rule share = new Permission(Action.USE);
@@ -102,7 +105,7 @@ TEST UNION di policy
         }
 
        TEST EREDITà ASSET
- **/
+
 
         Asset root = new Asset();
         Asset rootChild1 = new Asset();
@@ -149,7 +152,7 @@ TEST UNION di policy
 
        policyReader.readFileQuery();
 
-
+ **/
     }
 
 
