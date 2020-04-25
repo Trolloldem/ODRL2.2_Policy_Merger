@@ -250,7 +250,7 @@ Come definito nel modello presente nella sezione \ref{modello}, \textbf{action} 
 	\item transfer: una qualsiasi azione che preveda il trasferimento di proprietà dell'asset;
 \end{itemize}
 Un'azione può avere le seguenti proprietà:
-\begin{itemize}
+\begin{itemize}\label{includesProp}
 	\item refinement: raffinamenti semantici sull'azione, come ad esempio l'ammontare di un pagamento, il luogo nel quale l'azione può essere eseguita o il tempo massimo di esecuzione;
 	\item includedIn: esprime l'azione padre; la conseguenza di questa dichiarazione risulta essere che tutte le regole applicate all'azione padre, devono valere anche per l'azione figlia;
 	\item implies: esprime un'azione che non deve essere vietata per permettere l'azione con questa proprietà, ma le 2 azioni non hanno una relazione espressa tramite \textit{includedIn}\footnote{attualmente né l'ODRL Core Vocabulary né l'ODRL Common Vocabulary presentano azioni con questa proprietà}. 
@@ -458,6 +458,45 @@ Esempi di regole all'interno di policy:
  }]
 }
 \end{lstlisting}
+\subsection{Problematica trattata}
+\paragraph{Gestione dei conflitti}\mbox{}\\
+La trattazione fatta fino ad ora per ODRL prende in considerazione la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che il linguaggio punta a soddisfare ed, in particolare, non rispecchia i casi d'uso definiti in MOSAICO, dove è naturale che vi sia un numero molto alto di policy definite.\\
+ODRL propone già alcuni elementi per permettere la definizione di più policy in modo agevole, ad esempio: 
+\begin{itemize}
+	\item è possibile utilizzare la proprietà \textbf{inheritFrom} per permettere ad una policy di ereditare tutte le regole definite in un'altra policy;
+	\item è possibile utilizzare la proprietà \textbf{conflict} definire una strategia di risoluzione dei conflitti; le strategia attualmente definite nel modello sono le seguenti:
+	\begin{itemize}
+		\item \textbf{perm}: le regole di tipo \textbf{permission} hanno la priorità in caso di conflitto;
+		\item \textbf{prohibit}: le regole di tipo \textbf{prohibition} hanno la priorità in caso di conflitto;
+		\item \textbf{invalid}: in caso di conflitto, la policy risulta non valida nella sua interezza; è il valore di default se non definito esplicitamente.
+	\end{itemize}
+\end{itemize}
+Questo sistema di gestione dei conflitti risulta avere però una problematica fondamentale all'interno dei casi d'uso di MOSAICO: si riferisce a conflitti all'interno di una singola policy o che avvengono in seguito all'utilizzo della proprietà \textbf{inheritFrom}; risulta possibile notare che in uno scenario multi-owner, come quello di MOSAICO, l'utilizzo della proprietà \textbf{conflict} risulta inadatto, ad esempio:
+\begin{enumerate}
+	\item si supponga che un ospedale, indicato come A, voglia rendere disponibili i propri dati di ricerca in un mercato come quello di MOSAICO;
+	\item risulta plausibile che la collezione di dati di questo ospedale venga inserita in una raccolta di referti medici, i cui owner sono vari ospedali situati in stati diversi;
+	\item il dato fornito da A viene accompagnato da una policy ODRL, la quale può utilizzare la proprietà \textbf{inheritFrom} per inserire nella propria policy le regole richieste da normative europee;
+	\item oltre a questo, A inserisce nella policy anche regole relative a norme sulla privacy vigenti nel proprio paese, settando la proprietà \textbf{conflict} a \textbf{prohibit}, al fine di proteggere i dati sensibili degli utenti trattati dalla propria collezione dati.
+\end{enumerate}
+Se si considera lo scenario mostrato in esempio non multi-owner, ODRL riesce perfettamente ad soddisfare le esigenze dell'owner della collezione di dati, permettendogli di aderire alle normative europee ed, allo stesso tempo, di tutelare la privacy dei propri pazienti in conformità con le normative vigenti nel suo paese.\\
+Nel caso in cui, la collezione di dati medici appartenga a più ospedali, questa soluzione non risulta più adatta, in particolare nel seguente caso:
+\begin{enumerate}
+	\item un secondo ospedale, indicato come B, segue il medesimo procedimento ma lascia la proprietà \textbf{conflict} uguale ad \textbf{invalid};
+	\item se le norme dei paesi di A e B non sono le stesse, entrambe le policy vengono invalidate nella loro totalità, anche se in disaccordo solo su un sottoinsieme di regole;
+	\item questo comportamento risulta deleterio sia per quanto concerne il mercato, poiché scoraggia degli owner a partecipare ad una collezione; \item il comportamento mostrato risulta dannoso anche per quanto concerne i soggetti dei dati, non più tutelati da regole poiché invalidate.
+\end{enumerate}
+Una possibile soluzione a questo problema è attuare il merging delle varie policy che targettano la collezione di dati, rendendo l'azione sulle varie regole più granulare; prendendo ad esempio l'ultimo scenario mostrato:
+\begin{enumerate}
+	\item avendo due strategie di conflitto differenti, nessuna delle due viene considerata;
+	\item per ogni regola in conflitto, si tengono solamente le regole di divieto, seguendo l'obiettivo di MOSAICO di tutela della privacy;
+	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo d MOSAICO di portare un dato di qualità ed accessibile;
+	\item per ogni regola definita come permessa solo in una policy, la si invalida, poiché la seconda policy non si esprime in merito.
+\end{enumerate}
+Questo procedimento è solo uno dei possibili, in base alle casistiche di conflitto possibili e risulta in linea con i requisiti che MOSAICO punta a soddisfare, poiché a differenza di quanto definito in ODRL:
+\begin{itemize}
+	\item porta ad una diminuzione della qualità del dato graduale, anziché ad una invalidazione totale della policy al primo conflitto;
+	\item durante la diminuzione della qualità del dato, preserva comunque il maggior grado di tutela della privacy che le policy definite possono offrire, poiché permette sempre e solo azioni che hanno una regola esplicita che le riguarda.
+\end{itemize}
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
