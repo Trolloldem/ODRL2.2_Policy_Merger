@@ -101,7 +101,7 @@ Nonostante questi principi siano più indicati per un'implementazione graph-base
 \begin{figure}[H]
 	\centering
 	\def\svgwidth{\columnwidth}
-	\scalebox{0.5}{\includegraphics{ODRLModel.pdf}}
+	\scalebox{0.5}{\includegraphics{ODRLModel}}
 	
 	\caption{Schema del modello ODRL\cite{ODRLinfMod}\label{ODRLModelSchema}}
 \end{figure}
@@ -126,7 +126,7 @@ Una delle principali differenze tra i due vocabolari, la si ha all'interno delle
 \begin{figure}[H]
 	\centering
 	\def\svgwidth{\columnwidth}
-	\scalebox{0.35}{\includegraphics{useTree.png}}
+	\scalebox{0.35}{\includegraphics{useTree}}
 	
 	\caption{Tutte le azioni mostrate sono figlie di use, ad eccezioni di trasfer e le sue sottoazioni\cite{ODRLBestPract}\label{imgUseTransfer}}
 \end{figure}
@@ -810,7 +810,7 @@ A causa di questa varietà, la gestione di questo tipo di merging può facilment
 \section{Architettura generale}
 \begin{figure}[htp]
 \centering
-\includegraphics[scale=1]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/arch_gen.pdf}
+\includegraphics[scale=1]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/arch_gen}
 \caption{Pipeline dei macro componenti della soluzione}
 \label{archGenImpl}
 \end{figure}
@@ -834,7 +834,7 @@ Le operazioni di merging che si punta a supportare sono di 2 tipi:
 Tra i due focus dell'implementazione vi sono le \textbf{Action}, ovvero gli utilizzi dell'asset regolati dalle policy ODRL. Per rappresentarle, si è utilizzato un enumerativo con la struttura mostrata in figura \ref{imgActionEnum}:
 \begin{figure}[H]
 \centering
-\includegraphics[scale=1.00]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/enumAction.pdf}
+\includegraphics[scale=1.00]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/enumAction}
 \caption{Struttura dell'enumerativo Action}
 \label{imgActionEnum}
 \end{figure}
@@ -848,7 +848,7 @@ Il secondo focus principale dell'implementazione sono le \textbf{Rule}, il cui s
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=.60]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/imgCompRule.pdf}
+\includegraphics[scale=.60]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/imgCompRule}
 \caption{Diagramma dei componenti per la rappresentazione delle regole}
 \label{imgCompRule}
 \end{figure}
@@ -863,6 +863,7 @@ Nel caso in cui, ad esempio, si andasse a specificare l'azione \textbf{use}, l'a
 \item risulta possibile notare come l'albero sia piatto, poiché un'azione generica tende ad avere molti figli, ma le azioni più specifiche tendono poi a non avere figli a loro volta.
 \end{itemize}
 \paragraph{Gestione dello stato di un'azione}\mbox{}\\
+\label{ruleTree}
 Ogni nodo dell'albero creato si riferisce ad una azione che può essere regolata e, oltre a tener conto della struttura gerarchica tra le azioni, rappresenta se l'azione si possa svolgere o meno. Gli stati in cui si può trovare un nodo sono 3:
 \begin{enumerate}
 \item \textbf{Permitted}: l'azione del nodo è permessa esplicitamente;
@@ -883,17 +884,85 @@ I singoli nodi si occupano anche di trasmettere lungo l'albero le conseguenze di
 Di seguito alcuni esempi delle varie casistiche:
 \begin{figure}[H]
 \centering
-\includegraphics[scale=.50]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/propagationPerm.pdf}
+\includegraphics[scale=.50]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/propagationPerm}
 \caption{Esempio di propagazione di un permesso, con azione figlia proibita}
 \label{examplePerm}
 \end{figure}
 \begin{figure}[htp]
 \centering
-\includegraphics[scale=.50]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/propagationProParent.pdf}
+\includegraphics[scale=.50]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/propagationProParent}
 \caption{Esempio di propagazione verso il padre di un divieto}
 \label{exampleProParent}
 \end{figure}
 //TODO: già implementate ma qua non presenti: logica della policy, come tratto questi alberi per fare union e intersection; logica degli asset: come faccio in modo che la policy che tratta un asset si propaghi verso gli asset figli, sia in modalità intersect che unione
+\paragraph{Recupero di un nodo e del suo stato}\mbox{}\\
+L'albero creato non è un albero binario, di conseguenza la struttura dati in sé non supporta una ricerca efficiente dei nodi. La ricerca può essere resa però efficiente grazie alla gerarchia delle \textbf{Action} ed, in particolare, sfruttando l'enumerativo in figura \ref{imgActionEnum}, è possibile ricostruire il percorso che si deve fare da un nodo foglia alla radice per risalire alla gerarchia. Di seguito lo pseudo codice utilizzato per recuperare il nodo relativo ad un'azione:
+
+\begin{lstlisting}[language=Json,firstnumber=1,caption={Il caso peggiore per questa ricerca è la profondità della gerarchia delle azioni. Il caso migliore si ha qundo l'azione non è nell'albero, con tempo di risposta costante.},label=listingAlgoNode,captionpos=b]
+def getActionNode(Action a){
+List steps = [];
+Action visited = a;
+Node exploredNode = Tree.getRoot();
+
+while(visited != None){
+  steps.add(visited);
+  visited = visited.getFatherAction();
+}
+
+// Sempre vero a meno che non si chiami
+// il metodo su un albero con radice errata
+if(exploredNode.getAction() == steps.getLastStep()){
+  steps.popLast();
+  while(!(exploredNode.getAction() == a)){
+  	exploredNode=
+  	   visitedNode.getChildsMap()
+  	     .get(steps.getLastStep);
+  	steps.popLast();
+  }
+else{
+  // Caso di albero con radice errata
+  return null; 
+}
+
+return exploredNode;
+                
+}
+\end{lstlisting}
+Per il recupero dello stato relativo ad una azione, si usa il medesimo algoritmo mostrato nel listing \ref{listingAlgoNode} con un'ottimizzazione: qualora una delle azioni più in alto nella gerarchia fosse nello stato \textbf{Prohibited} o \textbf{Permitted}, si ritorna quello stato e si interrompe la ricerca del nodo, questo poiché:
+\begin{itemize}
+\item se l'azione più in alto nella gerarchia è \textbf{Permitted}, necessariamente tutte le azioni nel suo sottoalbero sono \textbf{Permitted}, se anche solo avesse uno stato diverso, la radice del sottoalbero sarebbe \textbf{Undefined} o \textbf{Prohibited};
+\item  se l'azione più in alto nella gerarchia è \textbf{Prohibited}, anche il suo sottoalbero è \textbf{Prohibited}.
+\end{itemize}
+Le prestazioni nel caso peggiore rimangono comunque dipendenti dalla profondità della gerarchia delle azioni, mentre ai casi migliori si aggiunge lo scenario in cui l'azione radice dell'albero è \textbf{Prohibited} o \textbf{Permitted}: la casistica ha tempo d'esecuzione costante, come quella relativa all'azione non presente nell'albero.
+\subsection{Rappresentazione Policy}
+Questa componente della rappresentazione attua le seguenti logiche:
+\begin{itemize}
+\item assegna ai target asset un insieme di regole;
+\item le regole assegnate vengono rappresentate tramite 2 alberi delle regole: uno con radice \textbf{USE} ed uno con radice \textbf{TRANSFER};
+\item si occupa di attuare il merging di 2 insiemi di regole;
+\item le modalità di merging sono \textbf{intersect} e \textbf{union}.
+\end{itemize}
+\paragraph{Unione di policy}\mbox{}\\
+L'unione di 2 policy è un'operazione creata per supportare uno scenario collaborativo, nel quale i permessi definiti da una policy vengono riconosciuti anche da quelli definiti da un'altra. Quest'operazione è attuata tramite i seguenti passi:
+\begin{enumerate}
+\item unione della lisa delle regole tra le regole della policy attuale e quella della policy con cui la si vuole unire;
+\item creazione di una nuova policy avente il set di tutte le regole;
+\item il metodo costruttore sfrutta la logica già esposta nel paragrafo \ref{ruleTree} relativo alla gestione degli alberi delle regole.
+\end{enumerate}
+\paragraph{Intersezione di policy}\mbox{}\\
+L'intersezione di 2 policy è un'operazione creata per supportare uno scenario conservativo, nel quale non si ha controllo sui permessi definiti dalla policy con cui si effettua l'intersezione, di conseguenza un permesso è mantenuto solo nel caso in cui sia definito da entrambe le policy. La logica è attuata mediante i seguenti passi:
+\begin{enumerate}
+\item si recuperano gli stati relativi ad ogni azione in entrambe le policy; gli stati sono mantenuti in mappe con chiave l'azione regolata;
+\item il passo 1 è attuato per entrambi gli alberi delle policy;
+\item si itera una delle 2 mappe e si fanno i seguenti controlli:
+\begin{itemize}
+\item se l'azione è \textbf{Prohibited} in almeno una delle policy, si inserisce il divieto relativo tra le regole finali;
+\item se l'azione è \textbf{Undefined} in almeno una delle policy, la si lascia non regolata;
+\item se non si è nei due casi precedenti, l'azione allora è \textbf{Permitted} da entrambe e si inserisce il relativo permesso tra le regole finali;
+\end{itemize}
+\item si crea una nuova policy avente il set delle regole finali ottenute ai passi precedenti;
+\item il metodo costruttore sfrutta la logica già esposta nel paragrafo \ref{ruleTree} relativo alla gestione degli alberi delle regole.
+\end{enumerate}
 \section{Produzione policy ODRL}
 //TODO
 \bibliography{cit}{}
