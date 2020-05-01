@@ -69,11 +69,13 @@
 
 \geometry{a4paper,top=3cm,bottom=3cm,left=3cm,right=3cm,heightrounded,bindingoffset=5mm}
 \onehalfspacing
-\title{Documento merging di policy}
+\title{Policy merging in ODRL}
 \date{Work in progress}
 \author{Gianluca Oldani}
 
 \begin{document}
+\maketitle
+\tableofcontents
 \chapter{ODRL}
 \section{Il linguaggio}
 \subsection{Definizione ed obiettivi}
@@ -839,7 +841,7 @@ Tra i due focus dell'implementazione vi sono le \textbf{Action}, ovvero gli util
 \label{imgActionEnum}
 \end{figure}
 All'interno dell'enumerativo è presente il nome che ha all'interno dell' ODRL Common Vocabulary, la lista delle azioni figlio e, se presente, l'azione padre. Tale struttura è assimilabile a quella di un nodo in una struttura dati al albero. L'enumerativo è provvisto dei vari \textit{getter} per il recupero delle informazioni citate.
-\subsection{Rappresentazione delle Regole}
+\subsection{Rappresentazione delle Regole}\label{ruleRappr}
 Il secondo focus principale dell'implementazione sono le \textbf{Rule}, il cui stato all'interno della policy è gestito mediante un albero di regole, sfruttando le relazioni che si creano tra le azioni mediante l'enumerativo definito in figura \ref{imgActionEnum}. Per ottenere un maggior incapsulamente delle funzioni, si è deciso di dividere la logica della struttura ad albero in due compenenti, mostrate in figura \ref{imgCompRule} ed esposte di seguito:
 \begin{itemize}
 \item gestore dell'albero delle regole: questa componente si occupa delle azioni più generali relative l'albero delle regole, come ad esempio il recupero di un nodo specifico, il settaggio di stato di un nodo, oppure il recupero dello stato di ogni regola;
@@ -894,7 +896,7 @@ Di seguito alcuni esempi delle varie casistiche:
 \caption{Esempio di propagazione verso il padre di un divieto}
 \label{exampleProParent}
 \end{figure}
-//TODO: già implementate ma qua non presenti: logica della policy, come tratto questi alberi per fare union e intersection; logica degli asset: come faccio in modo che la policy che tratta un asset si propaghi verso gli asset figli, sia in modalità intersect che unione
+
 \paragraph{Recupero di un nodo e del suo stato}\mbox{}\\
 L'albero creato non è un albero binario, di conseguenza la struttura dati in sé non supporta una ricerca efficiente dei nodi. La ricerca può essere resa però efficiente grazie alla gerarchia delle \textbf{Action} ed, in particolare, sfruttando l'enumerativo in figura \ref{imgActionEnum}, è possibile ricostruire il percorso che si deve fare da un nodo foglia alla radice per risalire alla gerarchia. Di seguito lo pseudo codice utilizzato per recuperare il nodo relativo ad un'azione:
 
@@ -934,7 +936,7 @@ Per il recupero dello stato relativo ad una azione, si usa il medesimo algoritmo
 \item  se l'azione più in alto nella gerarchia è \textbf{Prohibited}, anche il suo sottoalbero è \textbf{Prohibited}.
 \end{itemize}
 Le prestazioni nel caso peggiore rimangono comunque dipendenti dalla profondità della gerarchia delle azioni, mentre ai casi migliori si aggiunge lo scenario in cui l'azione radice dell'albero è \textbf{Prohibited} o \textbf{Permitted}: la casistica ha tempo d'esecuzione costante, come quella relativa all'azione non presente nell'albero.
-\subsection{Rappresentazione Policy}
+\subsection{Rappresentazione Policy}\label{policyRappr}
 Questa componente della rappresentazione attua le seguenti logiche:
 \begin{itemize}
 \item assegna ai target asset un insieme di regole;
@@ -963,6 +965,45 @@ L'intersezione di 2 policy è un'operazione creata per supportare uno scenario c
 \item si crea una nuova policy avente il set delle regole finali ottenute ai passi precedenti;
 \item il metodo costruttore sfrutta la logica già esposta nel paragrafo \ref{ruleTree} relativo alla gestione degli alberi delle regole.
 \end{enumerate}
+\subsection{Rappresentazione Asset}
+Questo componente si occupa di fornire funzioni relative alla gestione degli asset, le quali prevedono:
+\begin{itemize}
+\item supporto alla gerarchia degli asset, dando modo di esplicitare la proprietà \textbf{partOf}(attualmente la gerarchia è un albero, è possibile renderla un grafo a patto che non abbia cicli);
+\item collega un asset alla policy che definisce delle regole ad esso relative;
+\item propaga le regole di un asset alle collezioni figlie dell'asset, potendo scegliere come modalità di merging sia l'operazione \textbf{intersect} che quella di \textbf{union}, esposte in sezione \ref{policyRappr}.
+\end{itemize}
+Per supportare queste operazioni, si è usata un'architettura simile a quella delle regole mostrata nella sezione \ref{ruleRappr}, nella quale si sono separate le funzionalità a livello di gerarchia da quelle relative al singolo nodo. Di seguito è riportato il diagramma delle componenti:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.7]{../immagini/compAsset.pdf}
+\caption{Diagramma dei componenti per la rappresentazione degli asset}
+\label{compAssetImg}
+\end{figure}
+Come è possibile notare dalla figura \ref{compAssetImg}, questo componente sfrutta la logica presente in ogni altro componente esposto precedentemente.\\
+Lo scenario di utilizzo di un \textbf{Asset} si compone delle seguenti fasi:
+\begin{enumerate}
+\item definizione dei legami di gerarchia degli asset, seguento quanto esplicitato nella proprietà \textbf{partOf};
+\item definizione delle regole relative all'asset;
+\item creazione di una policy avente le regole definite al passo precedente;
+\item assegnare la policy al gestore della gerarchia, il quale si occuperà di settare la policy per il nodo interessato e propagarla ai figli.
+\end{enumerate}
+\paragraph{Propagazione delle policy}\mbox{}\\
+La propagazione di una policy avviene dopo che questa è stata settata mediante la gerarchia: risulta quindi necessario recuperare il nodo; per questa prima fase dell'operazione si è utilizzata una ricerca in profondità, data la natura ricorsiva dell'operazione di propagazione; sarebbe stato possibile utilizzare anche una ricerca in ampiezza, ma il caso peggiore sarebbe rimasto il medesimo, data l'assenza di cicli.\\
+Dopo il recupero del nodo interessato dalla policy, si attua l'effettiva propagazione ad ogni nodo figlio, fino ad arrivare ai nodi foglia. Qualora il nodo non avesse ancora una policy, viene settata quella del nodo padre.\\
+Di seguito alcuni esempi:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.70]{../immagini/assetSetPropagation.pdf}
+\caption{Esempio di propagazione di una policy quando l'asset padre non ha policy, modalità con intersezione}
+\label{imgAssetPropSet}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.70]{../immagini/assetIntersectPropagation.pdf}
+\caption{Esempio di propagazione di una intersezione di policy}
+\label{imgAssetPropIntersect}
+\end{figure}
+Il duale delle operazioni mostrate nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect} risulta disponibile per le operazioni di unione. Sempre dalla figura \ref{imgAssetPropIntersect} è possibile notare come se un asset figlio non abbia una propria policy, eredita in modo completo quella del nodo padre.
 \section{Produzione policy ODRL}
 //TODO
 \bibliography{cit}{}

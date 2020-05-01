@@ -12,12 +12,13 @@ import java.util.Map;
 import java.util.ArrayList;
 
 import Parser.policyReader;
+import org.apache.jena.base.Sys;
 
 public class Main {
 
     public static void main(String[] args) {
 /** TEST GENERICO
-**/
+
         Set p=new Set(new ArrayList<Rule>());
         RuleTree tree=p.getUseTree();
         tree.setActionPermitted(Action.SHARING);
@@ -104,7 +105,7 @@ TEST UNION di policy
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
 
-       TEST EREDITà ASSET
+       TEST EREDITà ASSET **/
 
 
         Asset root = new Asset();
@@ -115,9 +116,9 @@ TEST UNION di policy
         Asset rootChild3 = new Asset();
         rootChild3.setParent(root);
 
-        Rule display = new Permission(Action.PLAY);
-        Rule anon = new Permission(Action.ANONYMIZE);
-        Rule play = new Prohibition(Action.DISPLAY);
+        Rule play = new Permission(Action.PLAY);
+        Rule anon = new Prohibition(Action.ANONYMIZE);
+        Rule display = new Prohibition(Action.DISPLAY);
         ArrayList<Rule> ruleRoot = new ArrayList<Rule>();
         ArrayList<Rule> ruleChild2 = new ArrayList<Rule>();
         ruleRoot.add(display);
@@ -134,25 +135,34 @@ TEST UNION di policy
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
 
-        Set intPolicy = new Set(ruleRoot,rootChild2);
-        tree.intersectPolicy(intPolicy);
-        System.out.println("\nAFTER INTERSECT\n");
+        System.out.println("=======================\n" +
+                            "Interseco DALLA ROOT");
+
+        ArrayList<Rule> ruleRoot2 = new ArrayList<Rule>();
+        ruleRoot2.add(new Permission(Action.ANONYMIZE));
+        Set policyRoot2 = new Set(ruleRoot2,root);
+        tree.intersectPolicy(policyRoot2);
+
+        for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
+            System.out.println(entry.getKey() + " = " + entry.getValue());
+        }
+        System.out.println("=======================\n" +
+                "UNISCO DALLA ROOT");
+
+        ArrayList<Rule> ruleRoot3 = new ArrayList<Rule>();
+        ruleRoot3.add(new Permission(Action.WATERMARK));
+        Set policyRoot3 = new Set(ruleRoot3,root);
+        tree.unitePolicy(policyRoot3);
+
         for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
             System.out.println(entry.getKey() + " = " + entry.getValue());
         }
 
-        ArrayList<Rule> ruleuse= new ArrayList<Rule>();
-        ruleuse.add(new Permission(Action.USE));
-        Set allPolicy = new Set(ruleuse,rootChild2);
-        tree.unitePolicy(allPolicy);
-        System.out.println("\nAFTER INTERSECT\n");
-        for (Map.Entry<Action, String> entry : ((Set)rootChild2.getPolicy()).getUseTree().getAllStates().entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue());
-        }
 
-       policyReader.readFileQuery();
 
- **/
+//       policyReader.readFileQuery();
+
+
     }
 
 
