@@ -6,6 +6,19 @@ import java.util.ArrayList;
 
 public interface AssetCollection {
     /**
+     * Getter dell' URI dell'asset
+     * @return Stringa contenente l'URI dell'asset
+     */
+    public String getURI();
+
+    /**
+     * Setter dell' URI dell'asset
+     * @param URI Stringa contenente l'URI dell'asset
+*/
+    public void setURI(String URI);
+
+
+    /**
      * Getter della Policy assegnata all'asset
      * @return Policy che ha come target l'AssetCollection
      */

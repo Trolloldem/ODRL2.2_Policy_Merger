@@ -4,6 +4,7 @@ import Rule.Rule;
 import Rule.Permission;
 import Rule.Prohibition;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,14 +14,14 @@ import Actions.Action;
 
 public class Set implements Policy {
     private String type="Set";
-    private ArrayList<Rule> RuleList;
+    private List<Rule> RuleList;
     private RuleTree useTree=new RuleTree(Action.USE);
     private RuleTree transferTree=new RuleTree(Action.TRANSFER);
     private ArrayList<Prohibition> listProhib = new ArrayList<Prohibition>();
     private AssetCollection target;
 
 
-    public Set(ArrayList<Rule> RuleList){
+    public Set(List<Rule> RuleList){
         this.RuleList=RuleList;
         for(Rule r:this.RuleList){
             if(r instanceof Permission){
@@ -37,9 +38,12 @@ public class Set implements Policy {
         }
 
     }
+    public Set(AssetCollection target){
+        this.RuleList = new ArrayList<Rule>();
+        this.target= target;
+    }
 
-
-    public Set(ArrayList<Rule> RuleList,AssetCollection target){
+    public Set(List<Rule> RuleList, AssetCollection target){
         this.RuleList=RuleList;
 
         for(Rule r:this.RuleList){
@@ -71,7 +75,7 @@ public class Set implements Policy {
      * @return ArrayList di Rule
      */
     @Override
-    public ArrayList<Rule> getRules() {
+    public List<Rule> getRules() {
         return RuleList;
     }
     /**

@@ -1,8 +1,13 @@
 package Parser;
 
 
+import Actions.Action;
+import Assets.Asset;
+import Assets.AssetCollection;
+import Rule.Rule;
+import Rule.Permission;
+import Rule.Prohibition;
 import javafx.util.Pair;
-import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import java.util.*;
@@ -133,6 +138,7 @@ public class policyReader {
             }else{
 
                 List<Pair<String,String>> listaProp = new LinkedList<>();
+                listaProp.add(new Pair<>(rule.getResource("rule").toString(),type.toString()));
                 listaProp.add(new Pair<>(rule.getResource("pred").toString(), rule.getResource("ogg").toString()));
                 mappaRulesParams.put(ruleRes, listaProp);
             }
@@ -142,16 +148,20 @@ public class policyReader {
 
     }
 
-    public static void readFileQuery(){
+    /**
+     * Parsing del file JSON-LD con path passato come parametro
+     * @param path, String con path del file che si vuole parsare
+     */
+    public static Map<AssetCollection,List<Rule>>  readFileQuery(String path){
 
         Map<Resource,Set<Pair<Resource,String>>> mappaPolicyRules = new HashMap<Resource,Set<Pair<Resource,String>>>();
         Map<Resource,List<Pair<String,String>>> mappaRulesParams = new HashMap<Resource,List<Pair<String,String>>>();
 
         Model model = ModelFactory.createDefaultModel() ;
-        model.read("/home/oldem/IdeaProjects/actionTree/src/Parser/data.jsonld") ;
+        model.read(path) ;
 
         String queryPolicyString = "SELECT *  WHERE {" +
-                "?policy <"+ODRL_vocab.type+"> <"+ODRL_vocab.Policy+"> .}";
+                                   "?policy <"+ODRL_vocab.type+"> <"+ODRL_vocab.Policy+"> .}";
         Query queryPolicy = QueryFactory.create(queryPolicyString);
         QueryExecution queryExe = QueryExecutionFactory.create(queryPolicy,model);
 
@@ -173,22 +183,75 @@ public class policyReader {
             }
         }catch (Exception e){
             System.err.println(e.getMessage());
-            return;
+            return null;
         }
 
-        Iterator<Map.Entry<Resource, Set<Pair<Resource,String>>>> it = mappaPolicyRules.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Resource, Set<Pair<Resource,String>>> pair = it.next();
-            System.out.println("La policy "+pair.getKey() +" ha la rule: "+pair.getValue());
-            System.out.println("I parametri delle rule sono");
-            for(Pair<Resource,String> r : pair.getValue()){
-                List<Pair<String,String>> lista = mappaRulesParams.get(r.getKey());
-                System.out.println("Rule: "+r.getKey()+" di tipo: "+r.getValue());
-                for(Pair<String, String> c : lista){
-                    System.out.println("Parametro: "+c.getKey()+" con valore: "+c.getValue());
+        Map<AssetCollection,List<Rule>> mapAssetRuleList = new HashMap<>();
+        mapAssetRuleList.put(new Asset("EveryAsset"),new ArrayList<Rule>());
+
+        // Ho mappa che collega il documento di policy a tutte le regole che contiene
+        // Ho mappa che collega la sigola rule ai suoi parametri
+        Iterator<Map.Entry<Resource, List<Pair<String, String>>>> itRule = mappaRulesParams.entrySet().iterator();
+        while(itRule.hasNext() ){
+
+            Map.Entry<Resource, List<Pair<String, String>>> singleRule = itRule.next();
+            List<Pair<String,String>> propertyList = singleRule.getValue();
+
+            //Check se la regola è una PERMISSION o UNA PROHIBITION
+            AssetCollection collection = new Asset("EveryAsset");
+            String assignee = "EveryOne";
+            Action action = null;
+            String type = "";
+
+            for(Pair<String,String> actProperty : propertyList){
+                if(actProperty.getValue().equals(ODRL_vocab.permission.toString())){
+                    type = type + ODRL_vocab.permission;
+
+
+                }
+                if(actProperty.getValue().equals(ODRL_vocab.prohibition.toString())){
+                    type = type + ODRL_vocab.prohibition;
+
+                }
+                if(actProperty.getKey().equals(ODRL_vocab.target.toString())){
+                    collection = new Asset(actProperty.getValue());
+                }
+                if(actProperty.getKey().equals(ODRL_vocab.action.toString())){
+                    String[] URITokens = actProperty.getValue().split("/");
+                    String enumName = URITokens[URITokens.length-1].toUpperCase();
+                    action = Action.valueOf(enumName);
+                }
+                if(actProperty.getKey().equals(ODRL_vocab.assignee)){
+                    assignee = actProperty.getValue();
                 }
             }
+
+            if(type.equals("") || action==null){
+                throw new RuntimeException("Rules must have a TYPE and an ACTION specified");
+            }
+            Rule rule;
+            if(type.equals(ODRL_vocab.permission.toString())){
+                rule = new Permission(action);
+            }else {
+                rule = new Prohibition(action);
+            }
+            if(mapAssetRuleList.containsKey(collection)){
+                mapAssetRuleList.get(collection).add(rule);
+            }else{
+                List<Rule> assetRuleList = new ArrayList<Rule>();
+                assetRuleList.add(rule);
+                mapAssetRuleList.put(collection,assetRuleList);
+            }
+
+            collection = new Asset("EveryAsset");
+            assignee = "EveryOne";
+            action = null;
+            type = "";
         }
+
+
+        return mapAssetRuleList;
+
 
     }
 }

@@ -1,6 +1,7 @@
 package Policy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Assets.AssetCollection;
 import Rule.Rule;
@@ -10,7 +11,7 @@ public interface Policy {
      * Getter della lista di regole presenti nella policy
      * @return ArrayList di Rule
      */
-    public ArrayList<Rule> getRules();
+    public List<Rule> getRules();
     /**
      * Getter del tipo di policy
      * @return Stringa rappresentante il tipo di policy
