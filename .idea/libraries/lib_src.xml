@@ -8,6 +8,7 @@
     <SOURCES>
       <root url="file://$PROJECT_DIR$/src" />
       <root url="file://$USER_HOME$/Downloads/apache-jena-3.14.0/lib-src" />
+      <root url="file://$PROJECT_DIR$/src/main/java" />
     </SOURCES>
     <jarDirectory url="file://$USER_HOME$/Downloads/apache-jena-3.14.0/lib" recursive="false" />
     <jarDirectory url="file://$USER_HOME$/Downloads/apache-jena-3.14.0/lib-src" recursive="false" type="SOURCES" />

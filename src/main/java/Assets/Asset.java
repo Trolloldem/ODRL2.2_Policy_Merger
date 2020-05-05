@@ -11,9 +11,9 @@ import java.util.List;
 /**
  * Classe relativa alla gestione di un asset singolo
  */
-public class Asset implements AssetCollection{
+public class Asset implements AssetCollection {
     private String URI;
-    private AssetCollection parent;
+    private Assets.AssetCollection parent;
     private ArrayList<AssetCollection> children;
     private Policy policy;
 
