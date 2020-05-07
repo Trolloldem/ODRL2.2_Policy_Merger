@@ -46,6 +46,12 @@
           "assigner": "http://example.com/org/sony-music",
           "action": "install"
 
-            }]
+            },{"target" :{
+                                              "uid":"http://example.com/music/10secPurple.mp3",
+                                              "partOf": "http://example.com/music/PurpleRain.mp3"
+                                            },
+                        "assigner": "http://example.com/org/sony-music",
+                        "action": "annotate"
+                    }]
 
 }

@@ -182,15 +182,15 @@ TEST UNION di policy
 
         for(Map.Entry<AssetCollection,List<Rule>> entry : mappa.entrySet()){
             if(entry.getValue()!=null && entry.getValue().size() >0 ){
-                System.out.println(entry.getValue());
+
                 Policy actPolicy = new Set(entry.getValue(),assets.get(entry.getKey().getURI()));
-                tree.setPolicy(actPolicy,false);
+                tree.setPolicy(actPolicy,true);
             }
         }
 
         for(Map.Entry<String,Asset> entri : assets.entrySet()){
             System.out.println("===========================\n"+entri.getKey());
-            System.out.println(entri.getValue().getParent().getURI());
+
             for (Map.Entry<Action, String> entry : ((Set)entri.getValue().getPolicy()).getUseTree().getAllStates().entrySet()) {
                 System.out.println(entry.getKey() + " = " + entry.getValue());
             }
