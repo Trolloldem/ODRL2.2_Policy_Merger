@@ -7,18 +7,17 @@ import Assets.AssetTree;
 import Policy.Policy;
 import Policy.Set;
 import Rule.Rule;
-import Rule.RuleTree;
-import Rule.Permission;
-import Rule.Prohibition;
 
 import java.util.*;
 
 import Parser.policyReader;
-import org.apache.jena.base.Sys;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 public class Main {
 
     public static void main(String[] args) {
+
 /** TEST GENERICO
 
         Set p=new Set(new ArrayList<Rule>());
@@ -190,7 +189,7 @@ TEST UNION di policy
 
         for(Map.Entry<String,Asset> entri : assets.entrySet()){
             System.out.println("===========================\n"+entri.getKey());
-
+            if(entri.getValue().getPolicy()!=null)
             for (Map.Entry<Action, String> entry : ((Set)entri.getValue().getPolicy()).getUseTree().getAllStates().entrySet()) {
                 System.out.println(entry.getKey() + " = " + entry.getValue());
             }
