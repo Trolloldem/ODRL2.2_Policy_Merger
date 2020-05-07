@@ -2,9 +2,12 @@ package Policy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import Actions.Action;
 import Assets.AssetCollection;
 import Rule.Rule;
+import Rule.RuleTree;
 
 public interface Policy {
     /**
@@ -42,4 +45,15 @@ public interface Policy {
      * @param target: AssetCollection target della policy
      */
     public void setTarget(AssetCollection target);
+
+    /**
+     * Getter per albero dei permessi relativo alle sottoazioni di USE
+     * @return RuleTree dei permessi relativi alle sottoazioni di USE
+     */
+    public RuleTree getUseTree();
+    /**
+     * Getter per albero dei permessi relativo alle sottoazioni di TRANSFER
+     * @return RuleTree dei permessi relativi alle sottoazioni di TRANSFER
+     */
+    public RuleTree getTransferTree();
 }
