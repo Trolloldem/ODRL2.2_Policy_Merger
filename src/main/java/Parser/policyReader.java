@@ -10,104 +10,26 @@ import Rule.Prohibition;
 import javafx.util.Pair;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
+
 import java.util.*;
 
 public class policyReader {
 
-    private static void print(Set<Resource> risorse, Map<Resource,List<Pair<Property, RDFNode>>> mappaSoggettoValori, Map<Resource,Map<Property,Integer>> mappaSoggettoProp){
 
-        for(Resource r : risorse){
-            System.out.println("==========");
-
-            System.out.println("Il soggetto identificato come: "+r+"\nHa le seguenti campi");
-            for(Pair<Property,RDFNode> coppia : mappaSoggettoValori.get(r)){
-                System.out.println(""+coppia.getKey()+" : "+coppia.getValue());
-            }
-
-            System.out.println("Visualizzazione del numero di volte in cui appare la propietà");
-
-            Iterator<Map.Entry<Property, Integer>> it = mappaSoggettoProp.get(r).entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<Property, Integer> pair = it.next();
-                System.out.println("La proprietà "+pair.getKey() +" è presente: "+pair.getValue());
-            }
-
-            System.out.println("==========");
-        }
-
-    }
-
-
-
-    public static void readFile(){
-
-
-        Set<Resource> soggetti = new HashSet<Resource>();
-        Map<Resource,List<Pair<Property, RDFNode>>> mappaSoggettoValori= new HashMap<Resource,List<Pair<Property, RDFNode>>> ();
-        Map<Resource,Map<Property,Integer>> mappaSoggettoProp = new HashMap<Resource,Map<Property,Integer>>();
-
-        Model model = ModelFactory.createDefaultModel() ;
-        model.read("/home/oldem/IdeaProjects/actionTree/src/Parser/data.jsonld") ;
-
-        for (StmtIterator it = model.listStatements(); it.hasNext(); ) {
-            Statement s = it.next();
-
-            Resource soggetto = s.getSubject();
-            Property predicato = s.getPredicate();
-            RDFNode oggetto = s.getObject();
-
-            soggetti.add(s.getSubject());
-
-            if(mappaSoggettoProp.containsKey(soggetto)){
-
-                List<Pair<Property, RDFNode>> listaProp = mappaSoggettoValori.get(soggetto);
-                Pair<Property,RDFNode> coppiaPredOgg = new Pair<Property,RDFNode>(predicato,oggetto);
-                listaProp.add(coppiaPredOgg);
-
-            }else{
-
-                List<Pair<Property, RDFNode>> listaProp = new LinkedList<Pair<Property, RDFNode>>();
-                Pair<Property,RDFNode> coppiaPredOgg = new Pair<Property,RDFNode>(predicato,oggetto);
-                listaProp.add(coppiaPredOgg);
-                mappaSoggettoValori.put(soggetto, listaProp);
-
-            }
-
-            if(mappaSoggettoProp.containsKey(soggetto)){
-
-                Map<Property,Integer> mappaProp = mappaSoggettoProp.get(soggetto);
-                if(mappaProp.containsKey(predicato)){
-
-                    mappaProp.replace(predicato, mappaProp.get(predicato)+1);
-
-                }else{
-
-                    mappaProp.put(predicato, 1);
-
-                }
-
-
-            }else{
-
-                Map<Property,Integer> mappaProp = new HashMap<Property,Integer>();
-                mappaProp.put(predicato, 1);
-                mappaSoggettoProp.put(soggetto, mappaProp);
-
-            }
-
-
-
-        }
-        print(soggetti,mappaSoggettoValori, mappaSoggettoProp);
-    }
-
-
-    public static  void manageMaps(Resource policyRes, Property type, Model model, Map<Resource,Set<Pair<Resource,String>>> mappaPolicyRules, Map<Resource,List<Pair<String,String>>> mappaRulesParams) {
+    /**
+     * Meteodo per il recupero delle regole interne alla singola policy, attualmente i file ODRL contengono una policy alla volta
+     * @param policyRes risultato relativo alla query che ha estratto la policy di interesse
+     * @param model modello del documento ODRL necessario per query SPARQL
+     * @param mappaPolicyRules mappa che associa ad ogni Policy le regole che questa policy contiene
+     * @param mappaRulesParams mappa che associa ad ogni regola i propri parametri necessari per creare un oggetto Rule
+     */
+    private static  void manageMaps(Resource policyRes, Model model, Map<Resource,Set<Pair<Resource,String>>> mappaPolicyRules, Map<Resource,List<Pair<String,String>>> mappaRulesParams) {
 
         ParameterizedSparqlString queryRulesString = new ParameterizedSparqlString();
-        queryRulesString.setCommandText("SELECT ?rule ?pred ?ogg WHERE {" +
-                "?policy <" + type + "> ?rule ." +
-                " ?rule ?pred ?ogg}");
+        queryRulesString.setCommandText("SELECT ?rule ?pred ?ogg ?type WHERE {" +
+                "?policy ?type ?rule ." +
+                " ?rule ?pred ?ogg " +
+                "FILTER (?type IN (<"+ODRL_vocab.permission+">, <"+ODRL_vocab.prohibition+"> ))}");
         queryRulesString.setIri("policy",policyRes.getURI());
         Query queryRules = QueryFactory.create(queryRulesString.toString());
         QueryExecution queryExe2 = QueryExecutionFactory.create(queryRules,model);
@@ -116,6 +38,7 @@ public class policyReader {
         while(rules.hasNext()){
             QuerySolution rule = rules.next();
             Resource ruleRes = rule.getResource("rule");
+            Resource type = rule.getResource("type");
 
             if(mappaPolicyRules.containsKey(policyRes)){
 
@@ -149,10 +72,11 @@ public class policyReader {
     }
 
     /**
-     * Parsing del file JSON-LD con path passato come parametro
-     * @param path, String con path del file che si vuole parsare
+     * Recupera dal documento ODRL una mappa che collega i vari asset alle regole che li interessano
+     * @param path, stringa contenente il path del file da parsare
+     * @return Mappa che collega gli asset alla lista di regole che li interessano
      */
-    public static Map<AssetCollection,List<Rule>>  readFileQuery(String path){
+    public static Map<AssetCollection,List<Rule>>  readPolicyRules(String path){
 
         Map<Resource,Set<Pair<Resource,String>>> mappaPolicyRules = new HashMap<Resource,Set<Pair<Resource,String>>>();
         Map<Resource,List<Pair<String,String>>> mappaRulesParams = new HashMap<Resource,List<Pair<String,String>>>();
@@ -176,8 +100,7 @@ public class policyReader {
 
 
 
-                manageMaps(policyRes, ODRL_vocab.permission, model, mappaPolicyRules, mappaRulesParams);
-                manageMaps(policyRes, ODRL_vocab.prohibition, model, mappaPolicyRules, mappaRulesParams);
+                manageMaps(policyRes, model, mappaPolicyRules, mappaRulesParams);
 
 
             }
@@ -251,6 +174,67 @@ public class policyReader {
 
 
         return mapAssetRuleList;
+
+
+    }
+
+    /**
+     * Recupera del documento ODRL una mappa che collega l'URI ad un Asset, l'asset contiene già gli il Parent ed i Children
+     * @param @param path, stringa contenente il path del file da parsare
+     * @return Mappa che collega l'URI ad un Asset
+     */
+    public static Map<String, Asset> readAssets(String path){
+        Map<String,Asset> assets = new HashMap<String,Asset>();
+        Model model = ModelFactory.createDefaultModel() ;
+        model.read(path) ;
+
+        String queryAssetsString = "SELECT DISTINCT ?obj  WHERE {" +
+                "?sub ?pred ?obj " +
+                "FILTER (?pred IN (<"+ODRL_vocab.target+">, <"+ODRL_vocab.partOf+"> )) }";
+        Query queryAssets = QueryFactory.create(queryAssetsString);
+        QueryExecution queryExe = QueryExecutionFactory.create(queryAssets,model);
+
+        try {
+
+            ResultSet assetSet = queryExe.execSelect();
+
+            while(assetSet.hasNext()){
+
+                QuerySolution asset = assetSet.next();
+                Resource assetRes = asset.getResource("obj");
+                assets.put(assetRes.getURI(),new Asset(assetRes.getURI()));
+            }
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+
+        }
+        for(String uri : assets.keySet()){
+            String teamplateQueryString = "SELECT DISTINCT ?sub  WHERE {"+
+                    "?sub <"+ODRL_vocab.partOf+"> ?obj}";
+            ParameterizedSparqlString queryHierarchyString = new ParameterizedSparqlString(teamplateQueryString);
+            queryHierarchyString.setIri("obj",uri);
+            Query queryHierarchy = QueryFactory.create(queryHierarchyString.toString());
+            QueryExecution queryExeHierarchy = QueryExecutionFactory.create(queryHierarchy,model);
+            try {
+                AssetCollection actAsset = new Asset(uri);
+                ResultSet assetSet = queryExeHierarchy.execSelect();
+
+                while(assetSet.hasNext()){
+
+                    QuerySolution asset = assetSet.next();
+                    Resource assetRes = asset.getResource("sub");
+                    assets.get(assetRes.getURI()).setParent(assets.get(uri));
+
+                }
+            }catch (Exception e){
+
+                System.err.println(e.getMessage());
+
+            }
+
+        }
+
+        return assets;
 
 
     }

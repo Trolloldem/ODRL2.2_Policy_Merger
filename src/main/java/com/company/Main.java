@@ -166,56 +166,35 @@ TEST UNION di policy
  **/
 
 //TODO cambiare policyReader con ruleReader
-        String examplePath = "./src/Parser/data.jsonld";
-        Map<AssetCollection, List<Rule>>  mappa = policyReader.readFileQuery(examplePath);
-        java.util.Set<AssetCollection> assets = mappa.keySet();
+        String examplePath = "./src/main/java/Parser/data.jsonld";
+        Map<AssetCollection, List<Rule>>  mappa = policyReader.readPolicyRules(examplePath);
         Asset every = new Asset("EveryAsset");
-        Set rootPolicy;
-        for(AssetCollection ass : assets){
+        Map<String,Asset> assets = policyReader.readAssets(examplePath);
 
-            if(!ass.equals(every)){
-                ass.setParent(every);
-                ass.setParent(every);
-            }else {
-                List<Rule> ruleEveryone = mappa.get(ass);
-                mappa.remove(ass);
-                mappa.put(every,ruleEveryone);
-            }
+        for(Map.Entry<String,Asset> entry : assets.entrySet()) {
+            if (entry.getValue().getParent() == null)
+                entry.getValue().setParent(every);
         }
-        AssetTree tree= new AssetTree(every);
+
+        assets.put("EveryAsset", every);
+
+        AssetTree tree = new AssetTree(every);
+
         for(Map.Entry<AssetCollection,List<Rule>> entry : mappa.entrySet()){
-            if(entry.getValue().size()>0) {
-                Set policy = new Set(entry.getValue(), entry.getKey());
-                tree.setPolicy(policy, false);
-            }else {
-                Set policy = new Set(entry.getKey());
-                tree.setPolicy(policy, false);
+            if(entry.getValue()!=null && entry.getValue().size() >0 ){
+                System.out.println(entry.getValue());
+                Policy actPolicy = new Set(entry.getValue(),assets.get(entry.getKey().getURI()));
+                tree.setPolicy(actPolicy,false);
             }
-
         }
 
-        for(AssetCollection ass : assets){
-
-            System.out.println("==============\n"+ass.getURI());
-            for (Map.Entry<Action, String> entry : ((Set)ass.getPolicy()).getUseTree().getAllStates().entrySet()) {
+        for(Map.Entry<String,Asset> entri : assets.entrySet()){
+            System.out.println("===========================\n"+entri.getKey());
+            System.out.println(entri.getValue().getParent().getURI());
+            for (Map.Entry<Action, String> entry : ((Set)entri.getValue().getPolicy()).getUseTree().getAllStates().entrySet()) {
                 System.out.println(entry.getKey() + " = " + entry.getValue());
             }
         }
-
-        List<Rule> rootRule = new ArrayList<Rule>();
-        rootRule.add(new Permission(Action.ANNOTATE));
-        rootPolicy = new Set(rootRule,every);
-        tree.unitePolicy(rootPolicy);
-
-        for(AssetCollection ass : assets){
-
-            System.out.println("==============\n"+ass.getURI());
-            for (Map.Entry<Action, String> entry : ((Set)ass.getPolicy()).getUseTree().getAllStates().entrySet()) {
-                System.out.println(entry.getKey() + " = " + entry.getValue());
-            }
-        }
-
-
     }
 
 

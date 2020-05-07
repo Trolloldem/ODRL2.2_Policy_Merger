@@ -190,14 +190,6 @@ public class Asset implements AssetCollection {
 
         if(obj instanceof Asset){
             Asset other = (Asset)obj;
-            if(this.children.size()==other.children.size() && this.children.size()>0){
-                if(!this.children.equals(other.children)){
-                    return  false;
-                }
-            }
-            if(this.parent!=null && other.parent!=null)
-                if(!this.parent.equals(other.parent))
-                    return false;
 
             if(this.policy!=null && other.policy!=null)
                 if(!this.policy.equals(other.policy))
