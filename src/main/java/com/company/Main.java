@@ -80,8 +80,6 @@ public class Main {
 
  TEST DA FILE
  **/
-
-//TODO cambiare policyReader con ruleReader
         String examplePath = "./src/main/java/Parser/data.jsonld";
         Map<AssetCollection, List<Rule>>  mappa = policyReader.readPolicyRules(examplePath);
         Asset every = new Asset("EveryAsset");

@@ -31,7 +31,9 @@ public class AssetTree {
         }else{
             // non potendo controllare l'ordine di setPolicy, qualora un nodo FIGLIO fosse stato settato prima della sua Root,
             // si rifà il procedimento di settaggio
+
             if(p.getTarget().equals(node) && node.getPolicy()!=null ){
+
                 if(intersectChildren){
                     Set res = (Set) node.getPolicy();
                     res = res.IntersectWith(p);
