@@ -74,10 +74,15 @@ public class AssetTree {
             node.setPolicy(res);
             node.propagateUnion();
         }else{
-            if(node.getChildren()!=null)
-                for(AssetCollection child: node.getChildren()){
-                    unitePolicyChild(child,p);
-                }
+            if(p.getTarget().equals(node) && node.getPolicy()==null){
+                node.setPolicy(p);
+                node.propagateUnion();
+            }else {
+                if (node.getChildren() != null)
+                    for (AssetCollection child : node.getChildren()) {
+                        unitePolicyChild(child, p);
+                    }
+            }
         }
     }
     /**
@@ -94,10 +99,15 @@ public class AssetTree {
             node.setPolicy(res);
             node.propagateIntersection();
         }else{
-            if(node.getChildren()!=null)
-                for(AssetCollection child: node.getChildren()){
-                    intersectPolicyChild(child,p);
-                }
+            if(p.getTarget().equals(node) && node.getPolicy()==null){
+                node.setPolicy(p);
+                node.propagateIntersection();
+            }else{
+                if(node.getChildren()!=null)
+                    for(AssetCollection child: node.getChildren()){
+                        intersectPolicyChild(child,p);
+                    }
+            }
         }
     }
     /**
@@ -145,8 +155,15 @@ public class AssetTree {
             rootAsset.setPolicy(res);
             rootAsset.propagateUnion();
         }else{
-            for(AssetCollection child: rootAsset.getChildren()){
-                unitePolicyChild(child,p);
+            if(p.getTarget().equals(rootAsset) && rootAsset.getPolicy()==null){
+                rootAsset.setPolicy(p);
+
+                rootAsset.propagateUnion();
+            }else{
+                for(AssetCollection child: rootAsset.getChildren()){
+                    unitePolicyChild(child,p);
+            }
+
             }
         }
     }
@@ -165,8 +182,15 @@ public class AssetTree {
             rootAsset.setPolicy(res);
             rootAsset.propagateIntersection();
         }else{
-            for(AssetCollection child: rootAsset.getChildren()){
-                intersectPolicyChild(child,p);
+            if(p.getTarget().equals(rootAsset) && rootAsset.getPolicy()==null){
+                rootAsset.setPolicy(p);
+
+                rootAsset.propagateIntersection();
+
+            }else {
+                for (AssetCollection child : rootAsset.getChildren()) {
+                    intersectPolicyChild(child, p);
+                }
             }
         }
     }
@@ -208,6 +232,7 @@ public class AssetTree {
 
         for(AssetCollection node : rootAsset.getChildren()){
             queue.add(node);
+
         }
 
         while (!queue.isEmpty()){
@@ -226,8 +251,12 @@ public class AssetTree {
     private String addNode(String res,AssetCollection node){
         Policy actPolicy = node.getPolicy();
         res = res + "==============\n"+node.getURI()+"\n"+"==============\n";
-        for(Map.Entry<Action,String> entry : actPolicy.getUseTree().getAllStates().entrySet()){
-            res = res + entry.getKey()+" : "+entry.getValue()+"\n";
+        if (actPolicy != null){
+            for(Map.Entry<Action,String> entry : actPolicy.getUseTree().getAllStates().entrySet()){
+                res = res + entry.getKey()+" : "+entry.getValue()+"\n";
+            }
+        }else{
+            res = res + "No policy defined\n";
         }
         return res;
     }

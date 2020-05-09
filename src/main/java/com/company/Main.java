@@ -78,7 +78,7 @@ TEST 2 FILE
             }
         }
 
-        System.out.println(tree);
+       // System.out.println(tree);
 
     System.out.println("INTERSEZIONE CON NUOVO CHILD");
         String secondPath = "./src/main/java/Parser/doc2.jsonld";
@@ -86,8 +86,16 @@ TEST 2 FILE
         Map<String,Asset>assetsSecond = policyReader.readAssets(secondPath);
 
         for(Map.Entry<String,Asset> entry : assetsSecond.entrySet()) {
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+            if (entry.getValue().getParent() == null){
+                if(assets.get(entry.getValue().getURI())==null){
+                    entry.getValue().setParent(every);
+                }else{
+                    entry.getValue().setParent(assets.get(entry.getValue().getURI()).getParent());
+                }
+
+
+            }
+
             if(entry.getValue().getParent() != null && assets.containsKey(entry.getValue().getParent().getURI())){
                 Asset parent = assets.get(entry.getValue().getParent().getURI());
                 entry.getValue().resetParent(parent);
@@ -95,23 +103,40 @@ TEST 2 FILE
                 if(parent.getPolicy()!=null) {
 
                     Policy alignment = new Set(parent.getPolicy().getRules(),entry.getValue());
+                    if(mappaSecond.get(entry.getValue()) != null){
+                        alignment = alignment.IntersectWith(new Set(mappaSecond.get(entry.getValue())));
+                        alignment.setTarget(entry.getValue());
+                    }
                     tree.setPolicy(alignment, true);
 
                 }
             }
             if(entry.getValue().getChildren()!=null)
-            for(AssetCollection childAsset : entry.getValue().getChildren()){
-                if(mappa.containsKey(childAsset.getURI())){
-                    Asset child = assets.get(childAsset.getURI());
+            for(int i = 0; i<entry.getValue().getChildren().size(); i++){
+                AssetCollection childAsset = entry.getValue().getChildren().get(i);
+
+                if(mappa.containsKey(childAsset)){
+
+                    AssetCollection child = assets.get(childAsset.getURI());
+                    entry.getValue().getChildren().add(i,child);
+                    entry.getValue().getChildren().remove(i+1);
                     child.resetParent(entry.getValue());
+
+
+
+
                 }
             }
+
+
 
         }
 
         for(Map.Entry<AssetCollection,List<Rule>> entry : mappaSecond.entrySet()){
             if(entry.getValue()!=null && entry.getValue().size() >0 ){
                 Policy actPolicy = new Set(entry.getValue(),assetsSecond.get(entry.getKey().getURI()));
+
+
                 tree.intersectPolicy(actPolicy);
             }
         }

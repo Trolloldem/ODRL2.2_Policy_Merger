@@ -86,6 +86,7 @@ public class Asset implements AssetCollection {
 
     @Override
     public void resetParent(AssetCollection parent) {
+        this.parent.getChildren().remove(this);
         this.parent= null;
         this.setParent(parent);
     }

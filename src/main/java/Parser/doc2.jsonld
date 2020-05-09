@@ -8,14 +8,24 @@
                         },
                         "assigner": "http://example.com/org/sony-music",
                         "action": "display"
-                        },
+                        },{"target" :"http://example.com/music/Child2",
+
+
+                                "assigner": "http://example.com/org/sony-music",
+                                "action": "display"
+                                },
                    {"target" :{
                            "uid":"http://example.com/music/Child3",
                            "partOf": "http://example.com/music/rootRes"
                          },
                          "assigner": "http://example.com/org/sony-music",
                          "action": "stream"
-                         }
+                         },
+                         {"target" :"http://example.com/music/actRoot",
+
+                                                  "assigner": "http://example.com/org/sony-music",
+                                                  "action": "stream"
+                                                  }
       ],
       "prohibition": [
       {"target" :{
@@ -24,6 +34,13 @@
       },
       "assigner": "http://example.com/org/sony-music",
       "action": "annotate"
-      }]
+      },
+      {"target" :{
+              "uid":"http://example.com/music/rootRes",
+              "partOf": "http://example.com/music/actRoot"
+            },
+            "assigner": "http://example.com/org/sony-music",
+            "action": "annotate"
+            }]
 
 }
