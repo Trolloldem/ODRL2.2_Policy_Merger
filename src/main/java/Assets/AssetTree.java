@@ -2,7 +2,9 @@ package Assets;
 import Actions.Action;
 import Policy.Policy;
 import Policy.Set;
+import org.apache.jena.tdb.store.Hash;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -224,6 +226,7 @@ public class AssetTree {
         Queue<AssetCollection> queue = new LinkedList<AssetCollection>();
         if (actPolicy != null){
             for (Map.Entry<Action, String> entry : actPolicy.getUseTree().getAllStates().entrySet()) {
+                if(entry.getValue()!="Undefined")
                 res = res + entry.getKey() + " : " + entry.getValue() + "\n";
             }
         }else {
@@ -253,11 +256,43 @@ public class AssetTree {
         res = res + "==============\n"+node.getURI()+"\n"+"==============\n";
         if (actPolicy != null){
             for(Map.Entry<Action,String> entry : actPolicy.getUseTree().getAllStates().entrySet()){
+                if(entry.getValue()!="Undefined")
                 res = res + entry.getKey()+" : "+entry.getValue()+"\n";
             }
         }else{
             res = res + "No policy defined\n";
         }
         return res;
+    }
+
+    public Map<String,Policy> recoverAllPolicy() {
+        Map<String,Policy> res = new HashMap<>();
+        res.put(rootAsset.getURI(),rootAsset.getPolicy());
+
+        Queue<AssetCollection> queue = new LinkedList<AssetCollection>();
+
+
+        for(AssetCollection node : rootAsset.getChildren()){
+            queue.add(node);
+
+        }
+
+        while (!queue.isEmpty()){
+            AssetCollection node = queue.poll();
+            addNode(res,node);
+            if(node.getChildren()!=null && node.getChildren().size()>0)
+                for(AssetCollection child : node.getChildren()){
+                    queue.add(child);
+                }
+
+        }
+
+        return res;
+    }
+
+    private void addNode(Map<String,Policy> res,AssetCollection node){
+
+        res.put(node.getURI(),node.getPolicy());
+
     }
 }

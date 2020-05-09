@@ -492,23 +492,4 @@ public class AssetTreeTest {
         }
     }
 
-    @Test
-    public void prova(){
-        Asset root = new Asset("root");
-        Asset Child1 = new Asset("Child1");
-        Child1.setParent(root);
-
-
-        Rule delPerm = new Prohibition(Action.DELETE);
-        Rule play = new Permission(Action.DISPLAY);
-
-
-        ArrayList<Rule> ruleRoot = new ArrayList<Rule>();
-        AssetTree tree = new AssetTree(root);
-        ruleRoot.add(play);
-        ruleRoot.add(delPerm);
-        Policy rootP = new Set(ruleRoot,root);
-        tree.setPolicy(rootP);
-        System.out.println(tree);
-    }
 }
