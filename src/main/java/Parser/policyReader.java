@@ -8,6 +8,7 @@ import Rule.Rule;
 import Rule.Permission;
 import Rule.Prohibition;
 import javafx.util.Pair;
+import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 
@@ -127,6 +128,7 @@ public class policyReader {
             String type = "";
 
             for(Pair<String,String> actProperty : propertyList){
+
                 if(actProperty.getValue().equals(ODRL_vocab.permission.toString())){
                     type = type + ODRL_vocab.permission;
 

@@ -1,0 +1,48 @@
+{
+  "uid": "http://odrlapi.appspot.com/samples/sample005",
+  "type": "Policy",
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+   "permission": [{
+          "target": "http://example.com/music/rootRes",
+          "assigner": "http://example.com/org/sony-music",
+          "action": "play"
+      },
+  	{
+    "target" :{
+        "uid":"http://example.com/music/Child1",
+        "partOf": "http://example.com/music/rootRes"
+        },
+     "assigner": "http://example.com/org/sony-music",
+     "action": "anonymize"
+      },
+  	{
+     "target": {
+        "uid":"http://example.com/music/Child2",
+       "partOf": "http://example.com/music/rootRes"
+     },
+     "assigner": "http://example.com/org/sony-music",
+     "action": "translate"
+      }
+      ],
+      "prohibition": [{
+       "target": "http://example.com/music/rootRes",
+       "assigner": "http://example.com/org/sony-music",
+       "action": "delete"
+       },
+      {
+      "target": {
+         "uid":"http://example.com/music/Child1",
+         "partOf": "http://example.com/music/rootRes"
+      },
+      "assigner": "http://example.com/org/sony-music",
+      "action": "stream"
+      },
+      {"target" :{
+        "uid":"http://example.com/music/Child2",
+        "partOf": "http://example.com/music/rootRes"
+      },
+      "assigner": "http://example.com/org/sony-music",
+      "action": "annotate"
+      }]
+
+}

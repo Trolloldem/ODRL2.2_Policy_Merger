@@ -12,6 +12,12 @@ public interface AssetCollection {
     public String getURI();
 
     /**
+     * Reset del padre dell'asset
+     * @param parent: AssetCollection che si vuole settare come padre
+     */
+    public void resetParent(AssetCollection parent);
+
+    /**
      * Setter dell' URI dell'asset
      * @param URI Stringa contenente l'URI dell'asset
 */

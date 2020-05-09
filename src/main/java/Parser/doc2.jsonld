@@ -1,0 +1,29 @@
+{
+  "uid": "http://odrlapi.appspot.com/samples/sample005",
+  "type": "Policy",
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+   "permission": [{"target" :{
+                          "uid":"http://example.com/music/Child3",
+                          "partOf": "http://example.com/music/rootRes"
+                        },
+                        "assigner": "http://example.com/org/sony-music",
+                        "action": "display"
+                        },
+                   {"target" :{
+                           "uid":"http://example.com/music/Child3",
+                           "partOf": "http://example.com/music/rootRes"
+                         },
+                         "assigner": "http://example.com/org/sony-music",
+                         "action": "stream"
+                         }
+      ],
+      "prohibition": [
+      {"target" :{
+        "uid":"http://example.com/music/Child3",
+        "partOf": "http://example.com/music/rootRes"
+      },
+      "assigner": "http://example.com/org/sony-music",
+      "action": "annotate"
+      }]
+
+}

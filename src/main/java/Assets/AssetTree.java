@@ -1,6 +1,11 @@
 package Assets;
+import Actions.Action;
 import Policy.Policy;
 import Policy.Set;
+
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 
 /**
@@ -21,6 +26,7 @@ public class AssetTree {
 
 
     private void setPolicyChild(AssetCollection node,Policy p, Boolean intersectChildren){
+
         if(p.getTarget().equals(node) && node.getPolicy()==null){
             node.setPolicy(p);
             if(intersectChildren){
@@ -150,6 +156,7 @@ public class AssetTree {
      *
      */
     public void intersectPolicy(Policy p){
+
         if(p.getTarget().equals(rootAsset) && rootAsset.getPolicy()!=null) {
 
             Set res = (Set) rootAsset.getPolicy();
@@ -164,4 +171,64 @@ public class AssetTree {
         }
     }
 
+    /**
+     * Returns a string representation of the object. In general, the
+     * {@code toString} method returns a string that
+     * "textually represents" this object. The result should
+     * be a concise but informative representation that is easy for a
+     * person to read.
+     * It is recommended that all subclasses override this method.
+     * <p>
+     * The {@code toString} method for class {@code Object}
+     * returns a string consisting of the name of the class of which the
+     * object is an instance, the at-sign character `{@code @}', and
+     * the unsigned hexadecimal representation of the hash code of the
+     * object. In other words, this method returns a string equal to the
+     * value of:
+     * <blockquote>
+     * <pre>
+     * getClass().getName() + '@' + Integer.toHexString(hashCode())
+     * </pre></blockquote>
+     *
+     * @return a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        String res = "";
+        Policy actPolicy = rootAsset.getPolicy();
+        res = res + "==============\n" + rootAsset.getURI() + "\n" + "==============\n";
+        Queue<AssetCollection> queue = new LinkedList<AssetCollection>();
+        if (actPolicy != null){
+            for (Map.Entry<Action, String> entry : actPolicy.getUseTree().getAllStates().entrySet()) {
+                res = res + entry.getKey() + " : " + entry.getValue() + "\n";
+            }
+        }else {
+            res = res + "No policy defined\n";
+        }
+
+        for(AssetCollection node : rootAsset.getChildren()){
+            queue.add(node);
+        }
+
+        while (!queue.isEmpty()){
+            AssetCollection node = queue.poll();
+            res = addNode(res,node);
+            if(node.getChildren()!=null && node.getChildren().size()>0)
+            for(AssetCollection child : node.getChildren()){
+                queue.add(child);
+            }
+
+        }
+
+        return res;
+    }
+
+    private String addNode(String res,AssetCollection node){
+        Policy actPolicy = node.getPolicy();
+        res = res + "==============\n"+node.getURI()+"\n"+"==============\n";
+        for(Map.Entry<Action,String> entry : actPolicy.getUseTree().getAllStates().entrySet()){
+            res = res + entry.getKey()+" : "+entry.getValue()+"\n";
+        }
+        return res;
+    }
 }

@@ -3,6 +3,7 @@ package test.java;
 import Actions.Action;
 import Assets.Asset;
 import Assets.AssetTree;
+import Policy.Policy;
 import Policy.Set;
 import Rule.*;
 import org.junit.jupiter.api.Test;
@@ -452,7 +453,7 @@ public class AssetTreeTest {
                             assertEquals("Undefined",ruleState.getValue(), "L'azione "+ruleState.getKey()+" deve essere Undefined");
                         break;
                     case "Child3":
-                        if(ruleState.getKey().equals(Action.DELETE) ||ruleState.getKey().equals(Action.DELETE))
+                        if(ruleState.getKey().equals(Action.DELETE) )
                             assertEquals("Undefined",ruleState.getValue(), "L'azione "+ruleState.getKey()+" deve essere Undefined");
                         else if(ruleState.getKey().equals(Action.ANONYMIZE) || ruleState.getKey().equals(Action.INSTALL) || ruleState.getKey().equals(Action.PLAY) || ruleState.getKey().equals(Action.DISPLAY))
                             assertEquals("Prohibited",ruleState.getValue(), "L'azione "+ruleState.getKey()+" deve essere Prohibited");
@@ -489,5 +490,25 @@ public class AssetTreeTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void prova(){
+        Asset root = new Asset("root");
+        Asset Child1 = new Asset("Child1");
+        Child1.setParent(root);
+
+
+        Rule delPerm = new Prohibition(Action.DELETE);
+        Rule play = new Permission(Action.DISPLAY);
+
+
+        ArrayList<Rule> ruleRoot = new ArrayList<Rule>();
+        AssetTree tree = new AssetTree(root);
+        ruleRoot.add(play);
+        ruleRoot.add(delPerm);
+        Policy rootP = new Set(ruleRoot,root);
+        tree.setPolicy(rootP);
+        System.out.println(tree);
     }
 }
