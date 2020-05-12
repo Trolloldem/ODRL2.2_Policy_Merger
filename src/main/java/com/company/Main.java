@@ -7,6 +7,7 @@ import Assets.AssetTree;
 import Policy.Policy;
 import Policy.Set;
 import Rule.Rule;
+import Writer.trial;
 import mergingProcedure.merger;
 
 import java.io.File;
@@ -60,6 +61,7 @@ public class Main {
 
 TEST 2 FILE
 **/
+//trial.provaScrivere();
        try{
            PrintStream o = new PrintStream(new File("./src/main/java/Parser/output.txt"));
 
@@ -73,8 +75,8 @@ TEST 2 FILE
        }catch (Exception e){
            System.err.println(e);
        };
-//TODO Questo procedimento assume che vi sia stata una UNION nella gerarchia della policy di partenza
-        String examplePath = "./src/main/java/Parser/doc2.jsonld";
+
+        String examplePath = "./src/test/java/doc1.jsonld";
         Map<AssetCollection, List<Rule>>  mappa = policyReader.readPolicyRules(examplePath);
         Asset every = new Asset("EveryAsset");
         Map<String,Asset> assets = policyReader.readAssets(examplePath);
@@ -100,7 +102,7 @@ TEST 2 FILE
         System.out.println(tree);
 
         System.out.println("SECONDA POLICY");
-        String secondPath = "./src/main/java/Parser/doc1.jsonld";
+        String secondPath = "./src/test/java/doc2.jsonld";
         Map<AssetCollection, List<Rule>>  mappaSecond = policyReader.readPolicyRules(secondPath);
         Map<String,Asset>assetsSecond = policyReader.readAssets(secondPath);
         Asset everySecond = new Asset("EveryAsset");
@@ -124,7 +126,7 @@ TEST 2 FILE
         }
 
         System.out.println(treeSecond);
-        System.out.println(merger.union(assets,assetsSecond,tree,treeSecond));
+        System.out.println(merger.intersection(assets,assetsSecond,tree,treeSecond));
 
     }
 

@@ -142,6 +142,7 @@ public class policyReader {
                     collection = new Asset(actProperty.getValue());
                 }
                 if(actProperty.getKey().equals(ODRL_vocab.action.toString())){
+
                     String[] URITokens = actProperty.getValue().split("/");
                     String enumName = URITokens[URITokens.length-1].toUpperCase();
                     action = Action.valueOf(enumName);

@@ -1,0 +1,25 @@
+{
+   "uid":"http://odrlapi.appspot.com/samples/sample005",
+   "type":"Policy",
+   "@context":"http://www.w3.org/ns/odrl.jsonld",
+   "permission":[
+
+      {
+         "target":"http://example.com/music/Child2",
+         "assigner":"http://example.com/org/sony-music",
+         "action":"display"
+      },
+      {
+         "target":"http://example.com/music/Child2",
+         "assigner":"http://example.com/org/sony-music",
+         "action":"stream"
+      }
+   ],
+   "prohibition":[
+      {
+         "target":"http://example.com/music/Child2",
+         "assigner":"http://example.com/org/sony-music",
+         "action":"uninstall"
+      }
+   ]
+}
