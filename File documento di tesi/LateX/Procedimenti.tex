@@ -965,7 +965,7 @@ L'intersezione di 2 policy è un'operazione creata per supportare uno scenario c
 \item si crea una nuova policy avente il set delle regole finali ottenute ai passi precedenti;
 \item il metodo costruttore sfrutta la logica già esposta nel paragrafo \ref{ruleTree} relativo alla gestione degli alberi delle regole.
 \end{enumerate}
-\subsection{Rappresentazione Asset}
+\subsection{Rappresentazione Asset}\label{assetFun}
 Questo componente si occupa di fornire funzioni relative alla gestione degli asset, le quali prevedono:
 \begin{itemize}
 \item supporto alla gerarchia degli asset, dando modo di esplicitare la proprietà \textbf{partOf}(attualmente la gerarchia è un albero, è possibile renderla un grafo a patto che non abbia cicli);
@@ -987,7 +987,7 @@ Lo scenario di utilizzo di un \textbf{Asset} si compone delle seguenti fasi:
 \item creazione di una policy avente le regole definite al passo precedente;
 \item assegnare la policy al gestore della gerarchia, il quale si occuperà di settare la policy per il nodo interessato e propagarla ai figli.
 \end{enumerate}
-\paragraph{Propagazione delle policy}\mbox{}\\
+\paragraph{Propagazione delle policy}\label{propagation}\mbox{}\\
 La propagazione di una policy avviene dopo che questa è stata settata mediante la gerarchia: risulta quindi necessario recuperare il nodo; per questa prima fase dell'operazione si è utilizzata una ricerca in profondità, data la natura ricorsiva dell'operazione di propagazione; sarebbe stato possibile utilizzare anche una ricerca in ampiezza, ma il caso peggiore sarebbe rimasto il medesimo, data l'assenza di cicli.\\
 Dopo il recupero del nodo interessato dalla policy, si attua l'effettiva propagazione ad ogni nodo figlio, fino ad arrivare ai nodi foglia. Qualora il nodo non avesse ancora una policy, viene settata quella del nodo padre.\\
 Di seguito alcuni esempi:
@@ -1004,6 +1004,155 @@ Di seguito alcuni esempi:
 \label{imgAssetPropIntersect}
 \end{figure}
 Il duale delle operazioni mostrate nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect} risulta disponibile per le operazioni di unione. Sempre dalla figura \ref{imgAssetPropIntersect} è possibile notare come se un asset figlio non abbia una propria policy, eredita in modo completo quella del nodo padre.
+\paragraph{Recupero policy in seguito alla propagazione}\label{recuperoPolicy}\mbox{}\\
+La policy relativo ad un nodo ai livelli più bassi può cambiare drasticamente in seguito ad una operazione di propagazione, come visibili nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect}. A supporto di altri componenti è stata implementata una procedura di recupero di policy del singolo nodo all'interno della gerarchia: si esplora in ampiezza l'intera gerarchia, recuperando ogni policy di ogni risorsa. Il risultato finale è una mappa che collega l'URI di ogni risorsa presente nella gerarchia alla sua policy; nel set di chiavi sono presenti anche i nodi non aventi una policy.
+\subsection{Gestore procedura di merging}
+Tutte le componenti fino ad ora mostrate si concentrano in modo atomico su una singola porzione della procedura del merging di 2 policy. Come è possibile notare supportano le operazioni di intersezione ed unione, ma tutte le strutture dati lavorano su un singolo documento ODRL. Il componente mostrato in questa sezione, invece, si occupa di attuare l'effettivo flusso applicativo desiderato. Di seguito il diagramma delle componenti che interessano il processo di merging:
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=.70]{../immagini/processoMergin.pdf}
+	\caption{Componenti che interagiscono nel processo di merging di 2 policy ODRL}
+	\label{procMergin}
+\end{figure}
+Dalle interfacce esposte è possibile notare quali siano le informazioni che un utente deve specificare per attuare il merging di 2 policy:
+\begin{itemize}
+	\item i documenti contenenti le policy ODRL su cui si vuole operare;
+	\item l'ambiente in cui le \textbf{singole} policy operano, identificato come:
+	\begin{enumerate}
+		\item \textbf{collaborativo}: la policy espressa in un asset ai livelli più alti della gerarchia si propaga in modalità \textbf{union} ai nodi ai livelli più bassi della gerarchia;
+		\item \textbf{non collaborativo}: la policy espressa in un asset ai livelli più alti della gerarchia si propaga in modalità \textbf{intersection} ai nodi ai livelli più bassi della gerarchia;
+	\end{enumerate} 
+	\item l'operazione che si vuole attuare nel merging, che può essere \textbf{union} o \textbf{intersection};
+	\item l'operazione decisa, applicherà il corrispondente ambiente operativo all'intera gerarchia che risultante dal merging delle 2 policy.
+\end{itemize}
+\paragraph{Casistiche supportate}\mbox{}\\
+Tutti i casi di merging supportati, attualmente non prevedono un \textbf{Assignee} per le regole, si suppone quindi che tutte le regole si riferiscano allo stesso \textbf{Party} o \textbf{PartyCollection}. Un metodo per generalizzare queste casistiche per tener conto dell'\textbf{Assignee} delle regole sarebbe quello di creare una degli asset per ognuno degli attori interessati e ripetere i procedimenti di seguito per ognuno di loro.\\
+Tenendo conto di questa prima semplificazione, il merging di 2 policy può essere attuato nei seguenti casi relativi alla gerarchia degli asset:
+\begin{enumerate}
+	\item le 2 policy regolano la medesima gerarchia di asset;
+	\item le 2 policy regolano gerarchie totalmente disgiunte;
+	\item una delle 2 policy regola l'intera gerarchia, mentre l'altra ne gestisce solo una porzione;
+	\item una delle 2 policy inserisce nuovi nodi figli;
+	\item una delle 2 policy inserisce un nuovo nodo padre.
+\end{enumerate}
+Tutte queste casistiche sono inoltre supportate per i seguenti scenari:
+\begin{enumerate}
+	\item intersezione di policy entrambe in ambiente collaborativo;
+	\item intersezione di policy entrambe in ambiente non collaborativo;
+	\item intersezione di policy in ambienti diversi;
+	\item unione di policy entrambe in ambiente collaborativo;
+	\item unione di policy entrambe in ambiente non collaborativo;
+	\item unione di policy in ambienti diversi;
+\end{enumerate}
+\paragraph{Implementazione della procedura}\mbox{}\\
+In questo paragrafo è riportata la procedura utilizzata per creare la rappresentazione della policy finale. All'interno dell'implementazione è stata usata la seguente semplificazione: le gerarchie degli asset sono alberi. Tale semplificazione è superabile implementando diversamente la rappresentazione degli asset al fine che sia possibile avere più di un unico parent node e verificando che il grafo ottenuto sia un \textbf{Directed acyclic graph} (\textbf{DAG}).
+L'algoritmo può essere diviso nelle seguenti fasi:
+\begin{enumerate}
+	\item recupero della gerarchia complessiva regolata dalla policy finale, tale passo ha 2 sottopassi:
+	\begin{enumerate}
+		\item trattazione di asset presenti in entrambi i documenti di policy;
+		\item trattazione di asset presenti in uno solo dei due documenti di policy;
+	\end{enumerate}
+	\item recupero delle 2 policy che descrivono ogni singolo asset all'interno della gerarchia;
+	\item esecuzione dell'operazione desiderata su ogni asset;
+	\item propagazione di tutte le policy ottenute all'interno della gerarchia degli asset finale, con ambiente coerente all'operazione effettuata.
+\end{enumerate}
+\subparagraph{Recupero gerarchia asset complessiva}\mbox{}\\
+Di seguito gli pseudocodici relativi al recupero della gerarchia complessiva. Il primo passo riguarda il recupero degli asset in comune alle policy:
+\begin{lstlisting}[language=Json,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al più più grande degli insiemi di asset},label=algoRecoverHierarchyComm,captionpos=b]
+def Map<String, AssetCollection> mergeHierarchyCommon(
+         Map<String,Asset> assetsFirst,
+         Map<String,Asset> assetsSecond,
+         AssetTree treeFirst,
+         AssetTree treeSecond){
+         
+  Set uriSetFirst = assets.keySet();
+  Set uriSetSecond = assetsSecond.keySet();
+  Map<String, AssetCollection> finalAssets;
+  commonURI = uriSetFirst.intersect(uriSetSecond);
+  finalAssets.put("EveryAsset", everyAssetNode);
+  for(String uri : commonURI){
+  
+    if(uri.equals("EveryAsset"))
+      skip;  
+    if(not(finalAssets.containsKey(uri)))
+     finalAssets.put(uri,new Asset(uri));
+
+    parentFirst = assetsFirst.get(uri).getParent();
+    parentSecond = assetsSecond.get(uri).getParent();
+    
+    // Uno dei due non aveva un padre definito
+    if(
+    !parentFirst.getURI().equals(parentSecond.getURI()) && 
+    (parentFirst.getURI().equals("EveryAsset") ||
+     parentSecond.getURI().equals("EveryAsset"))){
+       actParent =
+        parentFirst.getURI().equals("EveryAsset") ?
+        new Asset(parentSecond.getURI()) :
+        new Asset(parentFirst.getURI());
+
+       if(finalAssets.containsKey(actParent.getURI())){
+        finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
+       }else{
+        actParent.addChild(finalAssets.get(uri));
+        finalAssets.put(actParent.getURI(),actParent);
+       }
+    }
+    
+    //L'asset ha lo stesso padre in entrambe le policy
+    if(parentFirst.getURI().equals(parentSecond.getURI())){
+     if(finalAssets.containsKey(parentFirst.getURI())){
+      finalAssets.get(parentFirst.getURI()).addChild(finalAssets.get(uri));
+     }else {
+      AssetCollection actParent = new Asset(parentFirst.getURI());
+      actParent.addChild(finalAssets.get(uri));
+      finalAssets.put(actParent.getURI(),actParent);
+     }
+    }
+    return finalAssets;
+  }
+\end{lstlisting}
+All'interno del listing \ref{algoRecoverHierarchyComm} è possibile notare:
+\begin{itemize}
+	\item all'interno delle casistiche relative agli asset in comune, non viene considerata la possibilità di asset con padri diversi poiché, lavorando con gerarchie espresse tramite alberi, questo porterebbe ad una situazione d'errore. Qualora si lavorasse con DAG, questa casistica porterebbe all'aggiunta di un nuovo parent node all'interno della lista dei parent del nodo esaminato;
+	\item all'interno della gerarchia è inserito un asset avente URI \textbf{EveryAsset}; questo è un asset fittizio al quale non viene mai assegnata una policy, il suo ruolo è fungere da punto d'inizio per la ricerca degli asset che non hanno un parent esplicitato, al fine di avere un'unica sorgente nella ricerca.
+\end{itemize}
+Il passo sucessivo è il recupero degli asset non in comune:
+\begin{lstlisting}[language=Json,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al numero di asset},label=algoRecoverHierarchyNotComm,captionpos=b]
+def Map<String, AssetCollection> mergeHierarchyUniq(
+       Map<String,Asset> assets,
+       AssetTree tree,
+       Map<String, AssetCollection> finalAssets){
+       
+ //In questo momento finalAsset contiene asset comuni      
+ Set commonURI = finalAssets.keySet();  
+ for(String uri: assets.keySet()){
+   if(!commonURI.contains(uri)){
+     if(!finalAssets.containsKey(uri))
+      finalAssets.put(uri,new Asset(uri));
+      
+	 // Aggiunta parent similare ai comuni
+     if(finalAssets.containsKey(assets.get(uri).getParentURI())){
+       finalAssets.get(assets.get(uri).getParentURI()).addChild(finalAssets.get(uri));
+     }else {
+       AssetCollection actParent =
+        new Asset(assets.get(uri).getParenttURI());
+       actParent.addChild(finalAssets.get(uri));
+       finalAssets.put(actParent.getURI(),actParent);
+     }
+   }
+   return finalAssets;
+ }
+\end{lstlisting}
+L'algoritmo esposto nel listing \ref{algoRecoverHierarchyNotComm} viene richiamato per gli insiemi di asset di entrambe le policy, coprendo così entrambi i set ricavabili dalle gerarchie.\\
+Applicando i 2 algoritmi descritti finora, l'output presente in \textbf{finalAssets} sarà una mappa che collega ogni URI di un asset ad un oggetto che lo rappresenta che contiene già le informazioni riguardanti nodi parent e nodi figli. Sfruttando le componenti descritte nella sezione \ref{assetFun} è quindi possibile definire un \textbf{Gestore gerarchia} che ha come nodo sorgente \textbf{EveryAsset}; il gestore si occuperà di propagare le policy lungo la gerarchia.
+\subparagraph{Recupero policy singole}\mbox{}\\
+Come visibile all'interno del prototipo definito nel listing \ref{algoRecoverHierarchyComm}, il componente di parsing recupera le informazioni necessarie poiché un \textbf{Gestore gerarchia} possa creare una gerarchia di asset e propagare le varie regole relative alla policy; tutto questo seguendo le indicazioni relative all'ambiente definite dall'utente, come presentato in figura \ref{procMergin}.\\
+Entrambe le policy originarie hanno un loro \textbf{Gestore gerarchia}, il quale si occupa di recuperare la policy di ogni nodo in seguito alla propagazione, la procedura è stata già presentata nella sezione \ref{recuperoPolicy}.\\
+L'output di questo passo sono quindi 2 mappe, una per documento di policy, che legano l'URI di una risorsa alla policy ricavabile dal documento in cui è presente. 
+\subparagraph{Esecuzione del merging e propagazione}\mbox{}\\
+Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di mergin desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
+Il risultato finale è quindi un \text{Gestore gerarchia} dal quale possono essere recuperate tutte le policy finali relative agli asset. Queste policy vengono poi utilizzate dal produttore di policy per generare il documento ODRL relativo alle regole ottenute.
 \section{Produzione policy ODRL}
 //TODO
 \bibliography{cit}{}
