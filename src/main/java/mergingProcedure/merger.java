@@ -4,6 +4,7 @@ import Assets.Asset;
 import Assets.AssetCollection;
 import Assets.AssetTree;
 import Policy.Policy;
+import org.apache.jena.atlas.lib.Pair;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public class merger {
      * @param treeSecond AssetTree relativo alla seconda policy
      * @return AssetTree relativo alla nuova policy
      */
-    public static AssetTree intersection(Map<String,Asset> assets,Map<String,Asset> assetsSecond, AssetTree tree, AssetTree treeSecond){
+    public static Pair<AssetTree, Map<String, AssetCollection>> intersection(Map<String,Asset> assets, Map<String,Asset> assetsSecond, AssetTree tree, AssetTree treeSecond){
         java.util.Set<String> commonURI = new HashSet<String>(assets.keySet());
         java.util.Set<String> uriSetSecond = assetsSecond.keySet();
         Map<String, AssetCollection> finalAssets = new HashMap<String, AssetCollection>();
@@ -104,10 +105,10 @@ public class merger {
                 finalTree.setPolicy(toSet,true);
             }
         }
-        return finalTree;
+        return new Pair<AssetTree,Map<String, AssetCollection>> (finalTree,finalAssets);
     }
 
-    public static AssetTree union(Map<String,Asset> assets,Map<String,Asset> assetsSecond, AssetTree tree, AssetTree treeSecond){
+    public static Pair<AssetTree, Map<String, AssetCollection>> union(Map<String,Asset> assets, Map<String,Asset> assetsSecond, AssetTree tree, AssetTree treeSecond){
         java.util.Set<String> commonURI = new HashSet<String>(assets.keySet());
         java.util.Set<String> uriSetSecond = assetsSecond.keySet();
         Map<String, AssetCollection> finalAssets = new HashMap<String, AssetCollection>();
@@ -192,6 +193,6 @@ public class merger {
                 finalTree.setPolicy(toSet,false);
             }
         }
-        return finalTree;
+        return new Pair<AssetTree,Map<String, AssetCollection>> (finalTree,finalAssets);
     }
 }

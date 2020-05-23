@@ -7,7 +7,7 @@ import Assets.AssetTree;
 import Policy.Policy;
 import Policy.Set;
 import Rule.Rule;
-import Writer.trial;
+import Writer.documentProducer;
 import mergingProcedure.merger;
 
 import java.io.File;
@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 import Parser.policyReader;
+import org.apache.jena.atlas.lib.Pair;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 public class Main {
@@ -61,20 +62,6 @@ public class Main {
 
 TEST 2 FILE
 **/
-//trial.provaScrivere();
-       try{
-           PrintStream o = new PrintStream(new File("./src/main/java/Parser/output.txt"));
-
-
-
-
-           // Assign o to output stream
-           System.setOut(o);
-
-
-       }catch (Exception e){
-           System.err.println(e);
-       };
 
         String examplePath = "./src/test/java/doc1.jsonld";
         Map<AssetCollection, List<Rule>>  mappa = policyReader.readPolicyRules(examplePath);
@@ -126,7 +113,12 @@ TEST 2 FILE
         }
 
         System.out.println(treeSecond);
-        System.out.println(merger.intersection(assets,assetsSecond,tree,treeSecond));
+        Pair<AssetTree, Map<String, AssetCollection>> mergingResult = merger.intersection(assets,assetsSecond,tree,treeSecond);
+
+        AssetTree resTree = mergingResult.getLeft();
+        System.out.println(resTree.toString());
+        Map<String, AssetCollection> hier = mergingResult.getRight();
+        documentProducer.produceDocument(resTree,hier);
 
     }
 
