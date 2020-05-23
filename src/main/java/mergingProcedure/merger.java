@@ -6,9 +6,8 @@ import Assets.AssetTree;
 import Policy.Policy;
 import org.apache.jena.atlas.lib.Pair;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class merger {
 
@@ -105,6 +104,8 @@ public class merger {
                 finalTree.setPolicy(toSet,true);
             }
         }
+
+
         return new Pair<AssetTree,Map<String, AssetCollection>> (finalTree,finalAssets);
     }
 
@@ -194,5 +195,36 @@ public class merger {
             }
         }
         return new Pair<AssetTree,Map<String, AssetCollection>> (finalTree,finalAssets);
+    }
+
+    private Set<String> getModifiedURIs(Set<String> commonURI, Map<String, Policy> policyFirstTree, Map<String, Policy> policySecondTree, Map<String, AssetCollection> finalAssets){
+        //PROVA
+        Set<String> modified = new HashSet<String >();
+        Queue<String> children = new LinkedList<>();
+        for(String uri : commonURI) {
+            if (!modified.contains(uri)){
+                boolean mod = policyFirstTree.get(uri) != null && policySecondTree.get(uri) != null ? true : false;
+                if (mod) {
+                    modified.add(uri);
+                    if(finalAssets.get(uri).getChildren() != null)
+                        children.addAll(finalAssets.get(uri).getChildren().stream().map(asset -> {
+                            return asset.getURI();
+                        }).collect(Collectors.toList()));
+                    while (!children.isEmpty()) {
+                        String internal = children.poll();
+                        modified.add(internal);
+                        if(finalAssets.get(internal).getChildren() != null)
+                            children.addAll(finalAssets.get(internal).getChildren().stream().map(asset -> {
+                                return asset.getURI();
+                            }).collect(Collectors.toList()));
+
+
+                    }
+                }
+            }
+        }
+        System.out.println("MODIFICATI: "+modified);
+        //FINE PROVA
+        return modified;
     }
 }

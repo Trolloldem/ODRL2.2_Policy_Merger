@@ -5,15 +5,67 @@
 
 <http://ID>  a            odrl:Set ;
         odrl:permission   [ a            odrl:Permission ;
-                            odrl:action  odrl:stream ;
+                            odrl:action  odrl:annotate ;
                             odrl:target  <http://example.com/music/actRoot>
                           ] ;
         odrl:permission   [ a            odrl:Permission ;
-                            odrl:action  odrl:annotate ;
+                            odrl:action  odrl:stream ;
                             odrl:target  <http://example.com/music/actRoot>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/rootRes>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child1>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child3>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:annotate ;
+                            odrl:target  <http://example.com/music/Child3>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child1>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child1>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child3>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/rootRes>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:annotate ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:annotate ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
                             odrl:target  <http://example.com/music/Child1>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
@@ -22,10 +74,38 @@
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child1>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child1>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
                             odrl:target  <http://example.com/music/Child3>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child3>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:annotate ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/rootRes>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:delete ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:annotate ;
+                            odrl:target  <http://example.com/music/Child2>
+                          ] ;
+        odrl:prohibition  [ a            odrl:Prohibition ;
+                            odrl:action  odrl:stream ;
                             odrl:target  <http://example.com/music/Child1>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
@@ -33,76 +113,12 @@
                             odrl:target  <http://example.com/music/Child1>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:annotate ;
-                            odrl:target  <http://example.com/music/Child3>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child3>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child1>
+                            odrl:target  <http://example.com/music/Child2>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:annotate ;
                             odrl:target  <http://example.com/music/Child3>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:annotate ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/rootRes>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child3>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:annotate ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:stream ;
-                            odrl:target  <http://example.com/music/Child1>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:annotate ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child1>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child1>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child1>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/rootRes>
                           ] ;
         odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:delete ;
@@ -111,22 +127,6 @@
         odrl:prohibition  [ a            odrl:Prohibition ;
                             odrl:action  odrl:delete ;
                             odrl:target  <http://example.com/music/Child3>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/rootRes>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child3>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:annotate ;
-                            odrl:target  <http://example.com/music/Child2>
-                          ] ;
-        odrl:prohibition  [ a            odrl:Prohibition ;
-                            odrl:action  odrl:delete ;
-                            odrl:target  <http://example.com/music/Child2>
                           ] .
 
 <http://example.com/music/actRoot>
