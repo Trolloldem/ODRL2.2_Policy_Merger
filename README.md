@@ -5,3 +5,6 @@ Stato attuale:
 - Le regole e le azioni attualmente rappresentate non presentano "constraint" o "refinement"
 - Le policy definite per un asset si propagano sui target figli(sia in modo intersect che union)
 - Le azioni di UNION e INTERSECT delle policy lavorano concordi con quanto presentato sopra
+- Risulta possibile specificare il comportamento finale della policy ottenuta mediante merging
+- Parsing di documenti ODRL per RDF
+- Produzione policy finale in documento ttl
