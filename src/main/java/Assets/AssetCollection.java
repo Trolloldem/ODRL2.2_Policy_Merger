@@ -5,6 +5,12 @@ import Policy.Policy;
 import java.util.ArrayList;
 
 public interface AssetCollection {
+
+    /**
+     * Riscrive la policy senza controllare che il nodo ne avesse una in precedenza
+     * @param p Policy che sostituisce la policy attuale
+     */
+    public void OverwritePolicy(Policy p);
     /**
      * Getter dell' URI dell'asset
      * @return Stringa contenente l'URI dell'asset

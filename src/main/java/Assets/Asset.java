@@ -38,6 +38,16 @@ public class Asset implements AssetCollection {
     }
 
     /**
+     * Riscrive la policy senza controllare che il nodo ne avesse una in precedenza
+     *
+     * @param p Policy che sostituisce la policy attuale
+     */
+    @Override
+    public void OverwritePolicy(Policy p) {
+        this.policy = p;
+    }
+
+    /**
      * Getter dell' URI dell'asset
      *
      * @return Stringa contenente l'URI dell'asset
@@ -104,6 +114,8 @@ public class Asset implements AssetCollection {
         if(this.policy==null)
             this.policy=p;
     }
+
+
 
     @Override
     public void propagateIntersection() {
