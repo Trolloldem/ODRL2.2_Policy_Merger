@@ -68,9 +68,9 @@ public class documentProducer {
                     }
 
                 }
-                if(permList.size()>0)
+                if(permList != null && permList.size()>0)
                     policy.addProperty(ODRL_vocab.permission,permList);
-                if(prohibList.size()>0)
+                if(prohibList != null && prohibList.size()>0)
                     policy.addProperty(ODRL_vocab.prohibition,prohibList);
             }
         }

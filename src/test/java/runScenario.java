@@ -72,7 +72,7 @@ public class runScenario {
 
         AssetTree resTree = mergingResult.getLeft();
         Map<String, AssetCollection> hier = mergingResult.getRight();
-        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersectOnCommon1-2.ttl");
+        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersectOnCommon1-3.ttl");
 
     }
 
@@ -130,25 +130,13 @@ public class runScenario {
 
         AssetTree resTree = mergingResult.getLeft();
         Map<String, AssetCollection> hier = mergingResult.getRight();
-        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersect1-2.ttl");
+        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersect1-3.ttl");
 
     }
 
     @Test
     public void  intersectCollaborativeWithNewNodes(){
-        try{
-            PrintStream o = new PrintStream(new File("./src/main/java/Parser/output.txt"));
 
-
-
-
-            // Assign o to output stream
-            System.setOut(o);
-
-
-        }catch (Exception e){
-            System.err.println(e);
-        };
 
         String examplePath = "./src/test/java/doc1.jsonld";
         Map<AssetCollection, List<Rule>> mappa = policyReader.readPolicyRules(examplePath);
@@ -173,9 +161,7 @@ public class runScenario {
             }
         }
 
-        System.out.println(tree);
 
-        System.out.println("SECONDA POLICY");
         String secondPath = "./src/test/java/doc2.jsonld";
         Map<AssetCollection, List<Rule>>  mappaSecond = policyReader.readPolicyRules(secondPath);
         Map<String,Asset>assetsSecond = policyReader.readAssets(secondPath);
@@ -199,24 +185,16 @@ public class runScenario {
             }
         }
 
-        System.out.println(treeSecond);
-        System.out.println(merger.intersection(assets,assetsSecond,tree,treeSecond));
+
+        Pair<AssetTree, Map<String, AssetCollection>> mergingResult = merger.intersection(assets,assetsSecond,tree,treeSecond);
+
+        AssetTree resTree = mergingResult.getLeft();
+        Map<String, AssetCollection> hier = mergingResult.getRight();
+        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersect1-2.ttl");
     }
     @Test
     public void  unionCollaborativeWithNewNodes(){
-        try{
-            PrintStream o = new PrintStream(new File("./src/main/java/Parser/output.txt"));
 
-
-
-
-            // Assign o to output stream
-            System.setOut(o);
-
-
-        }catch (Exception e){
-            System.err.println(e);
-        };
 
         String examplePath = "./src/test/java/doc1.jsonld";
         Map<AssetCollection, List<Rule>> mappa = policyReader.readPolicyRules(examplePath);
@@ -241,9 +219,7 @@ public class runScenario {
             }
         }
 
-        System.out.println(tree);
 
-        System.out.println("SECONDA POLICY");
         String secondPath = "./src/test/java/doc2.jsonld";
         Map<AssetCollection, List<Rule>>  mappaSecond = policyReader.readPolicyRules(secondPath);
         Map<String,Asset>assetsSecond = policyReader.readAssets(secondPath);
@@ -267,7 +243,11 @@ public class runScenario {
             }
         }
 
-        System.out.println(treeSecond);
-        System.out.println(merger.union(assets,assetsSecond,tree,treeSecond));
+
+        Pair<AssetTree, Map<String, AssetCollection>> mergingResult = merger.union(assets,assetsSecond,tree,treeSecond);
+
+        AssetTree resTree = mergingResult.getLeft();
+        Map<String, AssetCollection> hier = mergingResult.getRight();
+        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersect1-3.ttl");
     }
 }
