@@ -86,10 +86,8 @@ TEST 2 FILE
             }
         }
 
-        System.out.println(tree);
 
-        System.out.println("SECONDA POLICY");
-        String secondPath = "./src/test/java/doc2.jsonld";
+        String secondPath = "./src/test/java/doc3.jsonld";
         Map<AssetCollection, List<Rule>>  mappaSecond = policyReader.readPolicyRules(secondPath);
         Map<String,Asset>assetsSecond = policyReader.readAssets(secondPath);
         Asset everySecond = new Asset("EveryAsset");
@@ -112,13 +110,12 @@ TEST 2 FILE
             }
         }
 
-        System.out.println(treeSecond);
-        Pair<AssetTree, Map<String, AssetCollection>> mergingResult = merger.intersection(assets,assetsSecond,tree,treeSecond);
+
+        Pair<AssetTree, Map<String, AssetCollection>> mergingResult = merger.unionOnCommon(assets,assetsSecond,tree,treeSecond);
 
         AssetTree resTree = mergingResult.getLeft();
-        System.out.println(resTree.toString());
         Map<String, AssetCollection> hier = mergingResult.getRight();
-        documentProducer.produceDocument(resTree,hier);
+        documentProducer.produceDocument(resTree,hier,null);
 
     }
 

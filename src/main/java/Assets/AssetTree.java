@@ -64,8 +64,8 @@ public class AssetTree {
 
     private void setPolicyChildWithoutPropagation(AssetCollection node,Policy p){
 
-        if(p.getTarget().equals(node) && node.getPolicy()==null){
-            node.setPolicy(p);
+        if(p.getTarget().equals(node)){
+            node.OverwritePolicy(p);
         }else{
 
             if(node.getChildren()!=null)
@@ -151,8 +151,8 @@ public class AssetTree {
      * @param @param p: Policy che viene settata, se non presenta un AssetCollection come target, il metodo non fa nulla
      */
     public  void setPolicyWithoutPropagation(Policy p){
-        if(p.getTarget().equals(rootAsset) && rootAsset.getPolicy()==null){
-            rootAsset.setPolicy(p);
+        if(p.getTarget().equals(rootAsset)){
+            rootAsset.OverwritePolicy(p);
 
         }else{
             for(AssetCollection child: rootAsset.getChildren()){

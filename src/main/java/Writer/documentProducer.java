@@ -1,6 +1,7 @@
 package Writer;
 
 
+import Actions.Action;
 import Assets.AssetCollection;
 import Assets.AssetTree;
 import Parser.ODRL_vocab;
@@ -18,44 +19,69 @@ import org.apache.jena.vocabulary.RDFS;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
 public class documentProducer {
     public static String resPath = "./src/main/java/Parser/output.ttl";
 
-    public static void produceDocument(AssetTree tree, Map<String, AssetCollection> assets) {
+    public static void produceDocument(AssetTree tree, Map<String, AssetCollection> assets, String path) {
+        if(path == null){
+            path = resPath;
+        }
+
         Model m = ModelFactory.createDefaultModel();
         m.setNsPrefix("odrl", ODRL_vocab.NS);
         Resource policy;
         policy = m.createResource("http://ID");
         policy.addProperty(RDF.type, ODRL_vocab.Set);
         Map<String, Policy> allRules = tree.recoverAllPolicy();
-
+        RDFList permList = null;
+        RDFList prohibList = null;
         for(Map.Entry<String,Policy> URIRules : allRules.entrySet()){
             Resource target = processTargetNode(assets.get(URIRules.getKey()),  m);
+
+            Map<Action,String > useTransferMap = new HashMap<Action,String>();
+
             if(URIRules.getValue() != null){
-                for( Rule rule : URIRules.getValue().getRules()){
+
+                useTransferMap.putAll(URIRules.getValue().getUseTree().getAllStates());
+                useTransferMap.putAll(URIRules.getValue().getTransferTree().getAllStates());
+
+                for( Map.Entry<Action,String> rule : useTransferMap.entrySet()){
                     Resource ruleNode = null;
-                    if(rule instanceof Permission) {
-                        ruleNode = processRuleNode(rule, target, m, true);
-                        policy.addProperty(ODRL_vocab.permission, ruleNode);
+                    if(rule.getValue().equals("Permitted")) {
+                        ruleNode = processRuleNode(rule.getKey(), target, m, true);
+                        //policy.addProperty(ODRL_vocab.permission, ruleNode);
+                        if(permList==null)
+                            permList = m.createList(ruleNode);
+                        else
+                            permList.add(ruleNode);
                     }
-                    else {
-                        ruleNode = processRuleNode(rule, target, m, false);
-                        policy.addProperty(ODRL_vocab.prohibition, ruleNode);
+                    if(rule.getValue().equals("Prohibited")) {
+                        ruleNode = processRuleNode(rule.getKey(), target, m, false);
+                        //policy.addProperty(ODRL_vocab.prohibition, ruleNode);
+                        if(prohibList == null)
+                            prohibList = m.createList(ruleNode);
+                        else
+                            prohibList.add(ruleNode);
                     }
 
                 }
+                if(permList != null && permList.size()>0)
+                    policy.addProperty(ODRL_vocab.permission,permList);
+                if(prohibList != null && prohibList.size()>0)
+                    policy.addProperty(ODRL_vocab.prohibition,prohibList);
             }
         }
 
 
 
 
-        System.out.println("--- DEFAULT ---");
+
 
         try {
-            RDFDataMgr.write(new FileOutputStream(resPath), m, RDFFormat.TURTLE);
+            RDFDataMgr.write(new FileOutputStream(path), m, RDFFormat.TURTLE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -63,14 +89,14 @@ public class documentProducer {
 
     }
 
-    private static Resource processRuleNode(Rule rule, Resource target, Model m, boolean isPermission) {
+    private static Resource processRuleNode(Action rule, Resource target, Model m, boolean isPermission) {
 
         Resource res = m.createResource();
         Resource type = isPermission ? ODRL_vocab.Permission : ODRL_vocab.Prohibition;
         res.addProperty(RDF.type,type);
         Resource action = null;
         try {
-            Field vocabField = ODRL_vocab.class.getField(rule.getAction().getName());
+            Field vocabField = ODRL_vocab.class.getField(rule.getName());
             action = (Resource) vocabField.get(new ODRL_vocab());
         } catch (NoSuchFieldException e) {
             action = null;
