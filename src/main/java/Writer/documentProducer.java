@@ -122,7 +122,6 @@ public class documentProducer {
                 actualTarget.addProperty(ODRL_vocab.partOf, parentTarget);
 
         }
-        System.out.println(actualTarget.getProperty(ODRL_vocab.partOf));
         return actualTarget;
 
     }

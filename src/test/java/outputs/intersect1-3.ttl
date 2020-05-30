@@ -101,7 +101,7 @@
                           ) .
 
 <http://example.com/music/rootRes>
-        odrl:partOf  <EveryAsset> , <http://example.com/music/actRoot> .
+        odrl:partOf  <http://example.com/music/actRoot> .
 
 <http://example.com/music/Child3>
         odrl:partOf  <http://example.com/music/rootRes> .

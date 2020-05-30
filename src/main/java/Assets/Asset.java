@@ -110,6 +110,8 @@ public class Asset implements AssetCollection {
     }
 
 
+
+
     @Override
     public void addChild(AssetCollection child) {
         if(!this.children.contains(child))

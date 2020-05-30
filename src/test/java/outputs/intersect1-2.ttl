@@ -49,4 +49,4 @@
         odrl:partOf  <http://example.com/music/rootRes> .
 
 <http://example.com/music/rootRes>
-        odrl:partOf  <EveryAsset> , <http://example.com/music/actRoot> .
+        odrl:partOf  <http://example.com/music/actRoot> .

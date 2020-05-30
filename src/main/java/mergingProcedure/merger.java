@@ -49,6 +49,7 @@ public class merger {
                         finalAssets.put(actParent.getURI(), actParent);
                     }
                 }
+                finalAssets.get(uri).addParents(toCheck);
             }
             if(parentFirst.equals(parentSecond)) {
                 for (String parentURI : parentFirst){
@@ -160,6 +161,7 @@ public class merger {
                         finalAssets.put(actParent.getURI(), actParent);
                     }
                 }
+                finalAssets.get(uri).addParents(toCheck);
             }
             if(parentFirst.equals(parentSecond)) {
                 for (String parentURI : parentFirst){
@@ -260,6 +262,7 @@ public class merger {
             if(!parentFirst.equals(parentSecond) && (parentFirst.contains("EveryAsset") || parentSecond.contains("EveryAsset"))) {
                 ArrayList<AssetCollection> toCheck = parentFirst.contains("EveryAsset") ? assetsSecond.get(uri).getParents() : assets.get(uri).getParents();
 
+
                 for(AssetCollection actParent : toCheck){
                     if (finalAssets.containsKey(actParent.getURI())) {
                         finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
@@ -268,6 +271,7 @@ public class merger {
                         finalAssets.put(actParent.getURI(), actParent);
                     }
                 }
+                finalAssets.get(uri).addParents(toCheck);
             }
             if(parentFirst.equals(parentSecond)) {
                 for (String parentURI : parentFirst){
@@ -388,6 +392,7 @@ public class merger {
                         finalAssets.put(actParent.getURI(), actParent);
                     }
                 }
+                finalAssets.get(uri).addParents(toCheck);
             }
             if(parentFirst.equals(parentSecond)) {
                 for (String parentURI : parentFirst){

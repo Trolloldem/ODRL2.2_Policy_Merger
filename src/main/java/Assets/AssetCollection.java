@@ -58,6 +58,7 @@ public interface AssetCollection {
 
     public void addParent(AssetCollection parent,boolean secondary);
 
+
     /**
      * Aggiunge un figlio alla lista dei figli dell'asset
      * @param child: AssetCollection che si vuole aggiungere come figlio
