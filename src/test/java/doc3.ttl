@@ -1,0 +1,11 @@
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+
+<http://TARG2>  odrl:partOf  <http://TARG1> .
+
+<http://ID>  a           odrl:Policy ;
+        odrl:permission  [ odrl:action  odrl:play ;
+                           odrl:target  <http://TARG2>
+                         ] ;
+        odrl:permission  [ odrl:action  odrl:delete ;
+                           odrl:target  <http://TARG1>
+                         ] .
