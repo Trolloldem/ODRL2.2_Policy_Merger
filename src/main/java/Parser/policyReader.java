@@ -11,6 +11,7 @@ import javafx.util.Pair;
 import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDFS;
 
 import java.util.*;
 
@@ -236,6 +237,7 @@ public class policyReader {
             }
 
         }
+
 
         return assets;
 

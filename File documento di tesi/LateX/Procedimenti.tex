@@ -92,9 +92,9 @@ Avere un modello standard per definire questi bisogni dà 2 fondamentali vantagg
 	\item chi usufruisce dell'asset conosce in modo preciso quali azioni può compiere, evitando così di infrangere regole o leggi.
 \end{itemize}
 ODRL definisce un modello semantico di permessi, divieti ed obblighi, che può essere usato per descrivere le modalità d'uso di un contenuto. In particolare si cerca di definire i concetti chiave per la creazione di policy machine-readable collegate direttamente all'asset al quale sono associate, permettendo all'utente finale di reperire facilmente informazioni sulla risorsa che utilizza. Quest'ultimo requisito è soddisfatto, poiché ODRL è costruito seguendo i \textit{Linked Data principles}\cite{LinkedDataInfo}:
-\begin{itemize}
+\begin{itemize}\label{linkedDataPrinc}
 \item Utilizzo di URIs come nomi per le risorse;
-\item Gli URI sono indirizzi HTTP in modo che le persone possano cercare informazioni sulle risorse;
+\item Gli URI sono indirizzi HTTP in modo che si possano cercare informazioni sulle risorse;
 \item L'URI deve fornire informazioni utili sulla risorsa;
 \item Tra le informazioni, fornire altri URI, in modo che l'utente possa raggiungere altre informazioni.
 \end{itemize}
@@ -460,7 +460,7 @@ Esempi di regole all'interno di policy:
  }]
 }
 \end{lstlisting}
-\subsection{Problematica trattata}
+\subsection{Problematica trattata}\label{problematiche}
 \paragraph{Gestione dei conflitti}\mbox{}\\
 La trattazione fatta fino ad ora per ODRL prende in considerazione la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che il linguaggio punta a soddisfare ed, in particolare, non rispecchia i casi d'uso definiti in MOSAICO, dove è naturale che vi sia un numero molto alto di policy definite.\\
 ODRL propone già alcuni elementi per permettere la definizione di più policy in modo agevole, ad esempio: 
@@ -523,6 +523,71 @@ Nella casistica mostrata, questa soluzione si andrebbe a tradurre come:
 \item il permesso sull'azione \textbf{transfer} viene rimosso dalla policy.
 \end{enumerate}
 Come è possibile notare, un eventuale controllo sulle regole prodotte può fermarsi al primo permesso che trova, anziché controllare anche tutti i divieti presenti nella policy.
+\chapter{Tecnologie utilizzate}
+All'interno di questo capitolo sono trattate le varie tecnologie e paradigmi utilizzati per implementare una soluzione alle problematiche mostrate nella sezione \ref{problematiche}. Tale problematica necessita lo sviluppo di una componente che attui la semantica necessaria al merging di 2 policy e che mostri il risultato in un formato non ambiguo; al fine di realizzare questo componente, è stato necessario effettuare una ricerca per quanto concerne:
+\begin{itemize}
+	\item tool già sviluppati per il trattamento di policy ODRL;
+	\item tool per interrogare un documento ODRL;
+	\item tool per realizzare un documento ODRL.
+\end{itemize}
+\section{Tool già esistenti}
+I risultati relativi della ricerca di tool già realizzati hanno portato le seguenti conclusioni:
+\begin{itemize}
+	\item gran parte dei tool già sviluppati, non lavorano sull'attuale versione di ODRL\footnote{La versione utilizzata durante la stesura del lavoro di tesi è ODRL v2.2 }, come è possibile notare anche dalla pagina del progetto\cite{ODRLPage};
+	\item in particolare, gli unici tool documentati ufficialmente sono:
+	\begin{itemize}
+		\item alcuni valutatori di stato di una regola all'interno di una policy\cite{evalStatus}, attualmente in sviluppo;
+		\item un validatore di policy ODRL\cite{validator}, attualmente in sviluppo;
+		\item un editor di policy ODRL\cite{editor};
+		\item API per la rappresentazione tramite Java di policy ODRL\cite{api}, supporta ODRL 2.0.
+	\end{itemize}
+\end{itemize}
+Risulta possibile notare che le problematiche di merging e rappresentazione non efficiente delle regole non sono affrontate direttamente dai tool sviluppati, i quali tendono invece ad avere un carattere più generale. Sempre grazie allo scouting è possibile quindi dedurre che l'implementazione di un nuovo tool può non reimplementare i seguenti procedimenti:
+\begin{itemize}
+	\item eventuali documenti di policy presentati in ingresso possono essere validati in precedenza;
+	\item non necessita di informazioni sullo stato attuale di asset ed attori coinvolti, in quanto lo stato di questi può essere valutato;
+	\item non deve supportare nella creazione della policy l'utente.
+\end{itemize}
+Le uniche componenti relative ai tool già esistenti che nel lavoro esposto sono state reimplementate risultano essere le API per la rappresentazione di policy ODRL in Java: quelle già esistenti sono relative ad una versione di ODRL non attuale e non forniscono interfacce utili al procedimento di merging di 2 policy. 
+\section{Interrogazione e produzione documenti ODRL}
+Le ricerche relative al parsing ed alla produzione di un documento ODRL, hanno portato al framework Apache Jena\cite{Jena}, utilizzato per creare applicazioni secondo i modelli  ``Semantic web''\cite{SemanticWeb} e  ``Linked Data''. Il framework ed i modelli di cui supporta la creazione, sono descritti nelle sezioni seguenti.
+\subsection{Semantic Web}
+Il Semantic Web è definita come un'estensione del World Wide Web, nel quale i dati all'interno della rete \textit{machine-readable}. In particolare ``nel contesto del Semantic Web, il termine semantico assume la valenza di
+"elaborabile dalla macchina" e non intende fare riferimento alla semantica del 
+linguaggio naturale e alle tecniche di intelligenza artificiale. Il Semantic Web è, come l’
+XML, un ambiente dichiarativo, in cui si specifica il significato dei dati, e non il modo
+in cui si intende utilizzarli''\cite{introSem}. Alla base dell'idea del Semantic Web vi sono:
+\begin{itemize}
+	\item le risorse, non necessariamente interpretabili da una macchina;
+	\item i metadati connessi alle risorse, i quali sono machine-readable.
+\end{itemize}
+Per realizzare quest'idea, risulta necessario poter standardizzare i metadati collegati alle risorse, specificandone semantica e sintassi.\\
+Il formato sintattico scelto come standard è il modello Resource Description Framework (RDF)\cite{RDF}, mentre invece si lascia libertà sulla semantica, la quale può venir specificata mediante vocabolari relativi al dominio, utilizzando RDF Schema\cite{RDFS}. Sia RDF che RDFS sono descritti in dettaglio nelle prossime sezioni.\\
+Prendendo come esempio il listing \ref{esempioAsset}, risulta possibile notare:
+\begin{itemize}
+	\item il documento ODRL è la rappresentazione machine-readable di un documento di specifica dei requisiti d'accesso ad una risorsa;
+	\item la sintassi è standard ed è in formato RDF;
+	\item la semantica è stata definita per gli scopi necessari ad ODRL, esplicitandone gli elementi nel \textbf{contesto};
+	\item la risorsa alla quale è collegato il metadato non è specificata, ma il metadato dà informazioni utili su tutte le risorse presenti, fornendo un'informazione non centralizzata poiché recuperabile con query relative a varie risorse o semplicemente allegando il metadato a più risorse.
+\end{itemize}
+\subsection{Linked Data}
+Fino ad ora, si è mostrato i principi scelti come base per rendere ogni risorsa machine-readable, permettendo ad una macchina di ottenere maggiori informazioni sulla risorsa.\\
+Il Semantic Web non cerca solamente di migliorare la qualità dell'informazione sulla singola risorsa, bensì di fornire ad un applicativo la possibilità di consultare informazioni relative anche a risorse collegate a quella iniziale.\\
+Questo secondo obiettivo viene attuato mediante i 4 principi dei Linked Data, già enunciati nella sezione \ref{linkedDataPrinc}.\\
+Un importate risultato raggiunto in questo ambito risulta essere DBPedia\cite{dbpedia}, progetto che permette:
+\begin{itemize}
+	\item di consultare Wikipedia in formato RDF;
+	\item collega gli articoli Wikipedia a risorse presenti al di fuori del sito, permettendo così di effettuare query che recuperano informazioni da più fonti. 
+\end{itemize}
+Come già citato, questo modello è ben visibile all'interno di ODRL, per esempio nel listing \ref{esmpioPolicy} è possibile notare:
+\begin{itemize}
+	\item che la policy ha un proprio URI, risulta quindi sia un metadato, che una risorsa consultabile a sé;
+	\item in quanto risorsa consultabile, ha al suo interno diversi URI relativi ad altre risorse, come ad esempio:
+	\begin{itemize}
+		\item l'URI relativo all'asset target della policy;
+		\item l'URI relativo al contesto del documento, il quale contiene a suo volta informazioni utili per leggere correttamente una policy;
+	\end{itemize}
+\end{itemize}
 
 \chapter{Valutazione casistiche}
 \section{Casistiche di merging}
