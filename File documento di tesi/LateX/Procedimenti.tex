@@ -1072,6 +1072,7 @@ Il duale delle operazioni mostrate nelle figure \ref{imgAssetPropSet} e \ref{img
 \paragraph{Recupero policy in seguito alla propagazione}\label{recuperoPolicy}\mbox{}\\
 La policy relativo ad un nodo ai livelli più bassi può cambiare drasticamente in seguito ad una operazione di propagazione, come visibili nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect}. A supporto di altri componenti è stata implementata una procedura di recupero di policy del singolo nodo all'interno della gerarchia: si esplora in ampiezza l'intera gerarchia, recuperando ogni policy di ogni risorsa. Il risultato finale è una mappa che collega l'URI di ogni risorsa presente nella gerarchia alla sua policy; nel set di chiavi sono presenti anche i nodi non aventi una policy.
 \subsection{Gestore procedura di merging}
+TODO: Togliere semplificazioni dalla tesi: supporto a non propagare sull'intero DAG, albero non è più un DAG
 Tutte le componenti fino ad ora mostrate si concentrano in modo atomico su una singola porzione della procedura del merging di 2 policy. Come è possibile notare supportano le operazioni di intersezione ed unione, ma tutte le strutture dati lavorano su un singolo documento ODRL. Il componente mostrato in questa sezione, invece, si occupa di attuare l'effettivo flusso applicativo desiderato. Di seguito il diagramma delle componenti che interessano il processo di merging:
 \begin{figure}[H]
 	\centering
