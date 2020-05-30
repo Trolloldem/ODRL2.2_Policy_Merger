@@ -7,25 +7,26 @@ import Rule.Rule;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Classe relativa alla gestione di un asset singolo
  */
 public class Asset implements AssetCollection {
     private String URI;
-    private Assets.AssetCollection parent;
+    private ArrayList<AssetCollection> parents;
     private ArrayList<AssetCollection> children;
     private Policy policy;
 
     public Asset(){
         URI = null;
-        parent=null;
+        parents=new ArrayList<AssetCollection>();
         children=new ArrayList<AssetCollection>();
         policy = null;
     }
     public Asset(String URI){
         this.URI = URI;
-        parent=null;
+        parents=new ArrayList<AssetCollection>();
         children=new ArrayList<AssetCollection>();
         policy = null;
     }
@@ -73,8 +74,8 @@ public class Asset implements AssetCollection {
     }
 
     @Override
-    public AssetCollection getParent() {
-        return parent;
+    public ArrayList<AssetCollection> getParents() {
+        return parents;
     }
 
     @Override
@@ -87,26 +88,39 @@ public class Asset implements AssetCollection {
     }
 
     @Override
-    public void setParent(AssetCollection parent) {
-        if(this.parent==null){
-            this.parent = parent;
-            parent.addChild(this);
-        }
+    public void addParents(ArrayList<AssetCollection> parent) {
+
+            this.parents = parent;
+            parent.stream().forEach(parentNode -> parentNode.addChild(this,true));
+
     }
 
     @Override
-    public void resetParent(AssetCollection parent) {
-        this.parent.getChildren().remove(this);
-        this.parent= null;
-        this.setParent(parent);
+    public void addParent(AssetCollection parent) {
+        if(!this.parents.contains(parent))
+            this.parents.add(parent);
+        parent.addChild(this,true);
     }
+
+    @Override
+    public void addParent(AssetCollection parent,boolean secondary) {
+        if(!this.parents.contains(parent))
+            this.parents.add(parent);
+
+    }
+
 
     @Override
     public void addChild(AssetCollection child) {
-        if(!(this.children.contains(child))){
+        if(!this.children.contains(child))
             this.children.add(child);
-            child.setParent(this);
-        }
+        child.addParent(this,true);
+    }
+
+    @Override
+    public void addChild(AssetCollection child,boolean secondary) {
+        if(!this.children.contains(child))
+            this.children.add(child);
     }
 
     @Override
@@ -156,6 +170,11 @@ public class Asset implements AssetCollection {
             child.setPolicy(res);
             child.propagateUnion();
         }
+    }
+
+    @Override
+    public java.util.Set<String> getParentURIs() {
+        return this.parents.stream().map(asset -> asset.getURI()).collect(Collectors.toSet());
     }
 
     /**

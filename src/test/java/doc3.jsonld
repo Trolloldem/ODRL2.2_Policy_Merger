@@ -5,12 +5,18 @@
    "permission":[
 
       {
-         "target":"http://example.com/music/Child2",
+         "target":{
+                     "uid":"http://example.com/music/Child2",
+                     "partOf":"http://example.com/music/Child1"
+                  },
          "assigner":"http://example.com/org/sony-music",
          "action":"display"
       },
       {
-         "target":"http://example.com/music/Child2",
+         "target":{
+                     "uid":"http://example.com/music/Child2",
+                     "partOf":"http://example.com/music/Child1"
+                  },
          "assigner":"http://example.com/org/sony-music",
          "action":"stream"
       }

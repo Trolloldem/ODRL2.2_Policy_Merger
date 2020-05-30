@@ -20,13 +20,13 @@ public class AssetTreeTest {
     public void inheritPolicyIntersection(){
         Asset root = new Asset("root");
         Asset Child1 = new Asset("Child1");
-        Child1.setParent(root);
+        Child1.addParent(root);
         Asset Child2 = new Asset("Child2");
-        Child2.setParent(root);
+        Child2.addParent(root);
         Asset Child3 = new Asset("Child3");
-        Child3.setParent(root);
+        Child3.addParent(root);
         Asset deepestChild = new Asset("Deepest");
-        deepestChild.setParent(Child1);
+        deepestChild.addParent(Child1);
 
         Rule delPerm = new Permission(Action.DELETE);
         Rule play = new Permission(Action.PLAY);
@@ -121,13 +121,13 @@ public class AssetTreeTest {
     public void inheritPolicyUnion(){
         Asset root = new Asset("root");
         Asset Child1 = new Asset("Child1");
-        Child1.setParent(root);
+        Child1.addParent(root);
         Asset Child2 = new Asset("Child2");
-        Child2.setParent(root);
+        Child2.addParent(root);
         Asset Child3 = new Asset("Child3");
-        Child3.setParent(root);
+        Child3.addParent(root);
         Asset deepestChild = new Asset("Deepest");
-        deepestChild.setParent(Child1);
+        deepestChild.addParent(Child1);
 
         Rule delPerm = new Permission(Action.DELETE);
         Rule play = new Permission(Action.PLAY);
@@ -224,13 +224,13 @@ public class AssetTreeTest {
     public void policyUnion(){
         Asset root = new Asset("root");
         Asset Child1 = new Asset("Child1");
-        Child1.setParent(root);
+        Child1.addParent(root);
         Asset Child2 = new Asset("Child2");
-        Child2.setParent(root);
+        Child2.addParent(root);
         Asset Child3 = new Asset("Child3");
-        Child3.setParent(root);
+        Child3.addParent(root);
         Asset deepestChild = new Asset("Deepest");
-        deepestChild.setParent(Child1);
+        deepestChild.addParent(Child1);
 
         Rule delPerm = new Permission(Action.DELETE);
         Rule play = new Permission(Action.PLAY);
@@ -360,13 +360,13 @@ public class AssetTreeTest {
     public void policyIntersection(){
         Asset root = new Asset("root");
         Asset Child1 = new Asset("Child1");
-        Child1.setParent(root);
+        Child1.addParent(root);
         Asset Child2 = new Asset("Child2");
-        Child2.setParent(root);
+        Child2.addParent(root);
         Asset Child3 = new Asset("Child3");
-        Child3.setParent(root);
+        Child3.addParent(root);
         Asset deepestChild = new Asset("Deepest");
-        deepestChild.setParent(Child1);
+        deepestChild.addParent(Child1);
 
         Rule delPerm = new Permission(Action.DELETE);
         Rule play = new Permission(Action.PLAY);

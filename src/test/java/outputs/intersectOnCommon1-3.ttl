@@ -27,6 +27,10 @@
                             ]
                           ) ;
         odrl:prohibition  ( [ a            odrl:Prohibition ;
+                              odrl:action  odrl:stream ;
+                              odrl:target  <http://example.com/music/Child2>
+                            ]
+                            [ a            odrl:Prohibition ;
                               odrl:action  odrl:annotate ;
                               odrl:target  <http://example.com/music/Child2>
                             ]
@@ -53,7 +57,7 @@
                           ) .
 
 <http://example.com/music/Child2>
-        odrl:partOf  <http://example.com/music/rootRes> .
+        odrl:partOf  <http://example.com/music/Child1> , <http://example.com/music/rootRes> .
 
 <http://example.com/music/Child1>
         odrl:partOf  <http://example.com/music/rootRes> .

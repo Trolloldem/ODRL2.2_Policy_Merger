@@ -33,56 +33,80 @@ public class merger {
             if(!finalAssets.containsKey(uri))
                 finalAssets.put(uri,new Asset(uri));
 
-            AssetCollection parentFirst = assets.get(uri).getParent();
-            AssetCollection parentSecond = assetsSecond.get(uri).getParent();
+            Set<String> parentFirst = assets.get(uri).getParentURIs();
+            Set<String> parentSecond = assetsSecond.get(uri).getParentURIs();
 
-            if(!parentFirst.getURI().equals(parentSecond.getURI()) && (parentFirst.getURI().equals("EveryAsset") || parentSecond.getURI().equals("EveryAsset"))){
-                AssetCollection actParent = parentFirst.getURI().equals("EveryAsset") ? new Asset(parentSecond.getURI()) : new Asset(parentFirst.getURI());
+            if(!parentFirst.equals(parentSecond) && (parentFirst.contains("EveryAsset") || parentSecond.contains("EveryAsset"))) {
+                ArrayList<AssetCollection> toCheck = parentFirst.contains("EveryAsset") ? assetsSecond.get(uri).getParents() : assets.get(uri).getParents();
+                for(AssetCollection actParent : toCheck){
 
-                if(finalAssets.containsKey(actParent.getURI())){
-                    finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+                    if (finalAssets.containsKey(actParent.getURI())) {
+                        finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
+                    } else {
+
+
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
-            if(parentFirst.getURI().equals(parentSecond.getURI())){
-                if(finalAssets.containsKey(parentFirst.getURI())){
-                    finalAssets.get(parentFirst.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(parentFirst.getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(parentFirst.equals(parentSecond)) {
+                for (String parentURI : parentFirst){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
+            if(!parentFirst.equals(parentSecond) && !parentFirst.contains("EveryAsset") && !parentSecond.contains("EveryAsset")){
+                Set<String> totalParents = new HashSet<>(parentFirst);
+                totalParents.addAll(parentSecond);
+                for (String parentURI : totalParents){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
+                }
+            }
+
         }
 
-        for(String uri: assets.keySet()){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
 
-                if(finalAssets.containsKey(assets.get(uri).getParent().getURI())){
-                    finalAssets.get(assets.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assets.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+
+        for(String uri: assets.keySet()){
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assets.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri : uriSetSecond){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assetsSecond.get(uri).getParent().getURI())){
-                    finalAssets.get(assetsSecond.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assetsSecond.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assetsSecond.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
@@ -122,56 +146,75 @@ public class merger {
             if(!finalAssets.containsKey(uri))
                 finalAssets.put(uri,new Asset(uri));
 
-            AssetCollection parentFirst = assets.get(uri).getParent();
-            AssetCollection parentSecond = assetsSecond.get(uri).getParent();
+            Set<String> parentFirst = assets.get(uri).getParentURIs();
+            Set<String> parentSecond = assetsSecond.get(uri).getParentURIs();
 
-            if(!parentFirst.getURI().equals(parentSecond.getURI()) && (parentFirst.getURI().equals("EveryAsset") || parentSecond.getURI().equals("EveryAsset"))){
-                AssetCollection actParent = parentFirst.getURI().equals("EveryAsset") ? new Asset(parentSecond.getURI()) : new Asset(parentFirst.getURI());
+            if(!parentFirst.equals(parentSecond) && (parentFirst.contains("EveryAsset") || parentSecond.contains("EveryAsset"))) {
+                ArrayList<AssetCollection> toCheck = parentFirst.contains("EveryAsset") ? assetsSecond.get(uri).getParents() : assets.get(uri).getParents();
 
-                if(finalAssets.containsKey(actParent.getURI())){
-                    finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+                for(AssetCollection actParent : toCheck){
+                    if (finalAssets.containsKey(actParent.getURI())) {
+                        finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
+                    } else {
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
-            if(parentFirst.getURI().equals(parentSecond.getURI())){
-                if(finalAssets.containsKey(parentFirst.getURI())){
-                    finalAssets.get(parentFirst.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(parentFirst.getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(parentFirst.equals(parentSecond)) {
+                for (String parentURI : parentFirst){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
+                }
+            }
+            if(!parentFirst.equals(parentSecond) && !parentFirst.contains("EveryAsset") && !parentSecond.contains("EveryAsset")){
+                Set<String> totalParents = new HashSet<>(parentFirst);
+                totalParents.addAll(parentSecond);
+                for (String parentURI : totalParents){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri: assets.keySet()){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assets.get(uri).getParent().getURI())){
-                    finalAssets.get(assets.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assets.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assets.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri : uriSetSecond){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assetsSecond.get(uri).getParent().getURI())){
-                    finalAssets.get(assetsSecond.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assetsSecond.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assetsSecond.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
@@ -211,56 +254,75 @@ public class merger {
             if(!finalAssets.containsKey(uri))
                 finalAssets.put(uri,new Asset(uri));
 
-            AssetCollection parentFirst = assets.get(uri).getParent();
-            AssetCollection parentSecond = assetsSecond.get(uri).getParent();
+            Set<String> parentFirst = assets.get(uri).getParentURIs();
+            Set<String> parentSecond = assetsSecond.get(uri).getParentURIs();
 
-            if(!parentFirst.getURI().equals(parentSecond.getURI()) && (parentFirst.getURI().equals("EveryAsset") || parentSecond.getURI().equals("EveryAsset"))){
-                AssetCollection actParent = parentFirst.getURI().equals("EveryAsset") ? new Asset(parentSecond.getURI()) : new Asset(parentFirst.getURI());
+            if(!parentFirst.equals(parentSecond) && (parentFirst.contains("EveryAsset") || parentSecond.contains("EveryAsset"))) {
+                ArrayList<AssetCollection> toCheck = parentFirst.contains("EveryAsset") ? assetsSecond.get(uri).getParents() : assets.get(uri).getParents();
 
-                if(finalAssets.containsKey(actParent.getURI())){
-                    finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+                for(AssetCollection actParent : toCheck){
+                    if (finalAssets.containsKey(actParent.getURI())) {
+                        finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
+                    } else {
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
-            if(parentFirst.getURI().equals(parentSecond.getURI())){
-                if(finalAssets.containsKey(parentFirst.getURI())){
-                    finalAssets.get(parentFirst.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(parentFirst.getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(parentFirst.equals(parentSecond)) {
+                for (String parentURI : parentFirst){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
+                }
+            }
+            if(!parentFirst.equals(parentSecond) && !parentFirst.contains("EveryAsset") && !parentSecond.contains("EveryAsset")){
+                Set<String> totalParents = new HashSet<>(parentFirst);
+                totalParents.addAll(parentSecond);
+                for (String parentURI : totalParents){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri: assets.keySet()){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assets.get(uri).getParent().getURI())){
-                    finalAssets.get(assets.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assets.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assets.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri : uriSetSecond){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assetsSecond.get(uri).getParent().getURI())){
-                    finalAssets.get(assetsSecond.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assetsSecond.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assetsSecond.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
@@ -312,56 +374,75 @@ public class merger {
             if(!finalAssets.containsKey(uri))
                 finalAssets.put(uri,new Asset(uri));
 
-            AssetCollection parentFirst = assets.get(uri).getParent();
-            AssetCollection parentSecond = assetsSecond.get(uri).getParent();
+            Set<String> parentFirst = assets.get(uri).getParentURIs();
+            Set<String> parentSecond = assetsSecond.get(uri).getParentURIs();
 
-            if(!parentFirst.getURI().equals(parentSecond.getURI()) && (parentFirst.getURI().equals("EveryAsset") || parentSecond.getURI().equals("EveryAsset"))){
-                AssetCollection actParent = parentFirst.getURI().equals("EveryAsset") ? new Asset(parentSecond.getURI()) : new Asset(parentFirst.getURI());
+            if(!parentFirst.equals(parentSecond) && (parentFirst.contains("EveryAsset") || parentSecond.contains("EveryAsset"))) {
+                ArrayList<AssetCollection> toCheck = parentFirst.contains("EveryAsset") ? assetsSecond.get(uri).getParents() : assets.get(uri).getParents();
 
-                if(finalAssets.containsKey(actParent.getURI())){
-                    finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+                for(AssetCollection actParent : toCheck){
+                    if (finalAssets.containsKey(actParent.getURI())) {
+                        finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
+                    } else {
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
-            if(parentFirst.getURI().equals(parentSecond.getURI())){
-                if(finalAssets.containsKey(parentFirst.getURI())){
-                    finalAssets.get(parentFirst.getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(parentFirst.getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(parentFirst.equals(parentSecond)) {
+                for (String parentURI : parentFirst){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
+                }
+            }
+            if(!parentFirst.equals(parentSecond) && !parentFirst.contains("EveryAsset") && !parentSecond.contains("EveryAsset")){
+                Set<String> totalParents = new HashSet<>(parentFirst);
+                totalParents.addAll(parentSecond);
+                for (String parentURI : totalParents){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri: assets.keySet()){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assets.get(uri).getParent().getURI())){
-                    finalAssets.get(assets.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assets.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assets.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }
 
         for(String uri : uriSetSecond){
-            if(!commonURI.contains(uri)){
-                if(!finalAssets.containsKey(uri))
-                    finalAssets.put(uri,new Asset(uri));
-
-                if(finalAssets.containsKey(assetsSecond.get(uri).getParent().getURI())){
-                    finalAssets.get(assetsSecond.get(uri).getParent().getURI()).addChild(finalAssets.get(uri));
-                }else {
-                    AssetCollection actParent = new Asset(assetsSecond.get(uri).getParent().getURI());
-                    actParent.addChild(finalAssets.get(uri));
-                    finalAssets.put(actParent.getURI(),actParent);
+            if(!commonURI.contains(uri)) {
+                if (!finalAssets.containsKey(uri))
+                    finalAssets.put(uri, new Asset(uri));
+                for(String parentURI : assetsSecond.get(uri).getParentURIs()){
+                    if (finalAssets.containsKey(parentURI)) {
+                        finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+                    } else {
+                        AssetCollection actParent = new Asset(parentURI);
+                        actParent.addChild(finalAssets.get(uri));
+                        finalAssets.put(actParent.getURI(), actParent);
+                    }
                 }
             }
         }

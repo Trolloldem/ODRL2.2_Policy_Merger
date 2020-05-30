@@ -10,12 +10,10 @@ import Rule.Rule;
 import Writer.documentProducer;
 import mergingProcedure.merger;
 
-import java.io.File;
-
-import java.io.PrintStream;
 import java.util.*;
 
 import Parser.policyReader;
+import org.apache.jena.atlas.lib.CollectionUtils;
 import org.apache.jena.atlas.lib.Pair;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -37,7 +35,7 @@ public class Main {
 
         for(Map.Entry<String,Asset> entry : assets.entrySet()) {
             if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+                entry.getValue().addParent(every);
         }
 
         assets.put("EveryAsset", every);
@@ -70,8 +68,8 @@ TEST 2 FILE
 
         for(Map.Entry<String,Asset> entry : assets.entrySet()) {
 
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(every);
         }
 
         assets.put("EveryAsset", every);
@@ -93,8 +91,8 @@ TEST 2 FILE
         Asset everySecond = new Asset("EveryAsset");
 
         for(Map.Entry<String,Asset> entry : assetsSecond.entrySet()) {
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(everySecond);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(everySecond);
         }
 
         assetsSecond.put("EveryAsset", everySecond);
@@ -118,5 +116,7 @@ TEST 2 FILE
         documentProducer.produceDocument(resTree,hier,null);
 
     }
+
+
 
 }

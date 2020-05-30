@@ -28,8 +28,8 @@ public class runScenario {
 
         for(Map.Entry<String,Asset> entry : assets.entrySet()) {
 
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(every);
         }
 
         assets.put("EveryAsset", every);
@@ -51,8 +51,8 @@ public class runScenario {
         Asset everySecond = new Asset("EveryAsset");
 
         for(Map.Entry<String,Asset> entry : assetsSecond.entrySet()) {
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(everySecond);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(everySecond);
         }
 
         assetsSecond.put("EveryAsset", everySecond);
@@ -87,8 +87,8 @@ public class runScenario {
 
         for(Map.Entry<String,Asset> entry : assets.entrySet()) {
 
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(every);
         }
 
         assets.put("EveryAsset", every);
@@ -109,8 +109,8 @@ public class runScenario {
         Asset everySecond = new Asset("EveryAsset");
 
         for(Map.Entry<String,Asset> entry : assetsSecond.entrySet()) {
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(everySecond);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(everySecond);
         }
 
         assetsSecond.put("EveryAsset", everySecond);
@@ -145,8 +145,8 @@ public class runScenario {
 
         for(Map.Entry<String,Asset> entry : assets.entrySet()) {
 
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(every);
         }
 
         assets.put("EveryAsset", every);
@@ -168,8 +168,8 @@ public class runScenario {
         Asset everySecond = new Asset("EveryAsset");
 
         for(Map.Entry<String,Asset> entry : assetsSecond.entrySet()) {
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(everySecond);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(everySecond);
         }
 
         assetsSecond.put("EveryAsset", everySecond);
@@ -203,8 +203,8 @@ public class runScenario {
 
         for(Map.Entry<String,Asset> entry : assets.entrySet()) {
 
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(every);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(every);
         }
 
         assets.put("EveryAsset", every);
@@ -226,8 +226,8 @@ public class runScenario {
         Asset everySecond = new Asset("EveryAsset");
 
         for(Map.Entry<String,Asset> entry : assetsSecond.entrySet()) {
-            if (entry.getValue().getParent() == null)
-                entry.getValue().setParent(everySecond);
+            if (entry.getValue().getParents().size() == 0)
+                entry.getValue().addParent(everySecond);
         }
 
         assetsSecond.put("EveryAsset", everySecond);

@@ -3,6 +3,7 @@ package Assets;
 import Policy.Policy;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public interface AssetCollection {
 
@@ -17,11 +18,7 @@ public interface AssetCollection {
      */
     public String getURI();
 
-    /**
-     * Reset del padre dell'asset
-     * @param parent: AssetCollection che si vuole settare come padre
-     */
-    public void resetParent(AssetCollection parent);
+
 
     /**
      * Setter dell' URI dell'asset
@@ -40,7 +37,7 @@ public interface AssetCollection {
      * Getter del padre dell'asset
      * @return AssetCollection padre dell'AssetCollection su cui si chiama il metodo
      */
-    public AssetCollection getParent();
+    public ArrayList<AssetCollection> getParents();
     /**
      * Getter dei figli dell'asset
      * @return ArrayList di AssetCollection contenente i figli dell'AssetCollection di cui si chiama il metodo
@@ -49,15 +46,25 @@ public interface AssetCollection {
 
     /**
      * Setter del padre dell'asset
+     * @param parents: AssetCollection che si vuole settare come padre
+     */
+    public void addParents(ArrayList<AssetCollection> parents);
+
+    /**
+     * Setter del padre dell'asset
      * @param parent: AssetCollection che si vuole settare come padre
      */
-    public void setParent(AssetCollection parent);
+    public void addParent(AssetCollection parent);
+
+    public void addParent(AssetCollection parent,boolean secondary);
 
     /**
      * Aggiunge un figlio alla lista dei figli dell'asset
      * @param child: AssetCollection che si vuole aggiungere come figlio
      */
     public void addChild(AssetCollection child);
+
+    public void addChild(AssetCollection parent,boolean secondary);
 
     /**
      * Assegna una policy all'asset
@@ -72,5 +79,7 @@ public interface AssetCollection {
      * Propaga la policy dell'AssetCollection agli asset figli, unendo le policy
      */
     public void propagateUnion();
+
+    public Set<String> getParentURIs();
 
 }

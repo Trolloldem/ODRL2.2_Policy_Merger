@@ -227,7 +227,7 @@ public class policyReader {
 
                     QuerySolution asset = assetSet.next();
                     Resource assetRes = asset.getResource("sub");
-                    assets.get(assetRes.getURI()).setParent(assets.get(uri));
+                    assets.get(assetRes.getURI()).addParent(assets.get(uri));
 
                 }
             }catch (Exception e){
@@ -242,5 +242,19 @@ public class policyReader {
         return assets;
 
 
+    }
+
+    public static void retrieveODRLActionHierarchy(){
+        String queryString = "SELECT * FROM <https://www.w3.org/ns/odrl/2/ODRL22.ttl> WHERE {" +
+                "?sub <"+ODRL_vocab.includedIn+"> ?obj  }";
+        Query query = QueryFactory.create(queryString);
+        QueryExecution executionEnv = QueryExecutionFactory.create(query);
+        ResultSet resultSet = executionEnv.execSelect();
+
+        while(resultSet.hasNext()){
+
+            QuerySolution triplet = resultSet.next();
+            System.out.println("Action :"+triplet.getResource("sub")+ " is Included In: "+ triplet.getResource("obj"));
+        }
     }
 }

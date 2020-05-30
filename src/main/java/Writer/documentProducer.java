@@ -20,7 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class documentProducer {
     public static String resPath = "./src/main/java/Parser/output.ttl";
@@ -111,9 +113,16 @@ public class documentProducer {
 
     private static Resource processTargetNode(AssetCollection assetCollection, Model m) {
         Resource actualTarget = m.getResource(assetCollection.getURI());
-        Resource parentTarget = assetCollection.getParent() != null ? m.getResource(assetCollection.getParent().getURI()) : null;
-        if(parentTarget != null)
-            actualTarget.addProperty(ODRL_vocab.partOf, parentTarget);
+        Set<String> parents = assetCollection.getParents().size() != 0 ? assetCollection.getParentURIs() : new HashSet<String>();
+        System.out.println("PARANETS: "+parents);
+        for(String parentURI : parents) {
+            Resource parentTarget =  m.getResource(parentURI);
+
+            if (parentTarget != null)
+                actualTarget.addProperty(ODRL_vocab.partOf, parentTarget);
+
+        }
+        System.out.println(actualTarget.getProperty(ODRL_vocab.partOf));
         return actualTarget;
 
     }
