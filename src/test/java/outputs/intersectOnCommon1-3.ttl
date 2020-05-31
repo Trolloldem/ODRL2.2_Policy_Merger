@@ -1,6 +1,16 @@
 @prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
 
-<http://ID>  a            odrl:Set ;
+<http://example.com/music/Child2>
+        odrl:partOf  <http://example.com/music/rootRes> .
+
+<http://example.com/music/Child1>
+        odrl:partOf  <http://example.com/music/rootRes> .
+
+<http://example.com/music/rootRes>
+        odrl:partOf  <EveryAsset> .
+
+<http://intersectOnCommon1-3>
+        a                 odrl:Set ;
         odrl:permission   ( [ a            odrl:Permission ;
                               odrl:action  odrl:display ;
                               odrl:target  <http://example.com/music/Child2>
@@ -51,12 +61,3 @@
                               odrl:target  <http://example.com/music/Child1>
                             ]
                           ) .
-
-<http://example.com/music/Child2>
-        odrl:partOf  <http://example.com/music/rootRes> .
-
-<http://example.com/music/Child1>
-        odrl:partOf  <http://example.com/music/rootRes> .
-
-<http://example.com/music/rootRes>
-        odrl:partOf  <EveryAsset> .

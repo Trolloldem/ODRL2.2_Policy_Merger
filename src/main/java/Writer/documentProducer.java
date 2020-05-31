@@ -28,14 +28,18 @@ public class documentProducer {
     public static String resPath = "./src/main/java/Parser/output.ttl";
 
     public static void produceDocument(AssetTree tree, Map<String, AssetCollection> assets, String path) {
+        String URI = "ID";
         if(path == null){
             path = resPath;
+        }else{
+            String[] tokens = path.split("/");
+            URI = (tokens[tokens.length-1].split("\\."))[0];
         }
 
         Model m = ModelFactory.createDefaultModel();
         m.setNsPrefix("odrl", ODRL_vocab.NS);
         Resource policy;
-        policy = m.createResource("http://ID");
+        policy = m.createResource("http://"+URI);
         policy.addProperty(RDF.type, ODRL_vocab.Set);
         Map<String, Policy> allRules = tree.recoverAllPolicy();
         RDFList permList = null;

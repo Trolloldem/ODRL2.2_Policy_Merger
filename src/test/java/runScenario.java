@@ -248,6 +248,6 @@ public class runScenario {
 
         AssetTree resTree = mergingResult.getLeft();
         Map<String, AssetCollection> hier = mergingResult.getRight();
-        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/intersect1-3.ttl");
+        documentProducer.produceDocument(resTree,hier,"./src/test/java/outputs/union1-2.ttl");
     }
 }
