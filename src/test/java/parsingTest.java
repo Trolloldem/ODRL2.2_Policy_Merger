@@ -106,6 +106,7 @@ public class parsingTest {
             Asset actAsset = entry.getValue();
             if(actAsset.equals(new Asset("http://example.com/music/1999.mp3"))){
                 assertEquals(true, actAsset.getParents().contains(new Asset("http://example.com/music/aLotOfMp3")), "Parent errato per l'asset: "+actAsset.getURI());
+                assertEquals(1, actAsset.getParents().size(), "Parent errati per l'asset: "+actAsset.getURI());
                 assertEquals(null, actAsset.getChildren(), "Figli errati per l'asset: "+actAsset.getURI());
             }
             if(actAsset.equals(new Asset("http://example.com/music/aLotOfMp3"))){
@@ -116,11 +117,13 @@ public class parsingTest {
             }
             if(actAsset.equals(new Asset("http://example.com/music/PurpleRain.mp3"))){
                 assertEquals(true, actAsset.getParents().contains(new Asset("http://example.com/music/aLotOfMp3")), "Parent errato per l'asset: "+actAsset.getURI());
+                assertEquals(1, actAsset.getParents().size(), "Parent errati per l'asset: "+actAsset.getURI());
                 assertEquals(true, actAsset.getChildren().contains(new Asset("http://example.com/music/10secPurple.mp3")), "Figli errati per l'asset: "+actAsset.getURI());
                 assertEquals(1, actAsset.getChildren().size(),"Figli errati per l'asset: "+actAsset.getURI());
             }
             if(actAsset.equals(new Asset("http://example.com/music/10secPurple.mp3"))){
                 assertEquals(true, actAsset.getParents().contains(new Asset("http://example.com/music/PurpleRain.mp3")), "Parent errato per l'asset: "+actAsset.getURI());
+                assertEquals(1, actAsset.getParents().size(), "Parent errati per l'asset: "+actAsset.getURI());
                 assertEquals(null, actAsset.getChildren(), "Figli errati per l'asset: "+actAsset.getURI());
             }
 

@@ -114,7 +114,6 @@ public class documentProducer {
     private static Resource processTargetNode(AssetCollection assetCollection, Model m) {
         Resource actualTarget = m.getResource(assetCollection.getURI());
         Set<String> parents = assetCollection.getParents().size() != 0 ? assetCollection.getParentURIs() : new HashSet<String>();
-        System.out.println("PARANETS: "+parents);
         for(String parentURI : parents) {
             Resource parentTarget =  m.getResource(parentURI);
 
