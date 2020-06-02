@@ -588,7 +588,92 @@ Come già citato, questo modello è ben visibile all'interno di ODRL, per esempi
 		\item l'URI relativo al contesto del documento, il quale contiene a suo volta informazioni utili per leggere correttamente una policy;
 	\end{itemize}
 \end{itemize}
+\subsection{RDF}
+``RDF, o \textit{Resource Description Framework}, si pone alle fondamenta del processing di metadati; fornisce interoperabilità tra applicazioni che si scambiano infromazioni machine-readable nel Web. RDF enfatizza procedure per abilitare l'elaborazione automatica per risorse web''\cite{RDF}. Tra i casi d'uso supportati da RDF vi sono:
+\begin{itemize}
+\item recupero di risorse web per ottenere migliori motori di ricerca;
+\item catalogazione di contenuto ed espressione di relazioni tra varie fonti nel Web;
+\item rappresentazione di proprietà intellettuale e diritti relativi ad una risorsa Web.
+\end{itemize}
+RDF inoltre, condivide la visione per la quale un metadato può essere a sua volta un dato, poiché per all'interno del framework è si definisce come risorsa qualsiasi entità identificabile mediante un URI.\\
+Tra le caratteristiche di RDF vi è il proporre una sintassi che per descrivere risorse che sia indipendente dal dominio di applicazione: 
+\begin{itemize}
+\item non vi sono assunzioni specifiche di dominio applicativo;
+\item non vi sono restrizioni di semantica, definibile in base al dominio.
+\end{itemize}
+La sintassi mostrata, fa riferimento a ciò che è definito come \textit{serialization syntax}: formato XML per la rappresentazione del modello RDF. Tale sintassi non è l'unica possibile né l'unica valida:
+\begin{itemize}
+\item la \textit{serialization syntax} si riferisce al lavoro che la W3C sta svolgendo in questo ambito per affinare il modello RDF;
+\item altre rappresentazioni possono essere più utili in base allo scenario applicativo, per esempio nel caso in cui il documento debba essere anche leggibile da persone.
+\end{itemize}
+\paragraph{Il modello RDF}\mbox{}\\
+Il modello RDF è definito come segue\cite{RDF}:
+\begin{enumerate}
+\item dato un insieme di nodi, definito come N;
+\item sia un sottoinsieme di N, detto \textit{PropertyTypes}, definito come P;
+\item sia un insieme di triple, definito come T, i cui elementi vengono informarmalmente chiamati proprietà. Il primo elemento di ogni tripla è un elemento di P, il secondo un elemento di N ed il terzo può essere un elemento di N o un valore atomico, ad esempio una stringa Unicode.
+\end{enumerate}
+La rappresentazione del modello equivale ad un grafo orientato, i cui nodi sono le risorse descritte o i valori che le descrivono; gli archi che collegano i nodi presentano come label i nomi dei \textit{PropertyTypes} che li collegano. Per esempio:
+\begin{enumerate}
+\item la frase \\``Ora Lassila" è l' "autore" della pagina web ``http://www.w3.org/People/Lassila''''
+\item è serializzata come \\ \{autore, [http://www.w3.org/People/Lassila], "Ora Lassila"\}
+\item dalla definizio del modello, è possibile dedurre che la label \textit{autore} è il nome di un nodo appartenente a P;
+\item tale nodo, identificato con X,avrà a sua volta le seguenti serializzazioni:
+\begin{enumerate}
+\item \{PropName,  X, author\}
+\item \{PropObj,   X, [http://www.w3.org/People/Lassila]\}
+\item \{PropValue, X, "Ora Lassila"\}
+\end{enumerate}
 
+\end{enumerate}
+Nell'esempio precedente, si è mostrato il tipo di asserzione più semplice che RDF è in grado di supportare; quanto segue mostra come si possano creare relazioni tra le varie risorse:
+\begin{enumerate}
+\item la frase \\``Ralph crede che il documento 'L'origine delle specie' abbia come autore Charles Darwin''
+\item è serializzata come \\ \{crede, "Ralph", Statement1\}
+\item le serializzazioni relative al nodo di \textit{crede}, identificato con X, sono:
+\begin{enumerate}
+\item \{PropName,  X, crede\}
+\item \{PropObj,   X, Ralph\}
+\item \{PropValue, X, Statement1\}
+\end{enumerate}
+\item \textit{Statement1} è un elemento di T, ovvero un tripla;
+\item le serializzazioni relative a Statement1 sono:
+\begin{enumerate}
+\item \{PropName, Statement1, autore\}
+\item \{PropObj, Statement1, [http://loc.gov/Books/OrigineSpecie]\}
+\item \{PropValue, Statement1, Charles Darwin\}
+\end{enumerate}
+\end{enumerate}
+Dagli esempi mostrati, risulta possibile denotare che il cuore del modello RDF siano quindi le triple che si definiscono, dove in ognuna è possibile individuare:
+\begin{itemize}
+\item \textbf{predicato}: nodo appartente a P;
+\item \textbf{oggetto}: nodo sorgente dello statement; appartiene a P ed è il nodo a cui si applica il predicato;
+\item \textbf{valore}: nodo destinazione dello statement; appartiene a P, T, o è un valore atomico ed è il valore del predicato.
+\end{itemize}
+\paragraph{Grammatica RDF e rappresentazione grafica}\mbox{}\\
+Il seguente codice mostra un frammento di descrizione di dati conforme al modello RDF tramite XML:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioXML]
+<?namespace 
+	href="http://docs.r.us.com/bibliography-info"
+	as="bib"?> 
+<?namespace 
+	href="http://www.w3.org/schemas/rdf-schema"
+	as="RDF"?> 
+<RDF:serialization> 
+  <RDF:assertions href="http://www.bar.com/some.doc"> 
+    <bib:author>John Smith</bib:author> 
+  </RDF:assertions> 
+</RDF:serialization>
+\end{lstlisting}
+Risulta possibile notare i seguenti tag:
+\begin{itemize}
+\item \textbf{serialization}: indica un insieme di triple all'interno del modello;
+\item \textbf{assertions}: indica un'effettiva tripla all'interno del modello, i cui elementi sono individuati nei tag:
+\begin{itemize}
+\item \textbf{href} nel tag assertions: indica l'oggetto della tripla;
+\item \textbf{prefix:PropertyName}: tag definito dall'applicazione che indica il predicato della tripla; il valore di quest elemento XML indica invece il valore del predicato.
+\end{itemize}
+\end{itemize}
 \chapter{Valutazione casistiche}
 \section{Casistiche di merging}
 \paragraph{Casi base}\mbox{}\\
