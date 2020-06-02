@@ -76,7 +76,7 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\chapter{ODRL}
+\chapter{ODRL}\label{ODRLChapter}
 \section{Il linguaggio}
 \subsection{Definizione ed obiettivi}
 ``L' Open Digital Rights Language (ODRL) è un linguaggio per l'espressione di policy che definisce: un modello dell'informazione flessibile ed interoperativo, un vocabolario e un meccanismo di codifica per la rappresentazione delle istruzioni sull'uso di contenuti o servizi''\cite{ODRLinfMod}.\\
@@ -674,6 +674,74 @@ Risulta possibile notare i seguenti tag:
 \item \textbf{prefix:PropertyName}: tag definito dall'applicazione che indica il predicato della tripla; il valore di quest elemento XML indica invece il valore del predicato.
 \end{itemize}
 \end{itemize}
+Di seguito la rappresentazione grafica del grafo codificato:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.50]{../immagini/RDFXML.jpg}
+\caption{Rappresentazione grafica del grafo codificato nel listing \ref{esempioXML}}
+\label{imgEsempioXML}
+\end{figure}
+Nell'esempio che segue è invece possibile notare come sfruttare uno statement come valore di una tipla:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioComplexXML]
+<?namespace 
+  href="http://docs.r.us.com/bibliography-info"
+  as="bib"?> 
+<?namespace 
+  href="http://www.w3.org/schemas/rdf-schema"
+  as="RDF"?> 
+<RDF:serialization> 
+  <RDF:assertions href="http://www.bar.com/some.doc"> 
+    <bib:author> 
+      <RDF:resource> 
+        <bib:name>John Smith</bib:name> 
+        <bib:email>john@smith.com</bib:email> 
+        <bib:phone>+1 (555) 123-4567</bib:phone> 
+      </RDF:resource> 
+    </bib:author> 
+  </RDF:assertions> 
+</RDF:serialization>
+\end{lstlisting}
+Risulta possibile anche ottenere una scrittura più modulare, sfruttando la proprietà \textit{id} del tag \textit{resource}:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioIdXML]
+<?namespace 
+	href="http://docs.r.us.com/bibliography-info" 
+	as="bib"?> 
+<?namespace 
+	href="http://www.w3.org/schemas/rdf-schema"
+	as="RDF"?> 
+<RDF:serialization> 
+  <RDF:assertions href="http://www.bar.com/some.doc"> 
+    <bib:author href="#John_Smith"/> 
+  </RDF:assertions> 
+</RDF:serialization>
+
+<RDF:resource id="John_Smith"> 
+  <bib:name>John Smith</bib:name> 
+  <bib:email>john@smith.com</bib:email> 
+  <bib:phone>+1 (555) 123-4567</bib:phone> 
+</RDF:resource> 
+\end{lstlisting}
+Entrambi gli esempi mostrati nei listing \ref{esempioComplexXML} e \ref{esempioIdXML}, si riconducono alla seguente rappresentazione grafica:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.50]{/home/oldem/IdeaProjects/actionTree/File documento di tesi/immagini/complexXML.jpg}
+\caption{Rappresentazione grafica del grafo codificato nei listing \ref{esempioComplexXML} e \ref{esempioIdXML}}
+\label{imgEsempioComplexXML}
+\end{figure}
+\paragraph{Tag namespace}\mbox{}\\
+Il tag \textit{namespace} è un'estensione alla specifica RDF attualmente non mandatorio. Tale tag è stato introdotto per rendere la sintassi relativa alla semantica di un tag specifico di dominio meno prolissa:
+\begin{itemize}
+ \item \textbf{as}: proprietà del tag che indica il nome del namespace;
+ \item \textbf{href}: porzione di identificativo da sostituire alla proprietà \textit{as} quando la si incontra.
+\end{itemize} 
+Prendendo ad esempio il listing \ref{esempioComplexXML}: il tag \textit{bib:name} è da interpretare come \url{http://docs.r.us.com/bibliography-info/name}; quest'ultimo risulta infatti essere l'URI che identifica la proprietà e dove è possibile recuperare informazioni su di essa.\\
+Il suo utilizzo è denotabile all'interno di ODRL, come ad esempio nel listing \ref{esempioParty}, dove il tag \textit{@context} svolge un ruolo simile: fa riferimento ad un file RDF all'interno del quale sono definite tutte le abbreviazioni utili ad ODRL tramite le seguenti linee di codice:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Estratto context ODRL\cite{ODRLContext}},captionpos=b,label=contextJSONLD]
+"odrl":       "http://www.w3.org/ns/odrl/2/",
+"Permission": "odrl:Permission",
+"permission": {"@type": "@id", "@id": "odrl:permission"}
+\end{lstlisting}
+Come è possibile notare, il formato di serializzazione utilizzato nel listing \ref{contextJSONLD} non è XML, bensì JSON-LD, così come anche nei vari listing presentati nel capitolo \ref{ODRLChapter} relativo ad ODRL.
 \chapter{Valutazione casistiche}
 \section{Casistiche di merging}
 \paragraph{Casi base}\mbox{}\\
