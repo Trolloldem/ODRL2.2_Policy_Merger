@@ -1,0 +1,65 @@
+\begin{thebibliography}{1}
+
+\bibitem{LinkedDataInfo}
+Christian Bizer, Tom Heath and Tim Berners-Lee.
+\newblock \href{http://tomheath.com/papers/bizer-heath-berners-lee-ijswis-linked-data.pdf}{Linked Data - The Story So Far}.
+
+\bibitem{ODRLCV}
+Renato Iannella, Michael Steidl, Stuart Myles, and Víctor Rodríguez-Doncel.
+\newblock \href{https://www.w3.org/ns/odrl/2/}{Odrl version 2.2 ontology}.
+
+\bibitem{ODRVocab}
+Renato Iannella, Michael Steidl, Stuart Myles, and Víctor Rodríguez-Doncel.
+\newblock \href{https://www.w3.org/TR/odrl-vocab/}{Odrl vocabulary \& expression 2.2}.
+
+\bibitem{ODRLinfMod}
+Renato Iannella and Serena Villata.
+\newblock \href{https://www.w3.org/TR/odrl-model/}{Odrl information model 2.2}.
+
+\bibitem{ODRLBestPract}
+Benedict~Whittam Smith and Víctor Rodríguez-Doncel.
+\newblock \href{https://w3c.github.io/odrl/bp/}{Odrl implementation best practices}.
+
+
+\bibitem{ODRLPage}
+ODRL Community Group web page.
+\newblock \href{https://www.w3.org/community/odrl/}{ODRL Community Group}.
+
+\bibitem{evalStatus}
+W3C Permissions and Obligations Expression Working Group.
+\newblock \href{https://w3c.github.io/poe/test/implementors}{ODRL Candidate Recommendation - Implementation Report}.
+
+\bibitem{validator}
+W3C Permissions and Obligations Expression Working Group.
+\newblock \href{https://odrlapi.appspot.com/}{ODRL Implementation}.
+
+\bibitem{api}
+Víctor Rodríguez-Doncel.
+\newblock \href{https://oeg-upm.github.io/odrlapi/}{ODRLAPI: A Java API to manipulate ODRL2.0 RDF expressions}.
+
+\bibitem{editor}
+Víctor Rodríguez-Doncel and  Guillermo Gutierrez Lorenzo.
+\newblock \href{https://odrleditor.appspot.com/}{ODRL Editor}
+
+\bibitem{Jena}
+The Apache Software Foundation.
+\newblock \href{https://jena.apache.org/index.html}{Apache Jena}.
+
+\bibitem{SemanticWeb}
+W3C.
+\newblock \href{https://www.w3.org/standards/semanticweb/}{Semantic Web}.
+\bibitem{introSem}
+Oreste Signore
+\newblock \href{https://www.researchgate.net/publication/237469886_Introduzione_al_Semantic_Web}{Introduzione al Semantic Web}
+
+\bibitem{RDF}
+Eric Miller and Bob Schloss.
+\newblock \href{https://www.w3.org/TR/WD-rdf-syntax-971002/}{Resource Description Framework (RDF)}
+\bibitem{RDFS}
+Dan Brickley and R.V. Guha.
+\newblock \href{https://www.w3.org/TR/rdf-schema/}{RDF Schema}
+
+\bibitem{dbpedia}
+DBPedia official site.
+\newblock \href{https://wiki.dbpedia.org/}{DBPedia}.
+\end{thebibliography}
