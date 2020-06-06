@@ -387,7 +387,7 @@ Esempi di utilizzi dei constraint:
 }]
 }
 \end{lstlisting}
-\paragraph{Rule}\mbox{}\\
+\paragraph{Rule}\label{ODRLRulePara}\mbox{}\\
 Come definito nel modello presente nella sezione \ref{modello}, \textbf{rule} è una classe astratta che raccoglie gli aspetti comuni della classi  \textbf{permission}, \textbf{prohibition}, and \textbf{duty}. Rappresenta una delle regole all'interno della policy. Presenta le seguenti proprietà:
 \begin{itemize}
 	\item una \textbf{action}: azione regolamentata;
@@ -734,14 +734,151 @@ Il tag \textit{namespace} è un'estensione alla specifica RDF attualmente non ma
  \item \textbf{as}: proprietà del tag che indica il nome del namespace;
  \item \textbf{href}: porzione di identificativo da sostituire alla proprietà \textit{as} quando la si incontra.
 \end{itemize} 
-Prendendo ad esempio il listing \ref{esempioComplexXML}: il tag \textit{bib:name} è da interpretare come \url{http://docs.r.us.com/bibliography-info/name}; quest'ultimo risulta infatti essere l'URI che identifica la proprietà e dove è possibile recuperare informazioni su di essa.\\
+Prendendo ad esempio il listing \ref{esempioComplexXML}: il tag \textit{bib:name} è da interpretare come: \\\url{http://docs.r.us.com/bibliography-info/name}\\ quest'ultimo risulta infatti essere l'URI che identifica la proprietà, inoltre è un riferimento a dove è possibile recuperare informazioni su di essa.\\
 Il suo utilizzo è denotabile all'interno di ODRL, come ad esempio nel listing \ref{esempioParty}, dove il tag \textit{@context} svolge un ruolo simile: fa riferimento ad un file RDF all'interno del quale sono definite tutte le abbreviazioni utili ad ODRL tramite le seguenti linee di codice:
 \begin{lstlisting}[language=json,firstnumber=1,caption={Estratto context ODRL\cite{ODRLContext}},captionpos=b,label=contextJSONLD]
 "odrl":       "http://www.w3.org/ns/odrl/2/",
 "Permission": "odrl:Permission",
 "permission": {"@type": "@id", "@id": "odrl:permission"}
 \end{lstlisting}
-Come è possibile notare, il formato di serializzazione utilizzato nel listing \ref{contextJSONLD} non è XML, bensì JSON-LD, così come anche nei vari listing presentati nel capitolo \ref{ODRLChapter} relativo ad ODRL.
+Come è possibile notare, il formato di serializzazione utilizzato nel listing \ref{contextJSONLD} non è XML, bensì JSON-LD, così come anche nei vari listing presentati nel capitolo \ref{ODRLChapter} relativo ad ODRL.\\
+All'interno del lavoro di tesi, le serializzazioni utilizzate sono:
+\begin{itemize}
+\item JSON-LD: utilizzato negli esempi ed in input al processo di merging;
+\item Turtle\cite{Turtle}: utilizzato come output del processo di merging, tale decisione è stata presa poiché risulta essere la serializzazione più matura nel framework Jena.
+\end{itemize}
+\subsection{RDFS}
+Come esposto in precedenza, il modello RDF fornisce la sintassi necessaria per creare metadati in grado di rappresentare relazioni tra le varie risorse, lasciando libertà assoluta sul significato che queste relazioni possono avere. RDFS è ``un'estensione semantica''\cite{RDFS} di RDF che permette di descrivere gruppi di risorse correlate e le relazioni tra le varie risorse. RDFS basa il suo funzionamento sulla definizione di 2 termini:
+\begin{itemize}
+\item \textbf{rdfs:Class}: raggruppamento di risorse con le stesse proprietà, come ad esempio la classe \textit{odrl:Policy};
+\item \textbf{rdf:Property}: relazione tra risorse soggetto e risorse soggetto; istanze di questa particolare classe possiedono, a loro volta, le seguenti proprietà:
+\begin{itemize}
+\item \textbf{rdfs:range}: i \textit{valori} in una tripla della proprietà devono essere istanze delle classi specificate in questa proprietà;  
+\item \textbf{rdfs:domain}: gli \textit{oggetti} in una tripla della proprietà devono essere istanze delle classi specificate in questa proprietà; 
+\end{itemize}
+\end{itemize}
+Oltre a quanto appena mostrato, esistono anche 2 proprietà denominate: \textbf{rdfs:subClassOf} e \textbf{rdfs:subPropertyOf}, le quali permettono di definire un sistema di ereditarietà tra classi e tra proprietà, come ad esempio nel vocabolario ODRL si ha:\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={Estratto vocabolario ODRL\cite{ODRVocab}},captionpos=b,label=vocabExtract]
+<rdfs:Class 
+  rdf:about="http://www.w3.org/ns/odrl/2/Prohibition">
+  
+  <rdfs:isDefinedBy 
+    rdf:resource="http://www.w3.org/ns/odrl/2/"/>
+  
+  <rdfs:label xml:lang="en">Prohibition</rdfs:label>
+  <rdfs:subClassOf
+   rdf:resource="http://www.w3.org/ns/odrl/2/Rule"/>
+  
+</rdfs:Class>
+  \end{lstlisting}
+L'estratto mostrato è la definizione della sottoclasse \textit{Prohibition}, esposta nella sezione \ref{ODRLRulePara}. Un secondo esempio, sempre visibile in ODRL, è la definizione della proprietà ``odrl:partOf'', mostrata nei listing \ref{esempioAssetColl} e \ref{esempioPartyColl}, tale proprietà:
+\begin{itemize}
+\item 2 possibili \textit{rdfs:domain} e 2 possibili \textit{rdfs:range};
+\item solo 2 coppie \textit{rdfs:domain}-\textit{rdfs:range} sono valide, tale restrizione è espressa mediante OWL\cite{OWL}, ulteriore estensione semantica utilizzata per espriremere concetti logici complessi;
+\item all'interno delle proprietà sono specificate le 2 classi \textit{odrl:Party} ed \textit{odrl:Asset}.
+\end{itemize}
+\subsection{Apache Jena}
+``Apache Jena (o Jena) è un framework Java free ed open source per creare applicazioni del semantic web o che sfruttano Linked Data. Il framework è composta da diverse API che interagiscono al fine di processare dati RDF.''\cite{Jena}\\
+Per questo motivo si è scelto Jena come insieme di utility sia a supporto della porzione di parsing, descritta nella sezione \ref{parsingSection}, sia a supporto della porzione di produzione del documento ODRL finale, descritta nella sezione \ref{produceSection}. Nel dettaglio, le API utilizzate comprendono:
+\begin{itemize}
+\item \textbf{Core RDF API};
+\item \textbf{Jena schemagen};
+\item \textbf{ARQ - A SPARQL Processor for Jena};
+\item \textbf{Modulo I/O}.
+\end{itemize}
+\paragraph{Core RDF API}\mbox{}\\
+Questa porzione del framework offre interfacce per l'interazione con il modello RDF. La rappresentazione offerta da questa libreria si basa su triple, i cui elementi sono denominati:
+\begin{itemize}
+\item \textbf{resource}: l'oggetto dello statement codificato dalla tripla;
+\item \textbf{property}: il predicato dello statement;
+\item \textbf{value}: il valore dello statement, il quale può essere a sua volta una risorsa.
+\end{itemize}
+L'interfaccia core fornita da questo componente è denominata \textit{Model}, il quale denota un'intero grafo RDF; questa interfaccia è intesa per supportare operazioni molto astratte sull'intero modello, e può essere usata per:
+\begin{itemize}
+\item specificare su quale file o collezione di file RDF si sta lavorando;
+\item aggiungere, recuperare e rimuovere nodi dal grafo;
+\item settare i \textit{namespace} utilizzati all'interno del modello;
+\item settare la serializzazione con la quale il modello viene mostrato;
+\item interagire con l'API ARQ per l'interrogazione del modello tramite query SPARQL.
+\end{itemize}
+\paragraph{Jena schemagen}\mbox{}\\
+Questo tool fornito dal framework ha utilità puramente tecnica, in quanto è uno strumento per ``convertire vocabolari OWL o RDFS in una classe Java class che contiene costanti statiche per i termini nel vocabolario''.\\
+L'effettivo utilizzo del tool si traduce nel suo processare un file RDF, in questo caso il file context di ODRL\cite{ODRLContext}, automatizzando il processo di estrazione dei termini all'interno del vocabolario. I vantaggi di questo approccio si traducono in:
+\begin{itemize}
+\item l'utilizzo di variabili facilmente leggibili all'interno del linguaggio ARQ, anziché dell'URI che definisce la classe o la proprietà;
+\item interazione più trasparente con le \textit{Core RDF API} in fase di aggiunta risorse o di definizione delle proprietà di un nodo.
+\end{itemize}
+Il contributo di questo tool non è direttamente visibile all'interno del codice del progetto di tesi, poiché è stata sfruttata la versione standalone del tool.
+\paragraph{ARQ e SPARQL}\mbox{}\\
+``ARQ è il query engine fornito da Jena che supporta il linguaggio SPARQL RDF Query.''\cite{Jena}\\
+Il linguaggio ``SPARQL può essere usato per esprimere query su diverse sorgenti di dati, sia su dati nativi RDF o esposti come RDF via middleware.''\cite{SPARQL}\\
+L'obiettivo di queste tecnologie è fornire interfacce che permettano l'interrogazione di modelli RDF. ARQ è l'API esposta da Jena per formulare tramite Java le interrogazioni; SPARQL è l'effettivo linguaggio nel quale è espressa la query.\\
+Prendendo ad esempio il seguente file in formato RDF:\\
+
+\begin{lstlisting}[language=json,firstnumber=1,caption={File sul quale si vuole eseguire una query},captionpos=b,label=SPARQLRDF]
+@prefix dc:   <http://purl.org/dc/elements/1.1/> .
+@prefix :     <http://example.org/book/> .
+@prefix ns:   <http://example.org/ns#> .
+
+:book1  dc:title  "SPARQL Tutorial" .
+:book1  ns:price  42 .
+:book2  dc:title  "The Semantic Web" .
+:book2  ns:price  23 .
+
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={Query SPARQL per il recupero dei titoli che iniziano per SPARQL},captionpos=b,label=SPARQLQuery]
+
+PREFIX  dc:  <http://purl.org/dc/elements/1.1/>
+SELECT  ?title
+WHERE   { ?x dc:title ?title
+          FILTER regex(?title, "^SPARQL") 
+        }
+\end{lstlisting}\mbox{}\\ \\  
+Il risultato della query nel listing \ref{SPARQLQuery} è la tupla:
+\begin{center} (\textbf{title} = ``SPARQL Tutorial'')\end{center}
+Questo secondo esempio mostra come sia possibile filtrare uno statement sulla base di più espressioni:\\
+\begin{lstlisting}[language=json,firstnumber=1,caption={File sul quale si vuole eseguire una query},captionpos=b,label=SPARQLRDF2]
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+
+_:a  foaf:name   "Johnny Lee Outlaw" .
+_:a  foaf:mbox   <mailto:jlow@example.com> .
+_:b  foaf:name   "Peter Goodguy" .
+_:b  foaf:mbox   <mailto:peter@example.org> .
+_:c  foaf:mbox   <mailto:carol@example.org> .
+\end{lstlisting}\mbox{}
+
+\begin{lstlisting}[language=json,firstnumber=1,caption={Query SPARQL per il recupero dei nomi e delle mail solo per soggetti che presentano entrambe le proprietà},captionpos=b,label=SPARQLQuery2]
+PREFIX foaf:   <http://xmlns.com/foaf/0.1/>
+SELECT ?name ?mbox
+WHERE
+  { ?x foaf:name ?name .
+    ?x foaf:mbox ?mbox }
+\end{lstlisting}\mbox{}
+Il risultato della query nel listing \ref{SPARQLQuery} sono le tuple:
+\begin{center}
+(\textbf{name} = "Johnny Lee Outlaw", \textbf{mbox} = <mailto:jlow@example.com>)\\
+(\textbf{name} = "Peter Goodguy",	\textbf{mbox} = <mailto:peter@example.org>)
+\end{center}
+Risulta possibile notare che l'ultima tripla presente nel listing \ref{SPARQLRDF2} non sia stata utilizzata per costruire il risultato della query, poiché l'oggetto \textit{\_:c} non ha la proprietà \textit{foaf:mbox}.\\
+Il ruolo che hanno le API ARQ all'interno di del progetto è di collegamente tra le query e le \textit{CORE RDF API}, nonché di semplificazione della sintassi, evitando il costrutto \textit{PREFIX} laddove già presente all'interno del modello sul quale si eseguono le query.
+\paragraph{Modulo I/O}\mbox{}\\
+Il modulo Input/Output fornisce le interfacce necessarie:
+\begin{itemize}
+\item alla lettura di un file in formato RDF, supportando le serializzazioni:
+\begin{itemize}
+\item Turtle;
+\item N-Triples;
+\item N-Quads;
+\item TriG;
+\item RDF/XML;
+\item JSON-LD;
+\item RDF/JSON;
+\item TriX;
+\item RDF Binary;
+\end{itemize}
+\item alla scrittura di un file in formato RDF, supportando le medesime serializzazione mostrate in lettura.
+\end{itemize}
+Il modello espresso mediante \textit{CORE RDF API} otttenuto da questi moduli è il medesimo a discapito della serializzazione utilizzata, di conseguenza non è necessario, almeno in lettura, attuare implementazioni specifiche basate sul formato. Quest'ultima constatazione vale anche per il procedimento di parsing e, quindi, per l'intera procedura di merging a valle. L'unica porzione del progetto che necessita di adattamenti in base al formato risulta essere il produttore di documenti ODRL, in quanto alcuni formati possono necessitare di alcuni adattamenti per essere resi più leggibili dagli utenti. Non sono invece necessari adattamenti per l'utilizzo da parte di un programma.
 \chapter{Valutazione casistiche}
 \section{Casistiche di merging}
 \paragraph{Casi base}\mbox{}\\
@@ -1041,7 +1178,7 @@ Come mostrato nella figura \ref{archGenImpl}, l'architettura generale è una sem
 \end{itemize}
 Queste 2 operazioni sono attuate all'interno del componente denominato \textbf{``Logica Merging''}, il quale si occupa di aggiungere la semantica necessaria alle policy ODRL, per poi produrre il documento finale.\\
 Il primo componente della pipeline si occupa invece di estrarre le informazioni di rilievo dalle policy in ingresso, mentre il componente in coda si occupa di produrre un documento conforme ad ODRL per dare una forma al risultato ottenuto.
-\section{Parser}
+\section{Parser}\label{parsingSection}
 //TODO: l'implementazione è iniziata, devo ancora scrivere
 \section{Logica Merging}
 All'interno di questo componente, è presente la porzione di soluzione atta ad eseguire le effettive operazioni di merging delle policy in ingresso.\\
@@ -1372,7 +1509,7 @@ L'output di questo passo sono quindi 2 mappe, una per documento di policy, che l
 \subparagraph{Esecuzione del merging e propagazione}\mbox{}\\
 Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di mergin desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
 Il risultato finale è quindi un \text{Gestore gerarchia} dal quale possono essere recuperate tutte le policy finali relative agli asset. Queste policy vengono poi utilizzate dal produttore di policy per generare il documento ODRL relativo alle regole ottenute.
-\section{Produzione policy ODRL}
+\section{Produzione policy ODRL}\label{produceSection}
 //TODO
 \bibliography{cit}{}
 \bibliographystyle{plain}

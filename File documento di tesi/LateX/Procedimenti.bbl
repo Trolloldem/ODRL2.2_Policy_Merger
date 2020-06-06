@@ -62,4 +62,25 @@ Dan Brickley and R.V. Guha.
 \bibitem{dbpedia}
 DBPedia official site.
 \newblock \href{https://wiki.dbpedia.org/}{DBPedia}.
+
+\bibitem{ODRLContext}
+W3C.
+\newblock \href{https://www.w3.org/ns/odrl.jsonld}{ODRL context file, formato JSON-LD}.
+
+\bibitem{Turtle}
+David Beckett and Tim Berners-Lee.
+\newblock \href{https://www.w3.org/TeamSubmission/turtle/}{Turtle - Terse RDF Triple Language}.
+
+\bibitem{OWL}
+OWL Working Group.
+\newblock \href{https://www.w3.org/OWL/}{Web Ontology Language}.
+
+\bibitem{SPARQL}
+Steve Harris and Andy Seaborne.
+\newblock \href{https://www.w3.org/TR/2013/REC-sparql11-query-20130321/}{SPARQL 1.1 Query Language}.
+
+
 \end{thebibliography}
+
+
+
