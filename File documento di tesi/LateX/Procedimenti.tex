@@ -1635,7 +1635,27 @@ L'output di questo passo sono quindi 2 mappe, una per documento di policy, che l
 Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di mergin desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
 Il risultato finale è quindi un \text{Gestore gerarchia} dal quale possono essere recuperate tutte le policy finali relative agli asset. Queste policy vengono poi utilizzate dal produttore di policy per generare il documento ODRL relativo alle regole ottenute.
 \section{Produzione policy ODRL}\label{produceSection}
-//TODO
+Il produttore di documenti ODRL è l'ultimo componente della pipeline per il policy merging. Il ruolo svolto risulta essere di comunicazione tra i wrapper prodotti dalla logica di merging ed il modulo I/O del framework Jena. Le funzionalità sono attuate mediante la seguente procedura:
+\begin{enumerate}
+\item tramite le \textit{Core RDF API} fornite da Jena, si crea un nuovo modello RDF;
+\item dal gestore gerarchia asset relativo alla policy finale, si recupera una mappa che collega l'URI di un asset alla propria policy;
+\item per ogni URI:
+\begin{enumerate}
+\item si aggiunge al modello una risorsa relativa all'asset;
+\item si recuperano le risorse relative ai parent degli asset;
+\item a tutte le risorse recuperate al passo precedente si aggiunge alla proprietà \textit{odrl:partOf} il nuovo nodo;
+\item per ogni regola nella policy si crea un nodo;
+\item i nodi relativi alle regole vengono inseriti nella proprietà \textit{permission} o \textit{prohibition} del nuovo nodo relativo all'asset;
+\end{enumerate}
+\item viene settato al modelo il namespace relativo al contesto ODRL;
+\item il modello viene utilizzato dal modulo I/O che ne crea la corrispondente serializzazione Turtle.
+\end{enumerate}
+Il documento RDF finale prodotto ha le seguenti proprietà:
+\begin{itemize}
+\item ogni regola espressa appare una sola volta per target;
+\item ogni asset ha una propria definizione;
+\item la lista mostrata nelle proprietà \textit{partOf} non contiene ripetizioni.
+\end{itemize}
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
