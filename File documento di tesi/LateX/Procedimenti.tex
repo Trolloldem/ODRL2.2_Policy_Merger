@@ -777,7 +777,7 @@ L'estratto mostrato è la definizione della sottoclasse \textit{Prohibition}, es
 \item solo 2 coppie \textit{rdfs:domain}-\textit{rdfs:range} sono valide, tale restrizione è espressa mediante OWL\cite{OWL}, ulteriore estensione semantica utilizzata per espriremere concetti logici complessi;
 \item all'interno delle proprietà sono specificate le 2 classi \textit{odrl:Party} ed \textit{odrl:Asset}.
 \end{itemize}
-\subsection{Apache Jena}
+\subsection{Apache Jena}\label{apacheJenaSec}
 ``Apache Jena (o Jena) è un framework Java free ed open source per creare applicazioni del semantic web o che sfruttano Linked Data. Il framework è composta da diverse API che interagiscono al fine di processare dati RDF.''\cite{Jena}\\
 Per questo motivo si è scelto Jena come insieme di utility sia a supporto della porzione di parsing, descritta nella sezione \ref{parsingSection}, sia a supporto della porzione di produzione del documento ODRL finale, descritta nella sezione \ref{produceSection}. Nel dettaglio, le API utilizzate comprendono:
 \begin{itemize}
@@ -1179,7 +1179,132 @@ Come mostrato nella figura \ref{archGenImpl}, l'architettura generale è una sem
 Queste 2 operazioni sono attuate all'interno del componente denominato \textbf{``Logica Merging''}, il quale si occupa di aggiungere la semantica necessaria alle policy ODRL, per poi produrre il documento finale.\\
 Il primo componente della pipeline si occupa invece di estrarre le informazioni di rilievo dalle policy in ingresso, mentre il componente in coda si occupa di produrre un documento conforme ad ODRL per dare una forma al risultato ottenuto.
 \section{Parser}\label{parsingSection}
-//TODO: l'implementazione è iniziata, devo ancora scrivere
+Il primo componente della pipeline risulta il parser di documenti ODRL. Il suo ruolo è estrarre le informazioni utili alla procedura di merging. Tale componente sfrutta il framework Apache Jena, esposto nella sezione \ref{apacheJenaSec}. Questa porzione del progetto, espone 2 interfacce:
+\begin{itemize}
+\item un'interfaccia per il recupero delle \textit{Rule} relative ad ogni \textit{Asset} all'interno della policy;
+\item un'interfaccia per il recupero delle relazioni \textit{partOf} tra i vari \textit{Asset} all'interno della policy.
+\end{itemize}
+Questa decisione è stata presa al fine di incapsulare al meglio queste 2 funzionalità e permettere di usarle atomicamente dove fosse necessario. L'architettura del componente è mostrata nella seguente figura:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.80]{../immagini/parserDiagram.pdf}
+\caption{Diagramma delle componenti per il parsing di documenti ODRL}
+\label{parserUML}
+\end{figure}
+\subsection{Rule Reader}
+Questo componente ha il ruolo di estrarre le regole presenti in una policy, organizzandole in una mappa avente come chiavi gli \textit{Asset} e come valori le liste delle rispettive regole. Il procedimento attuato segue i seguenti passi:
+\begin{enumerate}
+\item recupero degli URI delle singole policy contenute nel documento ODRL;
+\item recupero della lista delle proprietà all'interno di una regola ODRL;
+\item estrazione della proprietà \textit{target} dalle regole per popolare le chiavi della mappa;
+\item estrazione delle proprietà \textit{type} e \textit{action} per creare il wrapper di una regola ODRL;
+\item inserimento del wrapper all'interno della lista del rispettivo target.
+\end{enumerate} 
+Il primo passo della procedura è attuato grazie alla query SPARQL:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Query per il recupero dei dati relativi a tutte le policy contenute nel documento ODRL},captionpos=b]
+SELECT *  WHERE {?policy <rdf:type> <odrl:Policy> .}
+\end{lstlisting}
+In questo modo, nonostante sia una pratica poco diffusa, è possibile identificare più policy all'interno del documento ODRL. L'URI delle varie policy è contenuto nella chiave \textbf{policy} delle tuple recuperate dalla query.\\
+Il secondo passo della procedura è attuato mediante questa seconda query SPARQL:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Query per il recupero delle proprietà di tutte le regole},captionpos=b]
+SELECT ?rule ?pred ?ogg ?type
+WHERE {
+	?policy ?type ?rule .
+	?rule ?pred ?ogg
+	FILTER (
+		?type IN (<odrl:permission>,
+		          <odrl:prohibition> )
+		)
+}
+\end{lstlisting}
+Le tuple recuperate da questa query hanno la seguente struttura:
+\begin{itemize}
+\item \textbf{rule}: uri autogenerato da ARQ per le regole, in quanto prive di URI nelle policy;
+\item \textbf{pred}: proprietà della all'interno della regola, per esempio \textit{rdf:type} o \textit{odrl:target};
+\item \textbf{ogg}: valore della proprietà identificata dalla chiave \textit{pred};
+\item \textbf{type}: valore delle proprietà \textit{rdf:type} della regola; come è possibile notare dalla clausola \textit{FILTER} può assumere solo i due valori \textit{odrl:permission} o \textit{odrl:prohibition}.
+\end{itemize}
+Il risultato viene riorganizzato in una mappa che lega ogni regola ad una coppia \textit{proprietà-valore}.\\
+Gli ultimi 3 passi della procedura sono eseguiti iterando la mappa ottenuta tramite l'algoritmo espresso dal seguente pseudo codice:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Pseudo codice per il popolamento della mappa finale},captionpos=b,label=parserRuleCode]
+Map<Asset,List<Rule> mapAssetRuleList;
+Iterator itRule = mappaParams.entrySet().iterator();
+
+//Iterazione sulla mappa precedente
+while(itRule.hasNext() ){
+
+    MapEntry singleRule = itRule.next();
+    List<Pair<String,String>> propertyList = singleRule.getValue();
+    
+    //Possibili property
+    Asset collection = new Asset("EveryAsset");
+    Action action = null;
+    String type = "";
+    
+    //Itero per recuperare il valore delle varie property
+	for(Pair<String,String> actProperty : propertyList){
+
+	 if(actProperty == odrl:permission)
+          type = "Permission";
+	 if(actProperty == odrl:prohibition)
+          type = "Prohibition";
+	 if(actProperty == odrl:target)
+          collection = new Asset(actProperty.Value);
+	 if(actProperty == odrl:action)
+	      action = actProperty.Value;
+	}
+	
+    //Creazione del wrapper
+    if(type.equals("Permission")
+          rule = new Permission(action)
+    else
+          rule = new Prohibition(action)
+    //Assegnazione wrapper a chiave corretta
+    if(mapAssetRuleList.hasKey(collection){
+          mapAssetRuleList.get(collection).add(rule);     
+    }else{
+          List<Rule> assetRuleList = new List();
+          assetRuleList.add(rule);
+          mapAssetRuleList.put(collection,assetRuleList);
+    }
+    resetTmp(collection,action,type);
+
+}
+return mapAssetRuleList;
+\end{lstlisting}
+Il codice mostrato nel listing \ref{parserRuleCode} risulta avere complessità lineare proporzionale al numero di proprietà recuperate dalle query SPARQL.
+\subsection{Asset Reader}
+Questo componente ha il ruolo di estrarre ogni asset presente nella policy che soddisfi almeno una delle seguenti condizioni:
+\begin{itemize}
+\item è il target di almeno una regola;
+\item è il valore della proprietà \textit{partOf} di almeno un altro asset.
+\end{itemize}
+Tutti gli asset che non soddisfano almeno una di queste condizioni non sono utili alla procedura di merging, poiché non sono effettivamente regolamentati dalla policy ODRL e non portano informazioni di ereditarietà tra gli asset. Gli asset recuperati vengono poi organizzati in una mappa che collega il loro URI al wrapper utilizzato dalla procedura di merging. I wrapper sono creati poiché possano fornire informazioni relative a legami di ereditarietà tra asset.\\
+I passi per fornire questa funzionalità sono:
+\begin{enumerate}
+\item recupero di tutti gli asset presenti nella policy tramite query SPARQL che filtra le 2 proprietà;
+\item creazione dei wrapper relativi ed inserimento all'interno della mappa che viene restituita come risultato finale;
+\item per ogni asset, si esegue una query SPARQL che recupera tutti gli asset che lo hanno come parent;
+\item si aggiorna ogni wrapper con l'informazione ottenuta dal passo precedente. 
+\end{enumerate}
+Di seguito la prima delle due query SPARQL effettuate:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Query SPARQL per il recupero degli asset utili alla procedura di merging},captionpos=b,label=parserRuleCode]
+SELECT DISTINCT ?obj  WHERE {
+  ?sub ?pred ?obj
+     FILTER (?pred IN
+              (<odrl:target>, <odrl:partOf> )
+            ) 
+}
+\end{lstlisting}
+Le tuple restituite da questa query presentano come valore con chiave \textit{obj} l'URI degli asset che almeno una volta sono il valore di una proprietà \textit{odrl:target} o \textit{odrl:partOf}.\\
+La seconda query necessaria al procedimento invece è la seguente:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Query SPARQL per il recupero degli asset utili alla procedura di merging},captionpos=b,label=parserRuleCode]
+SELECT DISTINCT ?sub  WHERE {
+   ?sub <odrl:partOf> <parentURI>}
+}
+\end{lstlisting}
+In questo caso, le tuple restituite presentano come valore con chiave \textit{sub} l'URI degli asset che hanno la proprietà \textit{odrl:partOf} valorizzata con l'URI presente al posto del placeholder \textit{parentURI}; l'identificatore effettivamente utilizzato è quello dell'asset per cui si sta iterando nel passo 3 della procedura.\\
+Per ogni URI recuperato da questa query, si aggiorna il relativo wrapper aggiungendo alla lista dei parent, il nodo dell'iterazione corrente.
 \section{Logica Merging}
 All'interno di questo componente, è presente la porzione di soluzione atta ad eseguire le effettive operazioni di merging delle policy in ingresso.\\
 Le operazioni di merging che si punta a supportare sono di 2 tipi:
