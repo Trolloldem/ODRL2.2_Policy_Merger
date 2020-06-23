@@ -1487,7 +1487,6 @@ Il duale delle operazioni mostrate nelle figure \ref{imgAssetPropSet} e \ref{img
 \paragraph{Recupero policy in seguito alla propagazione}\label{recuperoPolicy}\mbox{}\\
 La policy relativo ad un nodo ai livelli più bassi può cambiare drasticamente in seguito ad una operazione di propagazione, come visibili nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect}. A supporto di altri componenti è stata implementata una procedura di recupero di policy del singolo nodo all'interno della gerarchia: si esplora in ampiezza l'intera gerarchia, recuperando ogni policy di ogni risorsa. Il risultato finale è una mappa che collega l'URI di ogni risorsa presente nella gerarchia alla sua policy; nel set di chiavi sono presenti anche i nodi non aventi una policy.
 \subsection{Gestore procedura di merging}
-TODO: Togliere semplificazioni dalla tesi: supporto a non propagare sull'intero DAG, albero non è più un DAG
 Tutte le componenti fino ad ora mostrate si concentrano in modo atomico su una singola porzione della procedura del merging di 2 policy. Come è possibile notare supportano le operazioni di intersezione ed unione, ma tutte le strutture dati lavorano su un singolo documento ODRL. Il componente mostrato in questa sezione, invece, si occupa di attuare l'effettivo flusso applicativo desiderato. Di seguito il diagramma delle componenti che interessano il processo di merging:
 \begin{figure}[H]
 	\centering
@@ -1504,7 +1503,7 @@ Dalle interfacce esposte è possibile notare quali siano le informazioni che un 
 		\item \textbf{non collaborativo}: la policy espressa in un asset ai livelli più alti della gerarchia si propaga in modalità \textbf{intersection} ai nodi ai livelli più bassi della gerarchia;
 	\end{enumerate} 
 	\item l'operazione che si vuole attuare nel merging, che può essere \textbf{union} o \textbf{intersection};
-	\item l'operazione decisa, applicherà il corrispondente ambiente operativo all'intera gerarchia che risultante dal merging delle 2 policy.
+	\item risulta possibile decidere se propragare l'operazioni di merging sull'intera gerarchia degli asset finale, attuando un'override delle singole policy, oppure attuare la propagazione dell'operazione solo sugli asset interessati da entrambe le policy.
 \end{itemize}
 \paragraph{Casistiche supportate}\mbox{}\\
 Tutti i casi di merging supportati, attualmente non prevedono un \textbf{Assignee} per le regole, si suppone quindi che tutte le regole si riferiscano allo stesso \textbf{Party} o \textbf{PartyCollection}. Un metodo per generalizzare queste casistiche per tener conto dell'\textbf{Assignee} delle regole sarebbe quello di creare una degli asset per ognuno degli attori interessati e ripetere i procedimenti di seguito per ognuno di loro.\\
@@ -1526,7 +1525,7 @@ Tutte queste casistiche sono inoltre supportate per i seguenti scenari:
 	\item unione di policy in ambienti diversi;
 \end{enumerate}
 \paragraph{Implementazione della procedura}\mbox{}\\
-In questo paragrafo è riportata la procedura utilizzata per creare la rappresentazione della policy finale. All'interno dell'implementazione è stata usata la seguente semplificazione: le gerarchie degli asset sono alberi. Tale semplificazione è superabile implementando diversamente la rappresentazione degli asset al fine che sia possibile avere più di un unico parent node e verificando che il grafo ottenuto sia un \textbf{Directed acyclic graph} (\textbf{DAG}).
+In questo paragrafo è riportata la procedura utilizzata per creare la rappresentazione della policy finale. All'interno dell'implementazione è basata sulla seguente assunzione: le gerarchie degli asset è rappresentabile attraverso un \textbf{Directed acyclic graph} (\textbf{DAG}).
 L'algoritmo può essere diviso nelle seguenti fasi:
 \begin{enumerate}
 	\item recupero della gerarchia complessiva regolata dalla policy finale, tale passo ha 2 sottopassi:
@@ -1559,43 +1558,71 @@ def Map<String, AssetCollection> mergeHierarchyCommon(
     if(not(finalAssets.containsKey(uri)))
      finalAssets.put(uri,new Asset(uri));
 
-    parentFirst = assetsFirst.get(uri).getParent();
-    parentSecond = assetsSecond.get(uri).getParent();
+    parentFirst = assetsFirst.get(uri).getParents();
+    parentSecond = assetsSecond.get(uri).getParents();
     
     // Uno dei due non aveva un padre definito
     if(
-    !parentFirst.getURI().equals(parentSecond.getURI()) && 
-    (parentFirst.getURI().equals("EveryAsset") ||
-     parentSecond.getURI().equals("EveryAsset"))){
-       actParent =
-        parentFirst.getURI().equals("EveryAsset") ?
-        new Asset(parentSecond.getURI()) :
-        new Asset(parentFirst.getURI());
-
+    !parentFirst.equals(parentSecond) && 
+    (parentFirst.contains("EveryAsset") ||
+     parentSecond.contains("EveryAsset"))){
+       actParents =
+        parentFirst.contains("EveryAsset") ?
+        assetsFirst.get(uri).getParents() :
+        assetsSecond.get(uri).getParents();
+     for(actParent in actParents){
        if(finalAssets.containsKey(actParent.getURI())){
         finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
        }else{
         actParent.addChild(finalAssets.get(uri));
         finalAssets.put(actParent.getURI(),actParent);
        }
-    }
-    
-    //L'asset ha lo stesso padre in entrambe le policy
-    if(parentFirst.getURI().equals(parentSecond.getURI())){
-     if(finalAssets.containsKey(parentFirst.getURI())){
-      finalAssets.get(parentFirst.getURI()).addChild(finalAssets.get(uri));
-     }else {
-      AssetCollection actParent = new Asset(parentFirst.getURI());
-      actParent.addChild(finalAssets.get(uri));
-      finalAssets.put(actParent.getURI(),actParent);
      }
     }
-    return finalAssets;
+    
+    //L'asset ha gli stessi parents in entrambe le policy
+    if(parentFirst.equals(parentSecond)){
+     for(parent in parentFirst){
+      if(finalAssets.containsKey(parent.getURI())){
+       finalAssets.get(parent.getURI()).addChild(finalAssets.get(uri));
+      }else {
+       AssetCollection actParent = new Asset(parent.getURI());
+       actParent.addChild(finalAssets.get(uri));
+       finalAssets.put(actParent.getURI(),actParent);
+      }
+     }
+    }
+    
+    // Almeno un parent diverso
+    if(!parentFirst.equals(parentSecond) &&
+       !parentFirst.contains("EveryAsset") && 
+       !parentSecond.contains("EveryAsset")){
+      Set totalParents = new Set(parentFirst);
+      totalParents.addAll(parentSecond);
+      for (String parentURI : totalParents){
+       if (finalAssets.containsKey(parentURI)) {
+        finalAssets.get(parentURI)
+         .addChild(finalAssets.get(uri));
+       } else {
+        AssetCollection actParent = new Asset(parentURI);
+        actParent.addChild(finalAssets.get(uri));
+        finalAssets.put(actParent.getURI(), actParent);
+       }
+    }
   }
+
+    
+  return finalAssets;
+}
+
+
+
+
+
+  
 \end{lstlisting}
 All'interno del listing \ref{algoRecoverHierarchyComm} è possibile notare:
 \begin{itemize}
-	\item all'interno delle casistiche relative agli asset in comune, non viene considerata la possibilità di asset con padri diversi poiché, lavorando con gerarchie espresse tramite alberi, questo porterebbe ad una situazione d'errore. Qualora si lavorasse con DAG, questa casistica porterebbe all'aggiunta di un nuovo parent node all'interno della lista dei parent del nodo esaminato;
 	\item all'interno della gerarchia è inserito un asset avente URI \textbf{EveryAsset}; questo è un asset fittizio al quale non viene mai assegnata una policy, il suo ruolo è fungere da punto d'inizio per la ricerca degli asset che non hanno un parent esplicitato, al fine di avere un'unica sorgente nella ricerca.
 \end{itemize}
 Il passo sucessivo è il recupero degli asset non in comune:
@@ -1613,17 +1640,17 @@ def Map<String, AssetCollection> mergeHierarchyUniq(
       finalAssets.put(uri,new Asset(uri));
       
 	 // Aggiunta parent similare ai comuni
-     if(finalAssets.containsKey(assets.get(uri).getParentURI())){
-       finalAssets.get(assets.get(uri).getParentURI()).addChild(finalAssets.get(uri));
+   for(parent in assets.get(uri).getParents())
+     if(finalAssets.containsKey(parent.getURI())){
+       finalAssets.get(parent.getURI()).addChild(finalAssets.get(uri));
      }else {
        AssetCollection actParent =
-        new Asset(assets.get(uri).getParenttURI());
+        new Asset(parent.getURI());
        actParent.addChild(finalAssets.get(uri));
        finalAssets.put(actParent.getURI(),actParent);
      }
    }
    return finalAssets;
- }
 \end{lstlisting}
 L'algoritmo esposto nel listing \ref{algoRecoverHierarchyNotComm} viene richiamato per gli insiemi di asset di entrambe le policy, coprendo così entrambi i set ricavabili dalle gerarchie.\\
 Applicando i 2 algoritmi descritti finora, l'output presente in \textbf{finalAssets} sarà una mappa che collega ogni URI di un asset ad un oggetto che lo rappresenta che contiene già le informazioni riguardanti nodi parent e nodi figli. Sfruttando le componenti descritte nella sezione \ref{assetFun} è quindi possibile definire un \textbf{Gestore gerarchia} che ha come nodo sorgente \textbf{EveryAsset}; il gestore si occuperà di propagare le policy lungo la gerarchia.
@@ -1634,6 +1661,48 @@ L'output di questo passo sono quindi 2 mappe, una per documento di policy, che l
 \subparagraph{Esecuzione del merging e propagazione}\mbox{}\\
 Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di mergin desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
 Il risultato finale è quindi un \text{Gestore gerarchia} dal quale possono essere recuperate tutte le policy finali relative agli asset. Queste policy vengono poi utilizzate dal produttore di policy per generare il documento ODRL relativo alle regole ottenute.
+\subparagraph{Estensione per propagazione solo su asset comuni}\mbox{}\\
+I passi descritti fino ad ora sono relativi alla procedura di merging che effettua un override dell'ambiente delle singole policy, di conseguenza:
+\begin{itemize}
+\item per un qualsiasi ambiente definito dalle 2 policy iniziali, la policy risultante attua una propagazione coerente con l'operazione;
+\item la gerarchia finale potrebbe quindi portare cambiamenti anche in porzioni del DAG non interessate da entrambe le policy effetto che, in alcuni casi, può risultare indesiderato.
+\end{itemize}
+Un esempio di effetto non voluto è visibile nella seguente immagine:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.60]{../immagini/wrongProp.pdf}
+\caption{Intersezione di policy precedentemente in ambiente collaborativo}
+\label{wrongProp}
+\end{figure}
+In questo caso l'effetto ottenuto sull'\textit{Asset Child 2} è quello desiderato: l'asset non è più considerato in ambiente collaborativo ed interseca le varie policy che lo riguardano. Non si può dire lo stesso della policy finale relativa ad \textit{Asset Child 1}: nonostante l'unica policy introdotta sia \textit{New Policy 2}, la propagazione dell'ambiente non collaborativo produce cambiamenti anche in \textit{Policy 1}.\\
+La problematica appena presentata è stata trattata aggiungendo i seguenti passi all'algoritmo finora mostrato:
+\begin{enumerate}
+\item recupero degli asset che hanno subito una modifica di policy; questi asset sono quelli che hanno in entrambe le policy almeno una regola definita; questi nodi sono un sottoinsieme dei nodi comuni alle 2 policy.
+\item recupero dell'intero sottografo che ha come origine un nodo modificato;
+\item reset della policy originaria per i nodi recuperati nei 2 passi precedenti, senza attuare una propagazione di policy.
+\end{enumerate}
+Il sottoalbero così recuperato è l'insieme degli asset effettivamente interessati da un'operazione di intersezione o unione. Questa affermazione può essere dimostrata come segue:
+\begin{enumerate}
+\item sia C l'insieme degli asset regolati da entrambe le policy;
+\item sia M un sottoinsieme di C formato dai nodi per cui entrambe le policy presentano almeno una regola;
+\item sia F l'insieme dato dall'unione dei nodi appartenti ai sottografi di tutti i nodi in M;
+\item sia R l'unione di M ed F;
+\item gli elementi di R sono i nodi nel sottografo interessato dall'operazione di intersezione o unione delle 2 policy;
+\item supponendo per assurdo che altri nodi siano parte del sottografo:
+\begin{enumerate}
+\item un nodo non appartenente a C è per definizione, interessato in modo diretto solamente da una policy; si noti che F può contenere nodi non appartenenti a C;
+\item un nodo non appartenente ad M con una sola policy definita non subisce modifiche alla sua policy, di conseguenza la propagazione della sua policy finale ai nodi figli è già stata attuata;
+\item un nodo non appartenente ad M con entrambe le policy non definite non dà alcun contributo alla propagazione; inoltre non avendo alcuna policy, anche tutti i suoi nodi parent non hanno policy definite;
+\item se un nodo non appartiene ad F, nessuno dei nodi parent appartiene ad F o M, di conseguenza ha già subito eventuali propagazioni di policy ed ha già propagato le proprie regole.
+\end{enumerate}
+Queste modifiche producono i seguenti effetti:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{../immagini/correctProp.pdf}
+\caption{Intersezione di policy precedentemente in ambiente collaborativo senza override di ambiente}
+\label{}
+\end{figure}
+\end{enumerate}
 \section{Produzione policy ODRL}\label{produceSection}
 Il produttore di documenti ODRL è l'ultimo componente della pipeline per il policy merging. Il ruolo svolto risulta essere di comunicazione tra i wrapper prodotti dalla logica di merging ed il modulo I/O del framework Jena. Le funzionalità sono attuate mediante la seguente procedura:
 \begin{enumerate}
@@ -1656,6 +1725,7 @@ Il documento RDF finale prodotto ha le seguenti proprietà:
 \item ogni asset ha una propria definizione;
 \item la lista mostrata nelle proprietà \textit{partOf} non contiene ripetizioni.
 \end{itemize}
+\chapter{Valutazione dei risultati}
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
