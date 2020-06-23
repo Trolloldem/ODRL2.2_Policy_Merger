@@ -32,7 +32,7 @@
       {
          "target":"http://example.com/music/actRoot",
          "assigner":"http://example.com/org/sony-music",
-         "action":"annotate"
+         "action":"play"
       }
    ],
    "prohibition":[

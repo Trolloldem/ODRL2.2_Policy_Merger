@@ -1,0 +1,27 @@
+{
+   "uid":"http://singleExample2",
+   "type":"Policy",
+   "@context":"http://www.w3.org/ns/odrl.jsonld",
+   "permission":[
+
+      {
+         "target":"http://Child2",
+         "action":"play"
+      },
+      {
+         "target":"http://Child2",
+         "action":"install"
+      }
+      ,
+            {
+               "target":"http://Child2",
+               "action":"uninstall"
+            }
+   ],
+   "prohibition":[
+      {
+         "target":"http://Child2",
+         "action":"delete"
+      }
+   ]
+}

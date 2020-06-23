@@ -8,6 +8,10 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{listings}
+\usepackage{makecell}
+\usepackage{xcolor,colortbl}
+\usepackage{caption}
+\captionsetup[table]{position=bottom} 
 \graphicspath{ {immagini/} }
 \fancyhf{} % clear all header and footers
 \renewcommand{\headrulewidth}{0pt} % remove the header rule
@@ -20,7 +24,7 @@
 }
 
 \usepackage{pdfpages}
-\usepackage[italian,english]{babel}
+\usepackage[italian]{babel}
 \usepackage[hyphens,spaces,obeyspaces]{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage[T1]{fontenc}
@@ -1163,7 +1167,7 @@ Problematiche relative alla gestione di questo tipo di merging, non più necessa
 \end{itemize}
 A causa di questa varietà, la gestione di questo tipo di merging può facilmente esplodere. Vi è anche da contare che un ``constraint'' può essere ottenuto come operazione in logica booleana di altri ``constraint''. Questo tipo di merging non va necessariamente a risolvere conflitti nelle policy, ma può rilevare quando un numero eccessivo di constraint va a rendere la collezione di asset inutilizzabile(una policy permette l'uso di un asset solo la mattina, la seconda solo la sera, unendole l'asset risulta inutilizzabile).
 
-\chapter{Implementazioni}
+\chapter{Implementazioni}\label{implementazioniCh}
 \section{Architettura generale}
 \begin{figure}[htp]
 \centering
@@ -1700,7 +1704,7 @@ Queste modifiche producono i seguenti effetti:
 \centering
 \includegraphics[scale=0.6]{../immagini/correctProp.pdf}
 \caption{Intersezione di policy precedentemente in ambiente collaborativo senza override di ambiente}
-\label{}
+\label{correctProp}
 \end{figure}
 \end{enumerate}
 \section{Produzione policy ODRL}\label{produceSection}
@@ -1726,6 +1730,234 @@ Il documento RDF finale prodotto ha le seguenti proprietà:
 \item la lista mostrata nelle proprietà \textit{partOf} non contiene ripetizioni.
 \end{itemize}
 \chapter{Valutazione dei risultati}
+I principali obiettivi che questo lavoro di tesi si è posto sono stati esposti nella sezione \ref{problematiche} e riguardano principalmente 2 aree:
+\begin{enumerate}
+\item l'assenza da parte di ODRL di un metodo per trattare policy conflittuali all'interno dei casi d'uso individuati da MOSAICO;
+\item controllo ineficciente di una regola, poiché con query puntuali sul documento ODRL è possibile ottenere informazioni non corrette sulla regolamentazione di un'azione; attualmente risulta necessario controllare l'intero file per avere certezze su quanto è permesso su di un asset.
+\end{enumerate}
+Il tool sviluppato affronta entrambe queste problematiche, risolvendole nel caso di azioni prive di \textbf{constraint}. La soluzione proposta non è applicabile solamente ai casi d'uso di MOSAICO, ovvero quello di mercati digitali dove gli asset possono avere più possessori, ma anche a scenari più tradizionali, come ad esempio la definizione di policy d'accesso a risorse in un sistema operativo.\\
+Per risolvere la prima problematica, il focus principale è stato lo sviluppo di procedure che supportassero 2 operazioni di merging: \textbf{unione} ed \textbf{intersezione}. Tali operazioni identificano i 2 principali ambienti dove è possibile definire policy d'accesso: \textbf{collaborativo} e \textbf{non collaborativo}.\\
+La seconda problematica è stata affrontata su più livelli:
+\begin{itemize}
+\item a livello di \textbf{singola} policy: durante la lettura di un documento ODRL che definisce una policy d'accesso, il framework si occupa di inferire quelli che sono le \textbf{implicazioni} tra le regole, seguendo le definizioni date dall' \textit{ODRL Common Vocabulary}. In questo modo si impediscono ambiguità su regole interne alla policy, dove una sottoazione è permessa ma non l'azione padre è invece vietata;
+\item a livello di \textbf{asset}: durante la lettura del documento di ODRL, il framework si occupa di inferire, in base all'ambiente specificato per la policy, le regole che un asset eredita dai propri parent. Ottenute queste regole, si attua il livello su singola policy.
+\end{itemize}
+Entrambi i procedimenti appena esposti vengono attuati dall'architettura osservabile in figura \ref{procMergin}, i cui componenti sono stati esposti in dettaglio all'interno del capitolo \ref{implementazioniCh} relativo all'implementazione della soluzione. L'output della pipeline è un nuovo documento di policy ODRL che rappresenta il risultato dell'operazione desiderata.\\
+Si può notare come la soluzione sia modulare: non si è costretti ad utilizzare il tool unicamente per procedure di merging, poiché risulta possibile sfruttare ogni componente, e relativi sottocomponenti, nella pipeline in figura \ref{archGenImpl} senza l'ausilio degli altri. Questo permette sia lo sfruttamento delle singole funzionalità di ogni componente, sia la possibilità di estensione o sostituzione di un componente.\\
+\section{Esempi di casi d'uso}
+All'interno di questa sezione vengono mostrati casi d'uso di complessità crescente supportati dal lavoro di tesi, confrontando i risultati ottenuti effettuando query sull'output del policy merging rispetto a quello che è possibile effettuare solamente sui documenti ODRL originali.
+\subsection{Merging di policy relative ad un singolo asset}
+Casistica più semplice in assoluto, utile per comprendere il comportamento del tool e cosa si intende con procedura di merging. Di seguito i file ODRL utilizzati come input:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Policy ODRL su singolo asset},captionpos=b,label=mergingOnSingle1]
+{
+   "uid":"http://singleExample1",
+   "type":"Policy",
+   "@context":"http://www.w3.org/ns/odrl.jsonld",
+   "permission":[
+
+      {
+         "target":"http://Child2",
+         "action":"display"
+      },
+      {
+         "target":"http://Child2",
+         "action":"stream"
+      }
+   ],
+   
+   "prohibition":[
+      {
+         "target":"http://Child2",
+         "action":"uninstall"
+      }
+   ]
+}
+\end{lstlisting}
+\begin{lstlisting}[language=json,firstnumber=1,caption={Policy ODRL su singolo asset},captionpos=b,label=mergingOnSingle2]
+{
+   "uid":"http://singleExample2",
+   "type":"Policy",
+   "@context":"http://www.w3.org/ns/odrl.jsonld",
+   "permission":[
+
+      {
+         "target":"http://Child2",
+         "action":"play"
+      },
+      {
+         "target":"http://Child2",
+         "action":"install"
+      }
+      ,
+            {
+               "target":"http://Child2",
+               "action":"uninstall"
+            }
+   ],
+   "prohibition":[
+      {
+         "target":"http://Child2",
+         "action":"delete"
+      }
+   ]
+}
+\end{lstlisting}
+Di seguito, invece, vi sono i file prodotti, 1 per possibile operazione:
+\begin{lstlisting}[language=json,firstnumber=1,caption={Risultato dell'intersezione delle policy nei listing \ref{mergingOnSingle1} e \ref{mergingOnSingle2}},captionpos=b,label=intersectionSingle]
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+
+<http://single>  a odrl:Set ;
+ odrl:permission   ( [ a odrl:Permission ;
+                       odrl:action  odrl:display ;
+                       odrl:target  <http://Child2>
+                     ]
+                    ) ;
+odrl:prohibition  ( [ a odrl:Prohibition ;
+                      odrl:action  odrl:uninstall ;
+                      odrl:target  <http://Child2>
+                     ]
+                     [ a odrl:Prohibition ;
+                       odrl:action  odrl:delete ;
+                       odrl:target  <http://Child2>
+                       ]
+                    ) .
+
+<http://Child2>  odrl:partOf  <EveryAsset> .
+\end{lstlisting}
+
+\begin{lstlisting}[language=json,firstnumber=1,caption={Risultato dell'unione delle policy nei listing \ref{mergingOnSingle1} e \ref{mergingOnSingle2}},captionpos=b,label=unionSingle]
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+<http://singleUnion>  a odrl:Set ;
+odrl:permission   ( [ a odrl:Permission ;
+                      odrl:action  odrl:play ;
+                      odrl:target  <http://Child2>
+                     ]
+                     [ a odrl:Permission ;
+                     odrl:action  odrl:display ;
+                     odrl:target  <http://Child2>
+                     ]
+                     [ a            odrl:Permission ;
+                     odrl:action  odrl:install ;
+                     odrl:target  <http://Child2>
+                     ]
+                     [ a odrl:Permission ;
+                       odrl:action  odrl:stream ;
+                       odrl:target  <http://Child2>
+                     ]
+                  ) ;
+odrl:prohibition  ( [ a odrl:Prohibition ;
+                     odrl:action  odrl:uninstall ;
+                     odrl:target  <http://Child2>
+                     ]
+                     [ a odrl:Prohibition ;
+                     odrl:action  odrl:delete ;
+                     odrl:target  <http://Child2>
+                     ]
+                     ) .
+
+<http://Child2>  odrl:partOf  <EveryAsset> .
+
+\end{lstlisting}
+Il risultato è riassunto dalla seguente immagine:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.50]{../immagini/singlePolicyExample.pdf}
+\caption{Albero delle regole delle varie policy all'interno dell'esempio}
+\label{singleResult}
+\end{figure}
+Vantaggi osservabili utilizzando i file mostrati nei listing \textit{unionSingle} e \textit{intersectionSingle}:
+\begin{itemize}
+\item risulta possibile ottenere la regolamentazione di un'azione mediante una query puntuale accedendo ad un singolo file. L'implementazione baseline è invece costretta ad accedere ad almeno 2 file;
+\item l'implementazione baseline è anche costretta a controllare l'intera gerarchia dell'azione per cui si esegue il check, effettuando un'ulteriore accesso al vocabolario ODRL;
+\item la procedura di merging può essere considerata computazionalmente più onerosa rispetto a quella baseline, poiché aggiunge overhead relativi alla gestione della gerarchia degli asset, inutilizzati in questo caso;
+\item l'overhead aggiunto al punto precedente è però considerarsi un costo pagato una singola volta, a discapito invece dell'approccio baseline che deve ogni volta ricercare le informazioni relative agli asset.
+\end{itemize}
+Il vantaggio principale dell'approccio adottato all'interno della tesi risiede nell'aver prodotto un documento non ambiguo e concentrato delle informazioni relative alle policy d'accesso. Tale costo è pagato solo all'inserimento di un nuovo documento ODRL, in cambio di una procedura più efficiente nel lungo termine.
+
+\subsection{Merging di policy relative ad asset con gerarchia ad albero}
+Questa casistica risulta la seconda meno complessa: le 2 policy lavorano sugli stessi asset, i quali hanno una struttura gerarchica ad albero, ovvero ogni nodo ha un solo padre possibile. Nella trattazione di questo caso d'uso viene dato per scontato il corretto funzionamento di intersezione tra singole policy, focalizzandosi invece su quello che è il comportamento del tool nel propagare le policy.\\
+La casistica più interessante da studiare risulta essere l'\textit{intersezione} di 2 ambienti \textit{non collaborativi}.
+\begin{table}[H]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+{} & \makecell{\textbf{Root} \\\textbf{Policy 1}} & \makecell{\textbf{Root} \\\textbf{Policy 2}} & \makecell{\textbf{Child 1} \\\textbf{Policy 1}} & \makecell{\textbf{Child 1} \\\textbf{Policy 2}} & \makecell{\textbf{Child 2} \\\textbf{Policy 1}} & \makecell{\textbf{Child 2} \\\textbf{Policy 2}} \\
+\hline
+{play} & \cellcolor{green!25} & \cellcolor{green!25} & {} & {} & {} & {} \\
+\hline
+{diplay} & \cellcolor{green!25}& \cellcolor{green!25} & {} & \cellcolor{green!25} & {} & {} \\
+\hline
+{install} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & {} &\cellcolor{green!25} \\
+\hline
+{annotate} & \cellcolor{green!25} & {} & {} & {} & \cellcolor{green!25} & \cellcolor{red!25} \\
+\hline
+{delete} & \cellcolor{red!25} & \cellcolor{red!25} & {}&  {} & \cellcolor{red!25} & {}\\
+\hline
+{stream} & {} & {} & \cellcolor{red!25} & \cellcolor{red!25} & {} &  {}\\
+\hline
+
+\end{tabular}
+\caption{Regolamentazione delle policy prima dell'applicazione di ambiente non collaborativo e intersezione}
+\label{tableTree}
+\end{table}
+La struttura della gerarchia dello scenario è visibile in figura \ref{treeExampleImg}. In caso di ambiente \textbf{non collaborativo} si attua un'intersezione tra la policy del nodo padre ed i suoi figli. L'operazione d'intersezione finale interseca le varie policy ad ogni livello, per poi andare ad attuare la propagazione di ambiente \textbf{non collaborativo} sull'intero albero. Il risultato finale in questo caso è quanto segue:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+{} & \makecell{\textbf{Root}} & \makecell{\textbf{Child 1}} & \makecell{\textbf{Child 2}} \\
+\hline
+{play} & \cellcolor{green!25} & {}& {} \\
+\hline
+{diplay} & \cellcolor{green!25}& {} & {} \\
+\hline
+{install} & \cellcolor{green!25} & \cellcolor{green!25} & {}\\
+\hline
+{annotate} & {} & {} & \cellcolor{red!25} \\
+\hline
+{delete} & \cellcolor{red!25} & \cellcolor{red!25} & \cellcolor{red!25} \\
+\hline
+{stream} & {} & \cellcolor{red!25} & {}\\
+\hline
+
+\end{tabular}
+\caption{Regole all'interno della policy prodotta in output}
+\label{tableTreeFinal}
+\end{table}
+Dalla tabella \ref{tableTreeFinal} si nota che:
+\begin{itemize}
+\item una policy sulla root mantiene i suoi permessi solo se presenti in entrambe le policy intersecate, per effetto dell'operazione di \textbf{intersezione};
+\item una policy su un nodo figlio mantiene i suoi permessi se presenti in entrambe le policy intersecate e se anche la policy finale del nodo padre presenta tali permessi, quest'ultimo effetto è dato dall'ambiente \textbf{non collaborativo}.
+\end{itemize}
+Questa casistica risulta la maggiormente interessante poiché:
+\begin{itemize}
+\item l'intersezione di 2 ambienti collaborativi in questa situazione produce come risultato la propagazione della policy della root a tutti i nodi figli, ciò è causato dall'utilizzo dell'operazione di unione preliminare poi seguita da quella di intersezione;
+\item i 2 casi relativi all'unione di policy in 2 ambienti sono poco interessanti, poiché non avviene alcun filtraggio particolare delle regole.
+\end{itemize}
+Un'ulteriore motivazione d'interesse verso questa casistica è il fatto che può essere considerata una prima modellizzazione degli scenari d'interesse di MOSAICO: un eventuale utente che possiede l'\textit{asset child 1}, qualora volesse modificare la propria policy d'accesso, scatenerebbe questa casistica(salvo la propagazione dell'intersezione verso gli altri asset).\\
+In questo caso il tool sviluppato porta i medesimi vantaggi già mostrati nel caso precedente, aggiungendo i seguenti:
+\begin{itemize}
+\item in questo caso risulta necessaria un'ulteriore query da parte della baseline per recuperare la gerarchia relativa all'asset interessato dall'accesso;
+\item a seconda della tipologia di nodo, risulterà quindi necessario recuperare anche lo stato dell'azione all'interno della gerarchia dell'asset, tenendo conto del fatto che non è stata attuato alcun tipo di propagazione nei documenti originali;
+\item il costo dell'esecuzione dell'approccio baseline in questo caso si avvicina molto a quello che si ha per attuare il merging di policy, rendendo evidente il vantaggio portato dalla produzione di una policy output;
+\item infine, l'approccio implementato permetterebbe ad un owner degli asset di valutare la perdita di valore introdotta da una modifica alla propria policy d'accesso.
+\end{itemize}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.50]{../immagini/treePolicyExample.pdf}
+\caption{Policy finali del caso d'uso}
+\label{treeExampleImg}
+\end{figure}
+\subsection{Merging di policy relative a gerarchie differenti}
+In questo scenario, le 2 policy operano su gerarchie parzialmente sovrapposte. La casistica trattata sarà in questo caso l'\textit{intersezione} di ambienti \textit{collaborativi}. La procedura seguita dall'algoritmo è riassunta nella seguente figura:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.64]{../immagini/treeNewNodesExample.pdf}
+\caption{Procedura seguita per l'intersezione di 2 policy in ambiente collaborativo con l'aggiunta di nuovi nodi padre e foglia}
+\label{treeNewNodeExample}
+\end{figure}
+Questa casistica assume maggiore interesse rispetto allo scenario precedente, poiché l'aggiunta di nuovi parent all'interno della gerarchia, modifica quello che è il comportamento dell'unione seguita da intersezione: se nel caso precedente questo portava alla replica dell'intersezione dei nodi radice all'interno delle foglie, in questo caso le differenze nella gerarchia fanno in modo che cambi il punto dal quale inizia la copia delle policy. Si noti che le intersezioni a cui fa riferimento la figura \ref{treeNewNodeExample} sono relative ai permessi delle policy, che vengono ``mascherati'' dalla sequenza unione-intersezione; ciò vuol dire che i divieti delle policy non visibili sono comunque propagati lungo l'albero.\\
+I vantaggi introdotti in questo caso sono analoghi a quelli dello scenario precedente, poiché si tratta semplicemente di un'estensione a livello logico delle stesse casistiche. 
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
