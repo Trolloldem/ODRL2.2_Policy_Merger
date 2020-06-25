@@ -1665,7 +1665,7 @@ L'output di questo passo sono quindi 2 mappe, una per documento di policy, che l
 \subparagraph{Esecuzione del merging e propagazione}\mbox{}\\
 Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di mergin desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
 Il risultato finale è quindi un \text{Gestore gerarchia} dal quale possono essere recuperate tutte le policy finali relative agli asset. Queste policy vengono poi utilizzate dal produttore di policy per generare il documento ODRL relativo alle regole ottenute.
-\subparagraph{Estensione per propagazione solo su asset comuni}\mbox{}\\
+\subparagraph{Estensione per propagazione solo su asset comuni}\mbox{}\\ \label{estensioneAlg}
 I passi descritti fino ad ora sono relativi alla procedura di merging che effettua un override dell'ambiente delle singole policy, di conseguenza:
 \begin{itemize}
 \item per un qualsiasi ambiente definito dalle 2 policy iniziali, la policy risultante attua una propagazione coerente con l'operazione;
@@ -1950,7 +1950,7 @@ In questo caso il tool sviluppato porta i medesimi vantaggi già mostrati nel ca
 \end{figure}
 \subsection{Merging di policy relative a gerarchie differenti}
 In questo scenario, le 2 policy operano su gerarchie parzialmente sovrapposte. La casistica trattata sarà in questo caso l'\textit{intersezione} di ambienti \textit{collaborativi}. La procedura seguita dall'algoritmo è riassunta nella seguente figura:
-\begin{figure}[H]
+\begin{figure}[h]
 \centering
 \includegraphics[scale=.64]{../immagini/treeNewNodesExample.pdf}
 \caption{Procedura seguita per l'intersezione di 2 policy in ambiente collaborativo con l'aggiunta di nuovi nodi padre e foglia}
@@ -1958,6 +1958,135 @@ In questo scenario, le 2 policy operano su gerarchie parzialmente sovrapposte. L
 \end{figure}
 Questa casistica assume maggiore interesse rispetto allo scenario precedente, poiché l'aggiunta di nuovi parent all'interno della gerarchia, modifica quello che è il comportamento dell'unione seguita da intersezione: se nel caso precedente questo portava alla replica dell'intersezione dei nodi radice all'interno delle foglie, in questo caso le differenze nella gerarchia fanno in modo che cambi il punto dal quale inizia la copia delle policy. Si noti che le intersezioni a cui fa riferimento la figura \ref{treeNewNodeExample} sono relative ai permessi delle policy, che vengono ``mascherati'' dalla sequenza unione-intersezione; ciò vuol dire che i divieti delle policy non visibili sono comunque propagati lungo l'albero.\\
 I vantaggi introdotti in questo caso sono analoghi a quelli dello scenario precedente, poiché si tratta semplicemente di un'estensione a livello logico delle stesse casistiche. 
+\subsection{Merging di policy relative ad asset con gerarchia complessa}
+Quest'ultimo scenario mostrato risulta essere il più complesso dal punto di vista della gerarchia degli asset, non più rappresentata da un albero, ma da un DAG. L'esempio è caratterizzato dalle seguenti proprietà:
+\begin{itemize}
+\item ambienti iniziali collaborativi;
+\item intersezione di policy;
+\item aggiunta di 2 parent da parte di una policy;
+\item aggiunta di una nuova foglia da parte di una policy;
+\item valutazione dei risultati utilizzando sia l'algoritmo senza e con l'estensione introdotta nella sezione \ref{estensioneAlg}.
+\end{itemize}
+La struttura precedente al merging è visibile nella figura sottostante:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.70]{../immagini/DAGExample.pdf}
+\caption{Struttura dei DAG regolati dalle policy}
+\label{DAGStructureExample}
+\end{figure}
+All'interno della tabella \ref{tableInitialDAG} sono presenti i permessi utilizzati come esempio. Le regole sono da intendersi come input allo strumento e, quindi, precedenti all'applicazione dell'ambiente collaborativo.  Le tabelle \ref{finalDAGProp} e \ref{finalDAGNoProp} contengono invece i permessi nella policy prodotta a seconda del metodo di propagazione scelto.
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+{} & \makecell{\textbf{Root 1}} & \makecell{\textbf{Root 2}} & \makecell{\textbf{Child 1}} & \makecell{\textbf{Child 2} \\\textbf{Policy 1}} & \makecell{\textbf{Child 2} \\\textbf{Policy 2}} & \makecell{\textbf{Child 3}} & \makecell{\textbf{Leaf}}\\
+\hline
+{play} & \cellcolor{green!25} & \cellcolor{green!25} & {} & {} & {} & {}& {}  \\
+\hline
+{diplay} & \cellcolor{green!25}& \cellcolor{green!25} & {} & {} & \cellcolor{green!25} & {} & \cellcolor{green!25} \\
+\hline
+{install} & \cellcolor{green!25} & {} & {}& {} & {} &{} & {} \\
+\hline
+{annotate} & {}& {} & \cellcolor{green!25}  & {} & {}& {} & {} \\
+\hline
+{delete} & \cellcolor{green!25} & {} & {}&  {} & {} & {}& \cellcolor{green!25} \\
+\hline
+{stream} & {} & \cellcolor{green!25} & {} & {} & {} &  {}& {} \\
+\hline
+{anonymize} & {} & {} & {} & \cellcolor{green!25} & \cellcolor{green!25} &  {}& {} \\
+\hline
+{translate} & {} & {} & {} & {} & {} &  \cellcolor{green!25}& {} \\
+\hline
+
+\end{tabular}
+\caption{Permessi espresi esplicitamente dalle 2 policy di cui si fa l'intersezione}
+\label{tableInitialDAG}
+\end{table}
+\begin{table}[H]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+{} & \makecell{\textbf{Root 1}} & \makecell{\textbf{Root 2}} & \makecell{\textbf{Child 1}} & \makecell{\textbf{Child 2} }  & \makecell{\textbf{Child 3}} & \makecell{\textbf{Leaf}}\\
+\hline
+{play} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & {}& \cellcolor{green!25}& {}  \\
+\hline
+{diplay} & \cellcolor{green!25}& \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} \\
+\hline
+{install} & \cellcolor{green!25} & {} & \cellcolor{green!25}& {} &{} & {} \\
+\hline
+{annotate} & {}& {} & {}  & {} &  {} & {} \\
+\hline
+{delete} & \cellcolor{green!25} & {} & \cellcolor{green!25}&  {} & {}& {} \\
+\hline
+{stream} & {} & \cellcolor{green!25} & {} & {}&   \cellcolor{green!25}& {} \\
+\hline
+{anonymize} & {} & {} & {} & {} &  {}& {} \\
+\hline
+{translate} & {} & {} & {} & {}  &  {}& {} \\
+\hline
+
+\end{tabular}
+\caption{Permessi in seguito all'intersezione con propagazione dell'ambiente sull'intero DAG}
+\label{finalDAGProp}
+\end{table}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+{} & \makecell{\textbf{Root 1}} & \makecell{\textbf{Root 2}} & \makecell{\textbf{Child 1}} & \makecell{\textbf{Child 2} }  & \makecell{\textbf{Child 3}} & \makecell{\textbf{Leaf}}\\
+\hline
+{play} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & {}& \cellcolor{green!25}& {}  \\
+\hline
+{diplay} & \cellcolor{green!25}& \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} & \cellcolor{green!25} \\
+\hline
+{install} & \cellcolor{green!25} & {} & \cellcolor{green!25}& {} &{} & {} \\
+\hline
+{annotate} & {}& {} & \cellcolor{green!25}  & {} &  {} & {} \\
+\hline
+{delete} & \cellcolor{green!25} & {} & \cellcolor{green!25}&  {} & {}& {} \\
+\hline
+{stream} & {} & \cellcolor{green!25} & {} & {}&   \cellcolor{green!25}& {} \\
+\hline
+{anonymize} & {} & {} & {} & {} &  {}& {} \\
+\hline
+{translate} & {} & {} & {} & {}  &  \cellcolor{green!25}& {} \\
+\hline
+
+\end{tabular}
+\caption{Permessi in seguito all'intersezione con propagazione solo su asset interessati dal merging}
+\label{finalDAGNoProp}
+\end{table}
+Come risulta possibile notare dalla tabella \ref{finalDAGProp}, forzare l'ambiente in base all'operazione di merging effettuata può portare ad effetti indesiderati su porzioni del DAG non interessate dalla procedura:
+\begin{itemize}
+\item l'asset \textit{Child 1} perde il permesso relativo all'azione \textit{annotate};
+\item l'asset \textit{Child 3} perde il permesso relativo all'azione \textit{translate}.
+\end{itemize}
+All'interno dello strumento viene comunque lasciata questa possibilità poiché questo caso d'uso può avere comunque delle applicazioni.\\
+La tabella \ref{finalDAGNoProp} mostra invece quello che è l'effetto desiderato la maggior parte delle volte:
+\begin{itemize}
+\item solamente l'asset \textit{Child 2} perde le i permessi che potrebbe mantenere in ambiente collaborativo, ovvero \textit{anonymize};
+\item le risorse restanti mantengono le policy in ambiente collaborativo;
+\item i nodo figlio di \textit{Child 2}, pur non essendo interessato direttamente dall'operazione di intersezione, risulta in ambiente non collaborativo.
+\end{itemize}
+La procedura per ottenere gli effetti esposti nelle tabelle \ref{finalDAGProp} e \ref{finalDAGNoProp} sono riassunti nella figura \ref{DAGResult}. 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=1.00]{../immagini/DAGExampleRES.pdf}
+\caption{}
+\label{DAGResult}
+\end{figure}
+Lo scenario mostrato risulta interessante poiché è possibile notare quali siano gli effetti dati dalla più ampia variaretà di casistiche possibile. Lo strumento risulta in grado di trattare queste casistiche, dando una base per l'interrogazione efficiente anche con relazioni complesse tra gli asset. \\
+Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOSAICO. La caratterizzazione di quel caso sarebbe la seguente:
+\begin{itemize}
+\item ambienti iniziali non collaborativi, dato da collezioni multi owner;
+\item intersezione di policy, sempre poiché si parla di collezioni multi owner;
+\item aggiunta di 1 parent da parte di una policy, rappresentante la collezione di cui si fa parte nel mercato digitale;
+\item aggiunta o modifica di una foglia da parte di una policy, rappresentante la collezione dati dell'owner che vuole aggiungersi al mercato;
+\item necessario l'utilizzo della procedura di merging estesa.
+\end{itemize}
+Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine, per MOSAICO, risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devo avere effetti su dati da lui non posseduti.
+\section{Possibili sviluppi futuri}
+TODO: trattazione delle regole con constraint
+TODO: Aggiungere supporto alla cronologia delle modifiche
+TODO: supporto al deployment
+ 
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}

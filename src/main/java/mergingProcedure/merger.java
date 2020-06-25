@@ -38,6 +38,7 @@ public class merger {
 
             if(!parentFirst.equals(parentSecond) && (parentFirst.contains("EveryAsset") || parentSecond.contains("EveryAsset"))) {
                 ArrayList<AssetCollection> toCheck = parentFirst.contains("EveryAsset") ? assetsSecond.get(uri).getParents() : assets.get(uri).getParents();
+
                 for(AssetCollection actParent : toCheck){
 
                     if (finalAssets.containsKey(actParent.getURI())) {
@@ -82,11 +83,16 @@ public class merger {
 
         for(String uri: assets.keySet()){
             if(!commonURI.contains(uri)) {
-                if (!finalAssets.containsKey(uri))
+                if (!finalAssets.containsKey(uri)) {
+
                     finalAssets.put(uri, new Asset(uri));
+                }
                 for(String parentURI : assets.get(uri).getParentURIs()){
+
+
                     if (finalAssets.containsKey(parentURI)) {
                         finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+
                     } else {
                         AssetCollection actParent = new Asset(parentURI);
                         actParent.addChild(finalAssets.get(uri));
@@ -103,6 +109,8 @@ public class merger {
                 for(String parentURI : assetsSecond.get(uri).getParentURIs()){
                     if (finalAssets.containsKey(parentURI)) {
                         finalAssets.get(parentURI).addChild(finalAssets.get(uri));
+
+
                     } else {
                         AssetCollection actParent = new Asset(parentURI);
                         actParent.addChild(finalAssets.get(uri));
@@ -111,6 +119,7 @@ public class merger {
                 }
             }
         }
+
         Map<String, Policy> policyFirstTree = tree.recoverAllPolicy();
         Map<String,Policy> policySecondTree = treeSecond.recoverAllPolicy();
         AssetTree finalTree = new AssetTree(lastEvery);
@@ -129,7 +138,6 @@ public class merger {
                 finalTree.setPolicy(toSet,true);
             }
         }
-
 
         return new Pair<AssetTree,Map<String, AssetCollection>> (finalTree,finalAssets);
     }
@@ -244,6 +252,10 @@ public class merger {
 
 
     public static Pair<AssetTree, Map<String, AssetCollection>> intersectionOnCommon(Map<String,Asset> assets, Map<String,Asset> assetsSecond, AssetTree tree, AssetTree treeSecond){
+
+        Map<String, Policy> policyFirstTree = tree.recoverAllPolicy();
+        Map<String,Policy> policySecondTree = treeSecond.recoverAllPolicy();
+
         java.util.Set<String> commonURI = new HashSet<String>(assets.keySet());
         java.util.Set<String> uriSetSecond = assetsSecond.keySet();
         Map<String, AssetCollection> finalAssets = new HashMap<String, AssetCollection>();
@@ -330,8 +342,7 @@ public class merger {
                 }
             }
         }
-        Map<String, Policy> policyFirstTree = tree.recoverAllPolicy();
-        Map<String,Policy> policySecondTree = treeSecond.recoverAllPolicy();
+
         AssetTree finalTree = new AssetTree(lastEvery);
 
         for(Map.Entry<String,AssetCollection> asset: finalAssets.entrySet()){
@@ -366,6 +377,9 @@ public class merger {
     }
 
     public static Pair<AssetTree, Map<String, AssetCollection>> unionOnCommon(Map<String,Asset> assets, Map<String,Asset> assetsSecond, AssetTree tree, AssetTree treeSecond){
+        Map<String, Policy> policyFirstTree = tree.recoverAllPolicy();
+        Map<String,Policy> policySecondTree = treeSecond.recoverAllPolicy();
+
         java.util.Set<String> commonURI = new HashSet<String>(assets.keySet());
         java.util.Set<String> uriSetSecond = assetsSecond.keySet();
         Map<String, AssetCollection> finalAssets = new HashMap<String, AssetCollection>();
@@ -452,8 +466,7 @@ public class merger {
             }
         }
 
-        Map<String, Policy> policyFirstTree = tree.recoverAllPolicy();
-        Map<String,Policy> policySecondTree = treeSecond.recoverAllPolicy();
+
         AssetTree finalTree = new AssetTree(lastEvery);
 
         for(Map.Entry<String,AssetCollection> asset: finalAssets.entrySet()){

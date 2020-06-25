@@ -1,0 +1,95 @@
+@prefix odrl:  <http://www.w3.org/ns/odrl/2/> .
+
+<http://example.com/music/Child3>
+        odrl:partOf  <http://example.com/music/root2> .
+
+<http://example.com/music/leaf>
+        odrl:partOf  <http://example.com/music/Child2> .
+
+<http://example.com/music/Child2>
+        odrl:partOf  <http://example.com/music/root2> , <http://example.com/music/root1> .
+
+<http://example.com/music/Child1>
+        odrl:partOf  <http://example.com/music/root1> .
+
+<http://example.com/music/root2>
+        odrl:partOf  <EveryAsset> .
+
+<http://example.com/music/root1>
+        odrl:partOf  <EveryAsset> .
+
+<http://complexCommon>
+        a                odrl:Set ;
+        odrl:permission  ( [ a            odrl:Permission ;
+                             odrl:action  odrl:display ;
+                             odrl:target  <http://example.com/music/leaf>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:play ;
+                             odrl:target  <http://example.com/music/root1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:display ;
+                             odrl:target  <http://example.com/music/root1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:delete ;
+                             odrl:target  <http://example.com/music/root1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:install ;
+                             odrl:target  <http://example.com/music/root1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:play ;
+                             odrl:target  <http://example.com/music/root2>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:display ;
+                             odrl:target  <http://example.com/music/root2>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:stream ;
+                             odrl:target  <http://example.com/music/root2>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:display ;
+                             odrl:target  <http://example.com/music/Child2>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:play ;
+                             odrl:target  <http://example.com/music/Child3>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:display ;
+                             odrl:target  <http://example.com/music/Child3>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:translate ;
+                             odrl:target  <http://example.com/music/Child3>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:stream ;
+                             odrl:target  <http://example.com/music/Child3>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:play ;
+                             odrl:target  <http://example.com/music/Child1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:display ;
+                             odrl:target  <http://example.com/music/Child1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:delete ;
+                             odrl:target  <http://example.com/music/Child1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:annotate ;
+                             odrl:target  <http://example.com/music/Child1>
+                           ]
+                           [ a            odrl:Permission ;
+                             odrl:action  odrl:install ;
+                             odrl:target  <http://example.com/music/Child1>
+                           ]
+                         ) .

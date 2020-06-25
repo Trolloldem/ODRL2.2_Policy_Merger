@@ -99,6 +99,15 @@ public class Asset implements AssetCollection {
     public void addParent(AssetCollection parent) {
         if(!this.parents.contains(parent))
             this.parents.add(parent);
+        else{
+            for(int i=0; i<this.parents.size(); i++){
+                AssetCollection node = this.parents.get(i);
+                if(node.equals(parent)){
+                    this.parents.set(i, parent);
+                    break;
+                }
+            }
+        }
         parent.addChild(this,true);
     }
 
@@ -106,6 +115,15 @@ public class Asset implements AssetCollection {
     public void addParent(AssetCollection parent,boolean secondary) {
         if(!this.parents.contains(parent))
             this.parents.add(parent);
+        else{
+            for(int i=0; i<this.parents.size(); i++){
+                AssetCollection node = this.parents.get(i);
+                if(node.equals(parent)){
+                    this.parents.set(i, parent);
+                    break;
+                }
+            }
+        }
 
     }
 
@@ -116,6 +134,16 @@ public class Asset implements AssetCollection {
     public void addChild(AssetCollection child) {
         if(!this.children.contains(child))
             this.children.add(child);
+        else{
+            for(int i=0; i<this.children.size(); i++){
+                AssetCollection node = this.children.get(i);
+                if(node.equals(child)){
+                    this.children.set(i, child);
+                    break;
+                }
+            }
+        }
+
         child.addParent(this,true);
     }
 
@@ -123,6 +151,15 @@ public class Asset implements AssetCollection {
     public void addChild(AssetCollection child,boolean secondary) {
         if(!this.children.contains(child))
             this.children.add(child);
+        else{
+            for(int i=0; i<this.children.size(); i++){
+                AssetCollection node = this.children.get(i);
+                if(node.equals(child)){
+                    this.children.set(i, child);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
