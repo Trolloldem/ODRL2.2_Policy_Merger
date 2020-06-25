@@ -16,19 +16,19 @@
                               odrl:target  <http://example.com/music/Child2>
                             ]
                             [ a            odrl:Permission ;
-                              odrl:action  odrl:play ;
-                              odrl:target  <http://example.com/music/rootRes>
-                            ]
-                            [ a            odrl:Permission ;
                               odrl:action  odrl:display ;
                               odrl:target  <http://example.com/music/rootRes>
                             ]
                             [ a            odrl:Permission ;
                               odrl:action  odrl:play ;
+                              odrl:target  <http://example.com/music/rootRes>
+                            ]
+                            [ a            odrl:Permission ;
+                              odrl:action  odrl:display ;
                               odrl:target  <http://example.com/music/Child1>
                             ]
                             [ a            odrl:Permission ;
-                              odrl:action  odrl:display ;
+                              odrl:action  odrl:play ;
                               odrl:target  <http://example.com/music/Child1>
                             ]
                             [ a            odrl:Permission ;
@@ -41,11 +41,11 @@
                               odrl:target  <http://example.com/music/Child2>
                             ]
                             [ a            odrl:Prohibition ;
-                              odrl:action  odrl:uninstall ;
+                              odrl:action  odrl:delete ;
                               odrl:target  <http://example.com/music/Child2>
                             ]
                             [ a            odrl:Prohibition ;
-                              odrl:action  odrl:delete ;
+                              odrl:action  odrl:uninstall ;
                               odrl:target  <http://example.com/music/Child2>
                             ]
                             [ a            odrl:Prohibition ;
