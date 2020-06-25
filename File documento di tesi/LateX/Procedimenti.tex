@@ -2066,12 +2066,7 @@ La tabella \ref{finalDAGNoProp} mostra invece quello che è l'effetto desiderato
 \item i nodo figlio di \textit{Child 2}, pur non essendo interessato direttamente dall'operazione di intersezione, risulta in ambiente non collaborativo.
 \end{itemize}
 La procedura per ottenere gli effetti esposti nelle tabelle \ref{finalDAGProp} e \ref{finalDAGNoProp} sono riassunti nella figura \ref{DAGResult}. 
-\begin{figure}[h]
-\centering
-\includegraphics[scale=1.00]{../immagini/DAGExampleRES.pdf}
-\caption{}
-\label{DAGResult}
-\end{figure}
+
 Lo scenario mostrato risulta interessante poiché è possibile notare quali siano gli effetti dati dalla più ampia variaretà di casistiche possibile. Lo strumento risulta in grado di trattare queste casistiche, dando una base per l'interrogazione efficiente anche con relazioni complesse tra gli asset. \\
 Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOSAICO. La caratterizzazione di quel caso sarebbe la seguente:
 \begin{itemize}
@@ -2082,6 +2077,12 @@ Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOS
 \item necessario l'utilizzo della procedura di merging estesa.
 \end{itemize}
 Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine, per MOSAICO, risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devo avere effetti su dati da lui non posseduti.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1.00]{../immagini/DAGExampleRES.pdf}
+\caption{}
+\label{DAGResult}
+\end{figure}
 \section{Possibili sviluppi futuri}
 TODO: trattazione delle regole con constraint
 TODO: Aggiungere supporto alla cronologia delle modifiche
