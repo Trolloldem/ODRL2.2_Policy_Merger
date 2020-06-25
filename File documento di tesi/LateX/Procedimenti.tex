@@ -1950,9 +1950,9 @@ In questo caso il tool sviluppato porta i medesimi vantaggi già mostrati nel ca
 \end{figure}
 \subsection{Merging di policy relative a gerarchie differenti}
 In questo scenario, le 2 policy operano su gerarchie parzialmente sovrapposte. La casistica trattata sarà in questo caso l'\textit{intersezione} di ambienti \textit{collaborativi}. La procedura seguita dall'algoritmo è riassunta nella seguente figura:
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
-\includegraphics[scale=.64]{../immagini/treeNewNodesExample.pdf}
+\includegraphics[scale=.5]{../immagini/treeNewNodesExample.pdf}
 \caption{Procedura seguita per l'intersezione di 2 policy in ambiente collaborativo con l'aggiunta di nuovi nodi padre e foglia}
 \label{treeNewNodeExample}
 \end{figure}
@@ -2079,15 +2079,49 @@ Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOS
 Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine, per MOSAICO, risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devo avere effetti su dati da lui non posseduti.
 \begin{figure}[H]
 \centering
-\includegraphics[scale=1.00]{../immagini/DAGExampleRES.pdf}
+\includegraphics[scale=.90]{../immagini/DAGExampleRES.pdf}
 \caption{}
 \label{DAGResult}
 \end{figure}
 \section{Possibili sviluppi futuri}
-TODO: trattazione delle regole con constraint
-TODO: Aggiungere supporto alla cronologia delle modifiche
-TODO: supporto al deployment
- 
+TODO: trattazione delle regole con constraint\\
+In questa sezione si discutono quelli che possono essere gli sviluppi futuri del lavoro svolto. In particolare si trattano i seguenti aspetti:
+\begin{itemize}
+\item effettivo sistema per il deployment del tool;
+\item supporto alle gestione della cronologia delle operazioni;
+\item supporto ad azioni con \textbf{constraint}.
+\end{itemize}
+I primi 2 temi non sono stati approfonditi durante la stesura della tesi poiché non direttamente inerenti al merging di 2 policy, obiettivo di questo lavoro. L'ultimo tema, invece, non è stato trattato poiché la generalizzazione dei limiti relativi ad un'azione dipende dai vari domini possibili. 
+\paragraph{Possibile deployment del tool}\mbox{}\\
+Al fine di sfruttare al pieno i vantaggi portati dalla procedura sviluppata, risulta necessario effettuare il merging di 2 policy solo all'inserimento di un documento ODRL all'interno dell'ipotetico mercato digitale. Tra le possibili serializzazioni RDF vi è il formato JSON-LD; questo formato può essere sfruttato all'interno di basi di dati NoSQL come, ad esempio, MongoDB.\\
+Per quanto concerne l'effettivo inserimento di un documento ODRL all'interno della base di dati del mercato digitale, si potrebbe esporre un REST Service dove il corpo delle richieste è un documento JSON avente i seguenti campi:
+\begin{itemize}
+\item operazione di merging che si desidera effettuare;
+\item oggetto JSON contenente la serializzazione JSON-LD di una policy;
+\item identificativo della collezione al quale si vuole prendere parte.
+\end{itemize}
+In questo modo il sistema avrebbe tutte le informazioni necessarie per attuare il merging tra la policy attuale delle collezione esposta nel mercato digitale e quella inviata al servizio REST.
+\paragraph{Possibile gestione della cronologia delle operazioni}\mbox{}\\
+All'interno del mercato digitale risulta possibile che i vari owner non vogliano solamente aggiungere dati ad una collezione ma modificarne la policy o rimuovere i propri dati dal mercato. Per supportare questo tipo di operazioni è necessaria la rappresentazione della cronologia delle operazioni che hanno portato una policy al suo stato attuale.\\
+La rappresentazione che viene proposta è riassunta nella seguente immagine:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.80]{../immagini/historyFirst.pdf}
+\caption{Esempio di rappresentazione della cronologia di operazioni che portano allo stato finale di una policy}
+\label{historyFirst}
+\end{figure}
+Questa rappresentazione può essere attuata seguendo due metodi:
+\begin{itemize}
+\item arricchendo la sintassi ODRL, inserendo termini relativi al processo di merging; in questo modo, seguendo il princici dei \textit{Linked Data}, da una policy è possibile raggiungere i vari documenti che hanno contribuito alla sua creazione;
+\item inserendo in una base di dati record relativi alle operazioni intraprese su di una policy; questo approccio risulta attuabile anche in database relazionali, ma è meno vicino ai principi di sviluppo di ODRL.
+\end{itemize}
+In ognuno dei due casi, qualora una delle policy originali venisse rimossa o modificata, l'unica operazione necessaria per aggiornare i documenti finali sarebbe quella di ripercorrere l'albero delle operazioni. Prendendo ad esempio la figura \ref{historyFirst}, nel caso si volesse rimuovere la policy B si seguirebbe il procedimento riassunto nella seguente figura:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.80]{../immagini/historySecond.pdf}
+\caption{Rappresentazione della procedura attuata in seguito alla rimozione della policy B}
+\label{historySecond}
+\end{figure}
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
