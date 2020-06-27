@@ -67,23 +67,114 @@
 	{\}}{{{\color{delim}{\}}}}}{1}
 	{[}{{{\color{delim}{[}}}}{1}
 	{]}{{{\color{delim}{]}}}}{1},
+	otherkeywords = {uid,@context,@type,permission,target, action, prohibition, assigner, assignee, profile,@id,dc,title,odrl,partOf,vcard,fn,hasEmail,rdf,value,refinement,leftOperand,
+	operator,rightOperand,unit,xone,@list,resource,source,constraint,Permission,
+	rdfs,Class,isDefinedBy,label,subClassOf,about,type,Prohibition},
+    keywordstyle = {\textbf},
 }
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+\lstset{language=Java,
+  frame=single, 
+  numbers=left,
+	numberstyle=\scriptsize,
+	stepnumber=1,
+	numbersep=8pt,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  basicstyle=\ttfamily,
+  moredelim=[il][\textcolor{pgrey}]{$$},
+  moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
 
 
 
 \geometry{a4paper,top=3cm,bottom=3cm,left=3cm,right=3cm,heightrounded,bindingoffset=5mm}
 \onehalfspacing
-\title{Policy merging in ODRL}
-\date{Work in progress}
+\title{Aggiunta della semantica per merging di policy in ODRL }
+\date{28 giugno 2020}
 \author{Gianluca Oldani}
 
 \begin{document}
 \maketitle
 \tableofcontents
-\chapter{ODRL}\label{ODRLChapter}
+\chapter{Introduzione}
+Questo lavoro di tesi si inserisce all'interno del contesto del progetto europeo \textit{Multi-Owner data Sharing for Analytics and Integration
+respecting Confidentiality and Owner control} (MOSAICO). Come da titolo, il progetto nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati, garantendo il rispetto delle norme vigenti in materia di privacy ed eventuali requisiti di riservatezza espressi dagli utenti finali in un ambiente multi-owner. Questa tesi si inserisce all'interno del pacchetto di lavoro \textit{Policy specifications - Data governance framework}, il quale si occupa della definizione di un linguaggio, e relativo modello, per la definizione di requisiti di privacy; questo componente risulta critico poiché interessa l'intero ciclo di vita del dato, oltre ad influenzare l'operato degli altri due \textit{work package}. Tra i candidati esaminati per la definizione di questi metadati vi è l' \textit{Open Digital Rights Language} (ODRL). Inizialmente, il lavoro di tesi si occupa di esaminare la struttura del linguaggio ed evidenziarne due problematiche all'interno del contesto di MOSAICO. La prima problematica risulta essere l'assenza di una gestione dei conflitti efficace in scenari multi-owner; la seconda problematica risulta essere l'inefficiente rappresentazione delle regole in fase di interrogazione del modello.\\
+Individuate queste problematiche, la tesi mostra quali sono le tecnologie ed i principi che hanno guidato l'implementazione di una soluzione. La soluzione proposta consiste in un tool che attua il \textit{merging} di due policy qualora queste operino sulla stessa risorsa; prima di procedere all'effettiva implementazione, sono state individuate le varie casistiche possibili ed esempi degli scenari in cui queste si presentano, al fine di caratterizzare al meglio la problematica.\\Dopo questa caratterizzazione, il lavoro di tesi espone l'architettura della soluzione implementata, mostrando schemi UML e pseudocodice Java-like per dimostrare l'efficacia e la modularità della soluzione nelle parti più importanti.\\
+L'ultimo capitolo della tesi si concentra sulla valutazione dei risultati ottenuti, riassumendo quali fossero le problematiche affrontate e mostrando i vantaggi del tool creato tramite un confronto con una soluzione baseline in una serie di scenari dalla complessità crescente.
+\chapter{Il progetto MOSAICO}
+Il progetto MOSAICO nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati\cite{ProgettoMosaico}. In particolare, si inserisce nel contesto relativo alle sfide introdotte dai requisiti di privacy che è necessario garantire in queste applicazioni. Questi requisiti rappresentano ostacoli per task quali: aggregazione di dati posseduti da più attori, analisi di dati.\\
+Gli obiettivi che il progetto si pone sono:
+\begin{itemize}
+\item peremttere lo scambio di dati in sicurezza, sia per quanto concerne la protezione di informazioni personali che informazioni sensibili in ambito aziendale;
+\item dare supporto a realtà in cui vi è carenza di skills in ambito gestione dati dando la possibilità ai possessori di dati di usufruire di strumenti per la protezione, scambio ed analisi dei dati;
+\item standardizzare le procedure di scambio di dati tra diverse realtà in ambito europeo.
+\end{itemize}
+Il metodo con cui si intende realizzare questi obiettivi risulta la creazione di un framework che permetta la definizione di requisiti relativi alla protezione dei dati in modo dichiarativo; tali requisiti sono poi utilizzati durante l'intero ciclo di vita del dato per mettere in atto tecniche di protezione del dato. Le procedure utilizzate devono, inoltre, risultare efficienti, scalabili ed essere realizzate con uno scenario che pone l'attenzione sulla privacy in scenari multi possessore.\\
+Altri aspetti che il progetto MOSAICO tiene in considerazione sono:
+\begin{itemize}
+\item implementazione adatta al deployment in sistemi reali, cercando di adottare le migliore tecniche che la ricerca ha da offrire nella tutela della privacy;
+\item indipendenza del framework dalla specifica della piattaforma in cui viene impiegato, cercado di supportare come casi d'uso principali:
+\begin{itemize}
+\item una sola entità che gestisce il mercato digitale e che offre strumenti di analisi dei dati;
+\item una sola entità che gestisce il mercato digitale ma che demanda l'analisi dei dati ad entità esterne.
+\end{itemize}
+\item varietà dei gradi di sicurezza garantiti in relazione al degrado di performance introdotto dalle tecniche di protezione impiegate, permettendo così agli utilizzatori di gestire un trade-off tra requisiti di privacy e valore dei dati.
+\end{itemize}
+
+\section{Architettura del progetto}
+Il progetto modella il ciclo di vita del dato individuandone tre fasi:
+\begin{enumerate}
+\item \textbf{ingestion}: il dato passa dal suo possessore al mercato digitale; in questa fase si punta a fornire tecnologie che permettano al data owner di specificare le restrizioni che devono essere rispettate sui dati inseriti nel mercato ed, inoltre, di applicare tecniche che diano garanzia del rispetto di queste richieste, al fine di supportare scenari dove chi possiede il mercato digitale non è un soggetto trusted.
+\item \textbf{storage}: il dato è conservato e gestito dall'entità che comanda il mercato digitale; le tecnologie fornite in questa fase puntano a proteggere il dato sia durante la conservazione, sia durante l'interrogazione del dato; in questa fase risulta importante garantire l'interoperabilità con altri ambienti che non fanno uso di questi strumenti. Particolare attenzione viene data all'evitare il degrado delle performance quando si opera su dati protetti.
+\item \textbf{analytics}: il dato è processatto all'interno del mercato digitale; in questa fase le tecnologie fornite permetto ai vari possessori di effettuare analisi sui dati in maniera efficiente, basandosi sull'entità richiedente e sui requisiti di protezione specificati per i dati.
+\end{enumerate}
+A livello implementativo il progetto è diviso in tre \textit{work package}:
+\begin{enumerate}
+\label{tesiWP}
+\item \textbf{Policy specifications - Data governance framework}: questo pacchetto di lavoro si pone come obiettivo la definizione di un framework per la gestione e la specifica di policy in scenari di aggregazione dati multi-owner. Per rendere possibile ai possessori dei dati il regolare l'uso ed il trasferimento che è possibile fare sui propri asset, MOSAICO cerca di sviluppare un modello ed un linguaggio per la dichiarazione di policy. Sia il modello che il linguaggio devono risultare flessibili, poiché i requisiti espressi devono riguardare ogni fase della vita del dato.
+\item \textbf{Data wrapping}: questo pacchetto di lavoro si preoccupa della definizione di tecniche che permettano l'accesso ai dati in modo efficiente ma che non comprometta i requisiti di protezione specificati mediante il modello fornito nel package precedente.
+\item \textbf{Data sanitisation}: quest'ultimo pacchetto di lavoro mira alla definizione di tecniche efficienti e scalabili che operino su intere collezioni di dati, al fine di offrirne una versione offuscata e/o aggregata che sia robusta ad attacchi che compromettano la privacy e confidenzialità dei dati nella collezione. Questo package mira anche a fornire tecniche che permettano di valutare il grado di protezione di un dato in relazione al valore che questo mantiene. 
+\end{enumerate}
+Tutti i tre workpackage esposti devono essere impiegabili in ogni fase del ciclo di vita del dato, come mostrato nella seguente figura:
+\begin{figure}[H]
+\centering
+\includegraphics[scale=.65]{../immagini/MOSAICOUSES.png}
+\caption{Caratterizzazione dei casi d'uso presi in considerazione da MOSAICO\cite{ProgettoMosaico}}
+\label{MosUses}
+\end{figure}
+\section{Scenari d'uso}
+Lo sviluppo del progetto si basa sul soddisfare i requisiti di 3 scenari individuati; in ognuno di questi scenari si prende in considerazione uno specifico tipo di attore che può prendere parte ad un mercato digitale. Come visibile anche all'interno della figura \ref{MosUses} gli scenari affrontati sono:
+\begin{itemize}
+\item \textbf{DELL}: in questo caso d'uso si affronta la problematica dal punto di vista dei possessori di dati; per questi attori risulta cruciale la possibilità di definire requisiti di privacy e legislativi sui propri dati e poter sfruttare tecniche che assicurino questi requisiti anche in ambienti non trusted. Questi utenti sono interessati solamente dalla fase di \textit{ingestion} ma sfruttano ogni tecnologia all'interno del progetto;
+\item \textbf{MasterCard}: in questo caso d'uso si affronta la problematica dal punto di vista di un gestore di una piattaforma per l'analisi dei dati; per questi attori è cruciale il rispetto delle norme vigenti in termini di privacy ed, allo stesso tempo, poter fornire dati di qualità anche con granularità fine; questo tipo di utenti ha il controllo sull'intero ciclo di vita di un dato, con la possibilità di effettuare l'analisi dei dati ad altre entità; data la granularità del dato, non è necessario l'uso del layer di \textit{data sanitisation};
+\item \textbf{SAP}: in questo caso d'uso si affronta la problematica dal punto di vista di un gestore di una piattaforma per lo storage dei dati; per questi attori è cruciale il rispetto delle norme vigenti in termini di privacy e poterne misurare l'efficacia; questo tipo di utenti ha il controllo sull'intero ciclo di vita di un dato; data la granularità del dato, non è necessario l'uso del layer di \textit{data wrapping}.
+\end{itemize}
+\section{Collocamento del lavoro di tesi}
+Questa tesi si colloca all'interno degli studi effettuati per l'implementazione del pacchetto di lavoro denominato \textit{Policy specifications - Data governance framework}. In particolare viene analizzato uno dei linguaggi candidati per la modellizzazione dei requisiti di privacy: l' Open Digital Rights Language (ODRL), le cui proprietà sono trattate nel capitolo \ref{ODRLChapter}.\\
+Le motivazioni che rendono questo linguaggio un candidato interessante risultano:
+\begin{itemize}
+\item è uno standard definito dal W3C, patner del progetto ed importante risorsa per la standardizzazione delle soluzioni prodotte da MOSAICO;
+\item risulta implementabile mediante i linguaggi di definizione di metadati più diffusi, quali XML ed JSON;
+\item nasce come linguaggio per l'espressioni di policy, senza assunzioni di contesti specifici;
+\item utilizzato all'interno dell'industria del settore \textit{Digital rights management} (DRM).
+\end{itemize}
+Essendo questo \textit{work package} fondamentale in ogni fase di vita del dato e in tutti i casi d'uso, la definizione del modello, la comprensione dei punti di forza e delle limitazioni risultano aspetti cruciali per il progetto MOSAICO. \\
+ODRL soddisfa sia il requisito di flessibilità che di vicinanza alle tecnologie attualmente in essere.
+\chapter{ODRL}\label{ODRLChapter} 
 \section{Il linguaggio}
 \subsection{Definizione ed obiettivi}
-``L' Open Digital Rights Language (ODRL) è un linguaggio per l'espressione di policy che definisce: un modello dell'informazione flessibile ed interoperativo, un vocabolario e un meccanismo di codifica per la rappresentazione delle istruzioni sull'uso di contenuti o servizi''\cite{ODRLinfMod}.\\
+L' Open Digital Rights Language (ODRL) è un linguaggio per l'espressione di policy che definisce: un modello dell'informazione flessibile ed interoperativo, un vocabolario e un meccanismo di codifica per la rappresentazione delle istruzioni sull'uso di contenuti o servizi''\cite{ODRLinfMod}.\\
 Il linguaggio si pone all'interno dello scenario applicativo nel quale vi è la necessità di definire:
 \begin{itemize}
 	\item quali azioni siano permesse o proibite su una risorsa. Queste regole possono essere imposte da leggi o direttamente dal possessore dell'asset o servizio;
@@ -277,6 +368,7 @@ Di seguito un esempio di azione in una regola:
 	}]
 }
 \end{lstlisting}
+\label{ConstraintODRL}
 \paragraph{Constraint e Logical Constraint}\mbox{}\\
 Come definito nel modello presente nella sezione \ref{modello}, \textbf{constraint} è una classe usata per comparare 2 espressioni che non sono constraint a loro volta, utilizzando un operatore relazionale. Rappresentano una limitazione tramite un confronto, la quale può essere soddisfatta o non soddisfatta. La classe presenta le seguenti proprietà:
 \begin{itemize}
@@ -1230,7 +1322,7 @@ Le tuple recuperate da questa query hanno la seguente struttura:
 \end{itemize}
 Il risultato viene riorganizzato in una mappa che lega ogni regola ad una coppia \textit{proprietà-valore}.\\
 Gli ultimi 3 passi della procedura sono eseguiti iterando la mappa ottenuta tramite l'algoritmo espresso dal seguente pseudo codice:
-\begin{lstlisting}[language=json,firstnumber=1,caption={Pseudo codice per il popolamento della mappa finale},captionpos=b,label=parserRuleCode]
+\begin{lstlisting}[language=java,firstnumber=1,caption={Pseudo codice per il popolamento della mappa finale},captionpos=b,label=parserRuleCode]
 Map<Asset,List<Rule> mapAssetRuleList;
 Iterator itRule = mappaParams.entrySet().iterator();
 
@@ -1384,8 +1476,8 @@ Di seguito alcuni esempi delle varie casistiche:
 \paragraph{Recupero di un nodo e del suo stato}\mbox{}\\
 L'albero creato non è un albero binario, di conseguenza la struttura dati in sé non supporta una ricerca efficiente dei nodi. La ricerca può essere resa però efficiente grazie alla gerarchia delle \textbf{Action} ed, in particolare, sfruttando l'enumerativo in figura \ref{imgActionEnum}, è possibile ricostruire il percorso che si deve fare da un nodo foglia alla radice per risalire alla gerarchia. Di seguito lo pseudo codice utilizzato per recuperare il nodo relativo ad un'azione:
 
-\begin{lstlisting}[language=Json,firstnumber=1,caption={Il caso peggiore per questa ricerca è la profondità della gerarchia delle azioni. Il caso migliore si ha qundo l'azione non è nell'albero, con tempo di risposta costante.},label=listingAlgoNode,captionpos=b]
-def getActionNode(Action a){
+\begin{lstlisting}[language=java,firstnumber=1,caption={Il caso peggiore per questa ricerca è la profondità della gerarchia delle azioni. Il caso migliore si ha qundo l'azione non è nell'albero, con tempo di risposta costante.},label=listingAlgoNode,captionpos=b]
+public Node getActionNode(Action a){
 List steps = [];
 Action visited = a;
 Node exploredNode = Tree.getRoot();
@@ -1543,8 +1635,8 @@ L'algoritmo può essere diviso nelle seguenti fasi:
 \end{enumerate}
 \subparagraph{Recupero gerarchia asset complessiva}\mbox{}\\
 Di seguito gli pseudocodici relativi al recupero della gerarchia complessiva. Il primo passo riguarda il recupero degli asset in comune alle policy:
-\begin{lstlisting}[language=Json,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al più più grande degli insiemi di asset},label=algoRecoverHierarchyComm,captionpos=b]
-def Map<String, AssetCollection> mergeHierarchyCommon(
+\begin{lstlisting}[language=java,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al più più grande degli insiemi di asset},label=algoRecoverHierarchyComm,captionpos=b]
+public Map<String, AssetCollection> mergeHierarchyCommon(
          Map<String,Asset> assetsFirst,
          Map<String,Asset> assetsSecond,
          AssetTree treeFirst,
@@ -1576,7 +1668,8 @@ def Map<String, AssetCollection> mergeHierarchyCommon(
         assetsSecond.get(uri).getParents();
      for(actParent in actParents){
        if(finalAssets.containsKey(actParent.getURI())){
-        finalAssets.get(actParent.getURI()).addChild(finalAssets.get(uri));
+        finalAssets.get(actParent.getURI())
+         .addChild(finalAssets.get(uri));
        }else{
         actParent.addChild(finalAssets.get(uri));
         finalAssets.put(actParent.getURI(),actParent);
@@ -1588,7 +1681,8 @@ def Map<String, AssetCollection> mergeHierarchyCommon(
     if(parentFirst.equals(parentSecond)){
      for(parent in parentFirst){
       if(finalAssets.containsKey(parent.getURI())){
-       finalAssets.get(parent.getURI()).addChild(finalAssets.get(uri));
+       finalAssets.get(parent.getURI())
+        .addChild(finalAssets.get(uri));
       }else {
        AssetCollection actParent = new Asset(parent.getURI());
        actParent.addChild(finalAssets.get(uri));
@@ -1630,8 +1724,8 @@ All'interno del listing \ref{algoRecoverHierarchyComm} è possibile notare:
 	\item all'interno della gerarchia è inserito un asset avente URI \textbf{EveryAsset}; questo è un asset fittizio al quale non viene mai assegnata una policy, il suo ruolo è fungere da punto d'inizio per la ricerca degli asset che non hanno un parent esplicitato, al fine di avere un'unica sorgente nella ricerca.
 \end{itemize}
 Il passo sucessivo è il recupero degli asset non in comune:
-\begin{lstlisting}[language=Json,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al numero di asset},label=algoRecoverHierarchyNotComm,captionpos=b]
-def Map<String, AssetCollection> mergeHierarchyUniq(
+\begin{lstlisting}[language=java,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al numero di asset},label=algoRecoverHierarchyNotComm,captionpos=b]
+public Map<String, AssetCollection> mergeHierarchyUniq(
        Map<String,Asset> assets,
        AssetTree tree,
        Map<String, AssetCollection> finalAssets){
@@ -1646,7 +1740,8 @@ def Map<String, AssetCollection> mergeHierarchyUniq(
 	 // Aggiunta parent similare ai comuni
    for(parent in assets.get(uri).getParents())
      if(finalAssets.containsKey(parent.getURI())){
-       finalAssets.get(parent.getURI()).addChild(finalAssets.get(uri));
+       finalAssets.get(parent.getURI())
+       .addChild(finalAssets.get(uri));
      }else {
        AssetCollection actParent =
         new Asset(parent.getURI());
@@ -2084,7 +2179,6 @@ Questa casistica risulta però più limitata da un punto di vista della presenta
 \label{DAGResult}
 \end{figure}
 \section{Possibili sviluppi futuri}
-TODO: trattazione delle regole con constraint\\
 In questa sezione si discutono quelli che possono essere gli sviluppi futuri del lavoro svolto. In particolare si trattano i seguenti aspetti:
 \begin{itemize}
 \item effettivo sistema per il deployment del tool;
@@ -2122,6 +2216,17 @@ In ognuno dei due casi, qualora una delle policy originali venisse rimossa o mod
 \caption{Rappresentazione della procedura attuata in seguito alla rimozione della policy B}
 \label{historySecond}
 \end{figure}
+\paragraph{Trattazione regole con constraint}\mbox{}\\
+Come mostrato all'interno della sezione \ref{ConstraintODRL}, ODRL permette la definizione di \textbf{refinement} sulle azioni regolate da una policy. Questo aspetto non è stato trattato all'interno del lavoro di tesi per le seguenti motivazioni:
+\begin{itemize}
+\item i dati contenuti in queste proprietà possono essere poco strutturati, si veda ad esempio il listing \ref{esempioRef} dove la proprietà \textit{unit} è definibile come un link alla risorsa; questo comporta la definizione di procedure specifiche rispetto al dominio e, quindi, poco generalizzabili;
+\item come visibile all'interno dell'\textit{ODRL Information Model}\cite{ODRLinfMod}, la struttura relativa ai \textit{Constraint} è soggetta a cambiamenti, infatti risultano tra i pochi punti di non compatibilità con le vecchie versioni di ODRL; al fine di ottenere uno strumento il più stabile possibile, si è preferito non lavorare su questa porzione del linguaggio che risulta in fase di definizione. 
+\end{itemize}
+Alla luce di queste problematiche, per riuscire ad utilizzare questi limiti all'interno di un mercato digitale, risulta necessario discretizzare il \textit{range} utilizzabile in queste proprietà: questo procedimento andrebbe a ridurre la flessibilità del linguaggio ma, allo stesso tempo, permetterebbe di attuare procedure di merging anche su questa porzione di ODRL.  
+\chapter{Conclusione}
+La soluzione implementata risolve le problematiche individuate in ODRL in molteplici scenari, compresi quelli individuati in MOSAICO. Tali problemi riguardavano l'assenza di politiche per risolvere conflitti tra policy in un contesto multi-owner e l'inefficienza del linguaggio in fase di interrogazione della policy. Queste problematiche sono state affrontate mediante lo sviluppo di una procedura di \textit{merging} di due policy; l'output di tale procedura è una nuova policy che soddisfa i requisiti espressi da entrambi i documenti in input. Il \textit{merging} può essere attuato secondo due modalità: \textit{intersezione} ed \textit{unione}, supportando quindi sia scenari collaborativi che non collaborativi. Lo strumento prodotto non si occupa solamente del \textit{merging} di policy relative a singole risorse, ma anche della propagazione dell'operazione sull'intera gerarchia degli asset regolati dalle policy.\\
+Il processo di \textit{merging}, essendo uno sforzo eseguito una tantum, produce in output un documento riutilizzabile, garantendo un'iterrogazione del modello efficiente in tutti gli scenari d'utilizzo possibili; l'unico prezzo da pagare per questo vantaggio computazionale risulta essere il costo di storage di questa nuova policy prodotta. Questi vantaggi sono stati dimostrati mediante un confronto con un metodo baseline in grado di utilizzare solamente le policy originarie per controllare lo stato di una regola.\\
+La soluzione prodotta non introduce modifiche ad ODRL, risultando in linea con il requisito di MOSAICO di standardizzazione ed applicabilità dei risultati prodotti. Questo è ottenuto anche grazie all'implementazione delle componenti per il \textit{parsing} e la \textit{produzione} mediante il framework \textit{Apache Jena}. Il documento prodotto in output, infatti, risulta essere conforme allo standard ODRL in ogni sua parte. 
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}

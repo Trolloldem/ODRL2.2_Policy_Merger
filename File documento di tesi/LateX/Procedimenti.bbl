@@ -78,7 +78,9 @@ OWL Working Group.
 \bibitem{SPARQL}
 Steve Harris and Andy Seaborne.
 \newblock \href{https://www.w3.org/TR/2013/REC-sparql11-query-20130321/}{SPARQL 1.1 Query Language}.
-
+\bibitem{ProgettoMosaico}
+\newblock Multi-Owner data Sharing for Analytics and Integration
+                        respecting Confidentiality and Owner control.
 
 \end{thebibliography}
 
