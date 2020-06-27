@@ -218,7 +218,7 @@ Come visibile all'interno dello schema in figura \ref{ODRLModelSchema}, il model
 	\item \textbf{ODRL Core Vocabulary}: rappresenta l'insieme minimo di termini per l'espressione di policy supportato;
 	\item \textbf{ODRL Common Vocabulary}: arricchisce il vocabolario precedente con gruppi di \textit{azioni}, \textit{sottoclassi} per le policy, \textit{ruoli} per i party e \textit{relazioni} tra gli asset.
 \end{itemize}
-Una delle principali differenze tra i due vocabolari, la si ha all'interno delle \textbf{azioni} che possono essere indicate: nel primo caso si hanno a disposizione solamente due azioni \textbf{use} e \textbf{transfer}, nel secondo caso queste azioni vengono estese da altre azioni figlie, come mostrato in figura \ref{imgUseTransfer}.
+Una delle principali differenze tra i due vocabolari la si ha all'interno delle \textbf{azioni} che possono essere indicate: nel primo caso si hanno a disposizione solamente due azioni \textbf{use} e \textbf{transfer}, nel secondo caso queste azioni vengono estese da altre azioni figlie, come mostrato in figura \ref{imgUseTransfer}.
 
 \begin{figure}[H]
 	\centering
@@ -554,6 +554,7 @@ Esempi di regole all'interno di policy:
    }]
   }] }]}
 \end{lstlisting}
+\label{problematicheSec}
 \subsection{Problematica trattata}\label{problematiche}
 \paragraph{Gestione dei conflitti}\mbox{}\\
 La trattazione di ORDL fatta fino ad ora considera la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che MOSAICO che emergono daii casi: in questi scenari è naturale che ogni \textit{data owner} sia interessato a definire la propria policy sulla propria porzione asset.\\
@@ -574,8 +575,8 @@ Questo sistema di gestione dei conflitti risulta avere una problematica fondamen
 	\item il dato fornito da A viene accompagnato da una policy ODRL, la quale può utilizzare la proprietà \textbf{inheritFrom} per inserire nella propria policy le regole richieste da normative europee;
 	\item oltre a questo, A inserisce nella policy anche regole relative a norme sulla privacy vigenti nel proprio paese, settando la proprietà \textbf{conflict} a \textbf{prohibit}, al fine di proteggere i dati sensibili degli utenti trattati dalla propria collezione dati.
 \end{enumerate}
-Se si considera lo scenario mostrato in un contesto single-owner, ODRL riesce perfettamente ad soddisfare le esigenze dell'owner della collezione di dati: l'utente è in grado di aderire alle normative europee ed, allo stesso tempo, di tutelare la privacy dei propri pazienti in conformità con le leggi vigenti nel suo paese.\\
-Nel caso in cui la collezione di dati medici appartenga a più ospedali, questa soluzione non risulta più adatta, in particolare nel seguente caso:
+Se si considera lo scenario mostrato in un contesto single-owner, ODRL riesce perfettamente a soddisfare le esigenze dell'owner della collezione di dati: l'utente è in grado di aderire alle normative europee ed allo stesso tempo di tutelare la privacy dei propri pazienti in conformità con le leggi vigenti nel suo paese.\\
+Nel caso in cui la collezione di dati medici appartenga a più ospedali, la soluzione proposta da ODRL non risulta più adatta, in particolare nel seguente caso:
 \begin{enumerate}
 	\item un secondo ospedale, indicato come B, segue il medesimo procedimento ma lascia la proprietà \textbf{conflict} settata come \textbf{invalid};
 	\item se le norme dei paesi di A e B non sono le stesse, entrambe le policy vengono invalidate nella loro totalità, anche se in disaccordo solo su un sottoinsieme di regole;
@@ -585,7 +586,7 @@ Una possibile soluzione a questo problema è attuare il merging delle varie poli
 \begin{enumerate}
 	\item avendo due strategie di conflitto differenti, nessuna delle due viene considerata;
 	\item per ogni regola in conflitto, si tengono solamente le regole di divieto, seguendo l'obiettivo di MOSAICO di tutela della privacy;
-	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo d MOSAICO di mantenimento della qualità ed accessibilità dei dati;
+	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo di MOSAICO di mantenimento della qualità ed accessibilità dei dati;
 	\item per ogni azione permessa solo in una policy, si invalida la relativa, poiché solo uno dei due attori coinvolti si esprime in merito.
 \end{enumerate}
 Questo procedimento è solo uno dei tanti possibili in base alle casistiche di conflitto che possono presentarsi; questo metodo risulta in linea con i requisiti che MOSAICO punta a soddisfare, poiché a differenza di quanto definito in ODRL:
@@ -618,16 +619,16 @@ Nella casistica mostrata, questa soluzione si andrebbe a tradurre in:
 \end{enumerate}
 Attuando questa procedura è possibile notare come un algoritmo di controllo possa fermarsi al primo permesso che trova, anziché controllare anche tutti i divieti presenti nella policy; inoltre non è più necessario recuperare la gerarchia completa dell'azione e può limitarsi a controlli puntuali.
 \chapter{Tecnologie utilizzate}
-All'interno di questo capitolo sono trattate le varie tecnologie e paradigmi utilizzati per implementare una soluzione alle problematiche mostrate nella sezione \ref{problematiche}. Tali problematica necessitano lo sviluppo di una componente che attui la semantica necessaria al merging di due policy e che produca un risultato in un formato non ambiguo; al fine di realizzare questo componente, è stato necessario effettuare una ricerca per quanto concerne:
+All'interno di questo capitolo sono trattate le varie tecnologie e i paradigmi utilizzati per implementare una soluzione alle problematiche mostrate nella sezione \ref{problematiche}. Tali problematica necessitano lo sviluppo di una componente che attui la semantica necessaria al merging di due policy e che produca un risultato in un formato non ambiguo; al fine di realizzare questo componente, è stato necessario effettuare una ricerca per quanto concerne:
 \begin{itemize}
 	\item tool già sviluppati per il trattamento di policy ODRL;
 	\item tool per interrogare un documento ODRL;
 	\item tool per realizzare un documento ODRL.
 \end{itemize}
 \section{Tool già esistenti}
-I risultati relativi della ricerca di tool già realizzati hanno portato alle seguenti conclusioni:
+I risultati relativi alla ricerca di tool già realizzati hanno portato alle seguenti conclusioni:
 \begin{itemize}
-	\item gran parte dei tool già sviluppati, non lavorano sull'attuale versione di ODRL\footnote{La versione utilizzata durante la stesura del lavoro di tesi è ODRL 2.2 }, come è possibile notare anche dalla pagina del progetto\cite{ODRLPage};
+	\item gran parte dei tool già sviluppati non lavorano sull'attuale versione di ODRL\footnote{La versione utilizzata durante la stesura del lavoro di tesi è ODRL 2.2 }, come è possibile notare anche dalla pagina del progetto\cite{ODRLPage};
 	\item in particolare, gli unici tool documentati ufficialmente sono:
 	\begin{itemize}
 		\item alcuni valutatori dello stato di una regola all'interno di una policy\cite{evalStatus}, attualmente in sviluppo;
@@ -640,13 +641,13 @@ Le problematiche di merging e rappresentazione non efficiente delle regole non s
 \begin{itemize}
 	\item i documenti utilizzati come input possono essere considerati già validati;
 	\item lo stato attuale degli asset può essere tralasciato, in quanto valutatori di stato sono già in sviluppo;
-	\item non deve supportare nella creazione della policy l'utente.
+	\item non deve supportare l'utente nella creazione della policy.
 \end{itemize}
 Le uniche componenti relative ai tool già esistenti che nel lavoro di tesi sono state reimplementate sono le API per la rappresentazione di policy ODRL in Java: quelle già esistenti fanno riferimento ad una versione di ODRL non attuale e non forniscono interfacce utili al procedimento di merging di due policy. 
 \section{Interrogazione e produzione documenti ODRL}
-Le ricerche relative a strumenti per il parsing ed la produzione di documenti ODRL, hanno portato al framework Apache Jena\cite{Jena}, utilizzato per creare applicazioni secondo i principi del ``Semantic web''\cite{SemanticWeb} e dei ``Linked Data''. Il framework ed i modelli di cui supporta la creazione, sono descritti nelle sezioni che seguono.
+Le ricerche relative a strumenti per il parsing ed la produzione di documenti ODRL, hanno portato al framework Apache Jena\cite{Jena}, utilizzato per creare applicazioni secondo i principi del ``Semantic web''\cite{SemanticWeb} e dei ``Linked Data''. Il framework ed i modelli di cui supporta la creazione sono descritti nelle sezioni che seguono.
 \subsection{Semantic Web}
-Il Semantic Web è definito come un'estensione del World Wide Web, nel quale i dati all'interno della rete sono \textit{machine-readable}. In particolare ``nel contesto del Semantic Web, il termine semantico assume la valenza di
+Il Semantic Web è definito come un'estensione del World Wide Web, nel quale i dati all'interno della rete sono \textit{machine-readable}. In particolare ``[...]nel contesto del Semantic Web, il termine semantico assume la valenza di
 "elaborabile dalla macchina" e non intende fare riferimento alla semantica del 
 linguaggio naturale o alle tecniche di intelligenza artificiale. Il Semantic Web è, come l’
 XML, un ambiente dichiarativo, in cui si specifica il significato dei dati, e non il modo
@@ -656,7 +657,7 @@ in cui si intende utilizzarli''\cite{introSem}. Alla base dell'idea del Semantic
 	\item i metadati connessi alle risorse, i quali sono machine-readable.
 \end{itemize}
 Per realizzare quest'idea risulta necessario poter standardizzare i metadati collegati alle risorse, specificandone semantica e sintassi.\\
-Il formato sintattico scelto come standard è il modello Resource Description Framework (RDF)\cite{RDF} mentre, invece, si lascia libertà sulla semantica, la quale può venir definita mediante vocabolari specifici rispetto al dominio di utilizzo realizzati mediante RDF Schema (RDFS)\cite{RDFS}. Sia RDF che RDFS sono descritti in dettaglio nelle prossime sezioni.\\
+Il formato sintattico scelto come standard è il modello Resource Description Framework (RDF)\cite{RDF} mentre si lascia libertà sulla semantica, la quale può venir definita mediante vocabolari specifici rispetto al dominio di utilizzo realizzati mediante RDF Schema (RDFS)\cite{RDFS}. Sia RDF che RDFS sono descritti in dettaglio nelle prossime sezioni.\\
 Utilizzando come esempio il listing \ref{esempioAsset}, risulta possibile notare:
 \begin{itemize}
 	\item il documento ODRL è la rappresentazione machine-readable di un documento di specifica dei requisiti d'accesso ad una risorsa;
@@ -671,7 +672,7 @@ Questo secondo fine viene attuato mediante i quatrro principi dei Linked Data, g
 Un importate risultato raggiunto in questo ambito risulta essere DBPedia\cite{dbpedia}, progetto che permette:
 \begin{itemize}
 	\item di consultare Wikipedia in formato RDF;
-	\item collega gli articoli Wikipedia a risorse presenti al di fuori del sito, permettendo così di effettuare query che interrogano più fonti. 
+	\item di collegare gli articoli Wikipedia a risorse presenti al di fuori del sito, permettendo così di effettuare query che interrogano più fonti. 
 \end{itemize}
 Come già citato, questo modello è ben visibile all'interno di ODRL, per esempio nel listing \ref{esmpioPolicy} è possibile notare:
 \begin{itemize}
@@ -690,7 +691,7 @@ Come già citato, questo modello è ben visibile all'interno di ODRL, per esempi
 \item rappresentazione di proprietà intellettuale e diritti relativi ad una risorsa Web.
 \end{itemize}
 RDF, inoltre, condivide la visione per la quale un metadato può essere a sua volta un dato, poiché all'interno del framework è definita come risorsa qualsiasi entità identificabile mediante un URI.\\
-Tra le caratteristiche di RDF vi è il proporre una sintassi che per descrivere risorse indipendente dal dominio applicativo: 
+Tra le caratteristiche di RDF vi è il proporre una sintassi che descriva le risorse indipendentemente dal dominio applicativo: 
 \begin{itemize}
 \item non vi sono assunzioni specifiche sull'area di applicazione;
 \item non vi sono restrizioni di semantica, definibile in base al dominio.
@@ -720,7 +721,7 @@ La rappresentazione del modello equivale ad un grafo orientato, i cui nodi sono 
 \end{enumerate}
 
 \end{enumerate}
-Nell'esempio precedente, si è mostrato il tipo di asserzione più semplice supportato da RDF; quanto segue mostra come si possano creare relazioni tra le varie risorse:
+Nell'esempio precedente si è mostrato il tipo di asserzione più semplice supportato da RDF; quanto segue mostra come si possano creare relazioni tra le varie risorse:
 \begin{enumerate}
 \item la frase \\\textit{Ralph crede che il libro ``L'origine delle specie'' abbia come autore Charles Darwin}
 \item è serializzata come \\ \{crede, "Ralph", \textit{Statement1}\}\newpage
@@ -839,17 +840,18 @@ All'interno del lavoro di tesi, le serializzazioni utilizzate sono:
 \item Turtle\cite{Turtle}: utilizzato come output del processo di merging, tale decisione è stata presa poiché risulta essere la serializzazione più matura supportata dal framework Jena.
 \end{itemize}
 \subsection{RDFS}
-Come esposto in precedenza, il modello RDF fornisce la sintassi necessaria per creare metadati in grado di rappresentare relazioni tra le varie risorse, lasciando libertà assoluta sul significato che queste relazioni possono avere. RDFS è ``un'estensione semantica''\cite{RDFS} di RDF che permette di descrivere gruppi di risorse correlate e le relazioni tra le varie risorse. RDFS basa il suo funzionamento sulla definizione di 2 termini:
+Come esposto in precedenza, il modello RDF fornisce la sintassi necessaria per creare metadati in grado di rappresentare relazioni tra le varie risorse, lasciando libertà assoluta sul significato che queste relazioni possono avere. RDFS è ``un'estensione semantica''\cite{RDFS} di RDF che permette di descrivere gruppi di risorse correlate tra loro e le relazioni tra i vari gruppi. RDFS basa il suo funzionamento sulla definizione di due termini:
 \begin{itemize}
 \item \textbf{rdfs:Class}: raggruppamento di risorse con le stesse proprietà, come ad esempio la classe \textit{odrl:Policy};
-\item \textbf{rdf:Property}: relazione tra risorse soggetto e risorse soggetto; istanze di questa particolare classe possiedono, a loro volta, le seguenti proprietà:
+\item \textbf{rdf:Property}: relazione tra risorse oggetto e risorse valore di una tripla; istanze di questa particolare classe possiedono a loro volta le seguenti proprietà:
 \begin{itemize}
-\item \textbf{rdfs:range}: i \textit{valori} in una tripla della proprietà devono essere istanze delle classi specificate in questa proprietà;  
-\item \textbf{rdfs:domain}: gli \textit{oggetti} in una tripla della proprietà devono essere istanze delle classi specificate in questa proprietà; 
+\item \textbf{rdfs:range}: i \textit{valori} in una tripla di questa \textit{Property} devono essere istanze delle classi specificate in questa proprietà;  
+\item \textbf{rdfs:domain}: gli \textit{oggetti} in una tripla di questa \textit{Property} devono essere istanze delle classi specificate in questa proprietà; 
 \end{itemize}
 \end{itemize}
-Oltre a quanto appena mostrato, esistono anche 2 proprietà denominate: \textbf{rdfs:subClassOf} e \textbf{rdfs:subPropertyOf}, le quali permettono di definire un sistema di ereditarietà tra classi e tra proprietà, come ad esempio nel vocabolario ODRL si ha:\\
-\begin{lstlisting}[language=json,firstnumber=1,caption={Estratto vocabolario ODRL\cite{ODRVocab}},captionpos=b,label=vocabExtract]
+\newpage
+Oltre a quanto appena mostrato, esistono anche due proprietà denominate: \textbf{rdfs:subClassOf} e \textbf{rdfs:subPropertyOf}; tali \textit{Property} permettono di definire un sistema di ereditarietà tra classi e tra proprietà; ad esempio nel vocabolario ODRL si ha:\\
+\begin{lstlisting}[language=xml,firstnumber=1,caption={Estratto vocabolario ODRL\cite{ODRVocab}},captionpos=b,label=vocabExtract]
 <rdfs:Class 
   rdf:about="http://www.w3.org/ns/odrl/2/Prohibition">
   
@@ -862,14 +864,14 @@ Oltre a quanto appena mostrato, esistono anche 2 proprietà denominate: \textbf{
   
 </rdfs:Class>
   \end{lstlisting}
-L'estratto mostrato è la definizione della sottoclasse \textit{Prohibition}, esposta nella sezione \ref{ODRLRulePara}. Un secondo esempio, sempre visibile in ODRL, è la definizione della proprietà ``odrl:partOf'', mostrata nei listing \ref{esempioAssetColl} e \ref{esempioPartyColl}, tale proprietà:
+L'esempio appena mostrato è la definizione della sottoclasse \textit{Prohibition}, esposta nella sezione \ref{ODRLRulePara}. Un secondo esempio, sempre visibile in ODRL, è la definizione della proprietà ``odrl:partOf'', mostrata nei listing \ref{esempioAssetColl} e \ref{esempioPartyColl}, che presenta:
 \begin{itemize}
-\item 2 possibili \textit{rdfs:domain} e 2 possibili \textit{rdfs:range};
-\item solo 2 coppie \textit{rdfs:domain}-\textit{rdfs:range} sono valide, tale restrizione è espressa mediante OWL\cite{OWL}, ulteriore estensione semantica utilizzata per espriremere concetti logici complessi;
-\item all'interno delle proprietà sono specificate le 2 classi \textit{odrl:Party} ed \textit{odrl:Asset}.
+\item due possibili \textit{rdfs:domain} e due possibili \textit{rdfs:range};
+\item solo due coppie \textit{rdfs:domain}-\textit{rdfs:range} sono valide, tale restrizione è espressa mediante OWL\cite{OWL}, ulteriore estensione semantica utilizzata per espriremere concetti logici complessi;
+\item i valori possibili per queste proprietà sono le due classi \textit{odrl:Party} ed \textit{odrl:Asset}.
 \end{itemize}
 \subsection{Apache Jena}\label{apacheJenaSec}
-``Apache Jena (o Jena) è un framework Java free ed open source per creare applicazioni del semantic web o che sfruttano Linked Data. Il framework è composta da diverse API che interagiscono al fine di processare dati RDF.''\cite{Jena}\\
+``Apache Jena (o Jena) è un framework Java free ed open source per creare applicazioni del semantic web o che sfruttano Linked Data. Il framework è composto da diverse API che interagiscono al fine di processare dati RDF.''\cite{Jena}\\
 Per questo motivo si è scelto Jena come insieme di utility sia a supporto della porzione di parsing, descritta nella sezione \ref{parsingSection}, sia a supporto della porzione di produzione del documento ODRL finale, descritta nella sezione \ref{produceSection}. Nel dettaglio, le API utilizzate comprendono:
 \begin{itemize}
 \item \textbf{Core RDF API};
@@ -884,29 +886,29 @@ Questa porzione del framework offre interfacce per l'interazione con il modello 
 \item \textbf{property}: il predicato dello statement;
 \item \textbf{value}: il valore dello statement, il quale può essere a sua volta una risorsa.
 \end{itemize}
-L'interfaccia core fornita da questo componente è denominata \textit{Model}, il quale denota un'intero grafo RDF; questa interfaccia è intesa per supportare operazioni molto astratte sull'intero modello, e può essere usata per:
+L'interfaccia principale fornita da questo componente è denominata \textit{Model}, il quale denota un intero grafo RDF. Questa interfaccia è intesa per supportare operazioni molto astratte sull'intero modello, come per esempio:
 \begin{itemize}
-\item specificare su quale file o collezione di file RDF si sta lavorando;
+\item specificare su quale file o collezione di file RDF sta lavorando;
 \item aggiungere, recuperare e rimuovere nodi dal grafo;
 \item settare i \textit{namespace} utilizzati all'interno del modello;
-\item settare la serializzazione con la quale il modello viene mostrato;
-\item interagire con l'API ARQ per l'interrogazione del modello tramite query SPARQL.
+\item settare la serializzazione del modello;
+\item interagire con l'API ARQ per interrogare il modello tramite query SPARQL.
 \end{itemize}
 \paragraph{Jena schemagen}\mbox{}\\
-Questo tool fornito dal framework ha utilità puramente tecnica, in quanto è uno strumento per ``convertire vocabolari OWL o RDFS in una classe Java class che contiene costanti statiche per i termini nel vocabolario''.\\
-L'effettivo utilizzo del tool si traduce nel suo processare un file RDF, in questo caso il file context di ODRL\cite{ODRLContext}, automatizzando il processo di estrazione dei termini all'interno del vocabolario. I vantaggi di questo approccio si traducono in:
+Questo tool ha utilità puramente tecnica, in quanto è uno strumento per ``convertire vocabolari OWL o RDFS in una classe Java class che contiene costanti statiche per i termini nel vocabolario''.\\
+L'effettivo utilizzo del tool si traduce nel processare un file RDF, in questo caso il file context di ODRL\cite{ODRLContext}, automatizzando il processo di estrazione dei termini all'interno del vocabolario. I vantaggi di questo approccio si traducono in:
 \begin{itemize}
 \item l'utilizzo di variabili facilmente leggibili all'interno del linguaggio ARQ, anziché dell'URI che definisce la classe o la proprietà;
 \item interazione più trasparente con le \textit{Core RDF API} in fase di aggiunta risorse o di definizione delle proprietà di un nodo.
 \end{itemize}
-Il contributo di questo tool non è direttamente visibile all'interno del codice del progetto di tesi, poiché è stata sfruttata la versione standalone del tool.
+Il contributo di questo tool non è direttamente visibile all'interno del codice del progetto di tesi, poiché ne è stata sfruttata la versione standalone.
 \paragraph{ARQ e SPARQL}\mbox{}\\
 ``ARQ è il query engine fornito da Jena che supporta il linguaggio SPARQL RDF Query.''\cite{Jena}\\
 Il linguaggio ``SPARQL può essere usato per esprimere query su diverse sorgenti di dati, sia su dati nativi RDF o esposti come RDF via middleware.''\cite{SPARQL}\\
-L'obiettivo di queste tecnologie è fornire interfacce che permettano l'interrogazione di modelli RDF. ARQ è l'API esposta da Jena per formulare tramite Java le interrogazioni; SPARQL è l'effettivo linguaggio nel quale è espressa la query.\\
+L'obiettivo di queste tecnologie è fornire interfacce che permettano l'interrogazione di modelli RDF. ARQ è l'API esposta da Jena per formulare le interrogazioni tramite Java ; SPARQL è il linguaggio nel quale è espressa la query.\\
 Prendendo ad esempio il seguente file in formato RDF:\\
 
-\begin{lstlisting}[language=json,firstnumber=1,caption={File sul quale si vuole eseguire una query},captionpos=b,label=SPARQLRDF]
+\begin{lstlisting}[language=xml,firstnumber=1,caption={File sul quale si vuole eseguire una query},captionpos=b,label=SPARQLRDF]
 @prefix dc:   <http://purl.org/dc/elements/1.1/> .
 @prefix :     <http://example.org/book/> .
 @prefix ns:   <http://example.org/ns#> .
@@ -917,7 +919,7 @@ Prendendo ad esempio il seguente file in formato RDF:\\
 :book2  ns:price  23 .
 
 \end{lstlisting}
-\begin{lstlisting}[language=json,firstnumber=1,caption={Query SPARQL per il recupero dei titoli che iniziano per SPARQL},captionpos=b,label=SPARQLQuery]
+\begin{lstlisting}[language=sql,firstnumber=1,caption={Query SPARQL per il recupero dei titoli che iniziano per SPARQL},captionpos=b,label=SPARQLQuery]
 
 PREFIX  dc:  <http://purl.org/dc/elements/1.1/>
 SELECT  ?title
@@ -927,8 +929,9 @@ WHERE   { ?x dc:title ?title
 \end{lstlisting}\mbox{}\\ \\  
 Il risultato della query nel listing \ref{SPARQLQuery} è la tupla:
 \begin{center} (\textbf{title} = ``SPARQL Tutorial'')\end{center}
+\newpage
 Questo secondo esempio mostra come sia possibile filtrare uno statement sulla base di più espressioni:\\
-\begin{lstlisting}[language=json,firstnumber=1,caption={File sul quale si vuole eseguire una query},captionpos=b,label=SPARQLRDF2]
+\begin{lstlisting}[language=sql,firstnumber=1,caption={File sul quale si vuole eseguire una query},captionpos=b,label=SPARQLRDF2]
 @prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 
 _:a  foaf:name   "Johnny Lee Outlaw" .
@@ -938,7 +941,7 @@ _:b  foaf:mbox   <mailto:peter@example.org> .
 _:c  foaf:mbox   <mailto:carol@example.org> .
 \end{lstlisting}\mbox{}
 
-\begin{lstlisting}[language=json,firstnumber=1,caption={Query SPARQL per il recupero dei nomi e delle mail solo per soggetti che presentano entrambe le proprietà},captionpos=b,label=SPARQLQuery2]
+\begin{lstlisting}[language=sql,firstnumber=1,caption={Query SPARQL per il recupero dei nomi e delle mail solo per soggetti che presentano entrambe le proprietà},captionpos=b,label=SPARQLQuery2]
 PREFIX foaf:   <http://xmlns.com/foaf/0.1/>
 SELECT ?name ?mbox
 WHERE
@@ -951,8 +954,9 @@ Il risultato della query nel listing \ref{SPARQLQuery} sono le tuple:
 (\textbf{name} = "Peter Goodguy",	\textbf{mbox} = <mailto:peter@example.org>)
 \end{center}
 Risulta possibile notare che l'ultima tripla presente nel listing \ref{SPARQLRDF2} non sia stata utilizzata per costruire il risultato della query, poiché l'oggetto \textit{\_:c} non ha la proprietà \textit{foaf:mbox}.\\
-Il ruolo che hanno le API ARQ all'interno di del progetto è di collegamente tra le query e le \textit{CORE RDF API}, nonché di semplificazione della sintassi, evitando il costrutto \textit{PREFIX} laddove già presente all'interno del modello sul quale si eseguono le query.
-\paragraph{Modulo I/O}\mbox{}\\
+Il ruolo che hanno le API ARQ all'interno di del progetto è di collegamente tra le query e le \textit{CORE RDF API}; introducono anche una semplificazione della sintassi evitando il costrutto \textit{PREFIX} dove è noto il modello sul quale si eseguono le query.
+\newpage
+\paragraph{Modulo I/O}\mbox{}
 Il modulo Input/Output fornisce le interfacce necessarie:
 \begin{itemize}
 \item alla lettura di un file in formato RDF, supportando le serializzazioni:
@@ -967,12 +971,12 @@ Il modulo Input/Output fornisce le interfacce necessarie:
 \item TriX;
 \item RDF Binary;
 \end{itemize}
-\item alla scrittura di un file in formato RDF, supportando le medesime serializzazione mostrate in lettura.
+\item alla scrittura di un file in formato RDF, supportando le medesime serializzazioni mostrate in lettura.
 \end{itemize}
-Il modello espresso mediante \textit{CORE RDF API} otttenuto da questi moduli è il medesimo a discapito della serializzazione utilizzata, di conseguenza non è necessario, almeno in lettura, attuare implementazioni specifiche basate sul formato. Quest'ultima constatazione vale anche per il procedimento di parsing e, quindi, per l'intera procedura di merging a valle. L'unica porzione del progetto che necessita di adattamenti in base al formato risulta essere il produttore di documenti ODRL, in quanto alcuni formati possono necessitare di alcuni adattamenti per essere resi più leggibili dagli utenti. Non sono invece necessari adattamenti per l'utilizzo da parte di un programma.
+Il modello espresso mediante \textit{CORE RDF API} otttenuto da questi moduli è il medesimo a discapito della serializzazione utilizzata, di conseguenza non è necessario, almeno in lettura, attuare implementazioni specifiche basate sul formato. Quest'ultima constatazione vale anche per il procedimento di parsing e, quindi, per l'intera procedura di merging. L'unica porzione del progetto che necessita di adattamenti in base al formato risulta essere il produttore di documenti ODRL, in quanto alcuni formati possono necessitare di alcune modifiche per essere resi più leggibili dagli utenti finali. Non sono invece necessari adattamenti per l'utilizzo da parte di un programma.
 \chapter{Valutazione casistiche}
 \section{Casistiche di merging}
-\paragraph{Casi base}\mbox{}\\
+\paragraph{Casi base}
 \subparagraph{Asset diffrenti}\mbox{}\\
 
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1010 permette di riprodurre l'asset 9898.movie a chiunque},captionpos=b]
@@ -1024,7 +1028,7 @@ Le due policy mostrate si riferiscono ad asset differenti, farne il merging port
 }]
 }
 \end{lstlisting}
-Nonostante le due policy si riferiscano allo stesso asset, anche in questo caso, non è possibile combinare le due regole, poiché si riferiscono a domini diversi. Un eventuale merging delle due policy avrebbe 2 regole distinte uguali a quelle di partenza.\newpage
+Nonostante le due policy si riferiscano allo stesso asset anche in questo caso non è possibile combinare le due regole, poiché si riferiscono a regole tra loro scollegate. Un eventuale merging delle due policy avrebbe due regole distinte uguali a quelle di partenza.\newpage
 \subparagraph{Attori designati differenti}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 da parte del soggetto Billie},captionpos=b]
 {
@@ -1054,9 +1058,14 @@ Nonostante le due policy si riferiscano allo stesso asset, anche in questo caso,
 }]
 }
 \end{lstlisting}
-In questo caso, le regole espresse dalle 2 policy sarebbero in conflitto, poiché ``use'', permesso dalla prima policy, comprende al suo interno anche ``play''\footnote{Per le dipendenze tra le azioni, si fa riferimento all'ODRL Core Vocabulary}, proibito dalla seconda. Siccome però le due regole riguardano due soggetti diversi,un eventuale merging delle policy avrebbe 2 regole distinte uguali a quelle di partenza.
+In questo caso le regole espresse dalle due policy sarebbero in conflitto, poiché \textit{use}, permesso dalla prima policy, comprende al suo interno anche \textit{play}, proibito dalla seconda. Siccome però le due regole sono applicate a due soggetti diversi,un eventuale merging delle policy avrebbe due regole distinte uguali a quelle di partenza. Questa casistica non è stata ulteriormente esplorata all'interno del lavoro di tesi poiché:
+\begin{itemize}
+\item la procedura di merging implementata utilizza come semplificazione regole riferite ad \textbf{EveryOne}; questo poiché il procetto MOSAICO ha il suo focus sui dati;
+\item un'eventuale procedura che tenga conto anche degli utenti aggiungerebbe solo un filtraggio preliminare sulle entità cui si riferiscono le regole.
+\end{itemize}
+\label{noStrat}
 \paragraph{Conflitti senza strategia risolutiva indicata}\label{noStrat}\mbox{}\\
-Nel caso si presentino 2 policy in conflitto, se non viene indicato alcun processo di risoluzione dei conflitti, secondo lo standard ODRL entrambe le policy sono da considerarsi non valide. Attuando policy merging è possibile formulare una terza policy che racchiude entrambe le casistiche.
+Nel caso due policy siano conflitto quando non viene indicato alcun processo di risoluzione dei conflitti ODRL invalida entrambe le policy. Attuando policy merging è possibile formulare una terza policy che racchiude entrambi i requisiti espressi dai documenti originali.
 \subparagraph{Conflitti permesso-permesso}\label{permperm}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
 {
@@ -1080,11 +1089,10 @@ Nel caso si presentino 2 policy in conflitto, se non viene indicato alcun proces
 }]
 }
 \end{lstlisting}
-La seconda policy risulta in conflitto con la prima, poiché quest'ultima permette un numero maggiore di utilizzi. Seguendo la procedura standard, entrambe le 2 policy dovrebbero essere considerate invalidate. Nella realtà dei fatti, facendo policy merging, si otterrebbe solamente la policy più restrittiva, ovvero la seconda. La procedura di policy merging in questione sarebbe quindi: 
+La seconda policy risulta in conflitto con la prima, poiché quest'ultima permette un numero maggiore di utilizzi. Seguendo la procedura standard, entrambe le due policy dovrebbero essere considerate non valide. Nella realtà dei fatti, facendo policy merging, si otterrebbe solamente la policy più restrittiva, ovvero la seconda. La procedura di policy merging in questione sarebbe quindi: 
 \begin{enumerate}
 	\item invalidare le policy 0001 e 0002;
-	\item creare una terza policy 0003, uguale alla 0002(la più restrittiva delle due), con indicato il procedimento di merging;
-	\item l'indicazione è opportuna per fare il processo inverso al merging qualora una delle 2 policy originarie venga ritirata.
+	\item creare una terza policy 0003, uguale alla 0002(la più restrittiva delle due), al fine di segnalare il processo di merging avvenuto.
 \end{enumerate}
 \subparagraph{Conflitti divieto-divieto}\label{divdiv}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 proibisce un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
@@ -1112,8 +1120,7 @@ La seconda policy risulta in conflitto con la prima, poiché quest'ultima permet
 Caso duale del precedente; in questo caso una delle due policy proibisce un numero maggiore di utilizzi rispetto all'altra. La procedura da seguire risulta essere:
 \begin{enumerate}
 	\item invalidare le policy 0001 e 0002;
-	\item creare una terza policy 0003, uguale alla 0001(la più ampia delle due), con indicato il procedimento di merging;
-	\item l'indicazione è opportuna per fare il processo inverso al merging qualora una delle 2 policy originarie venga ritirata.
+	\item creare una terza policy 0003, uguale alla 0001(la più ampia delle due), al fine di segnalare il processo di merging avvenuto.
 \end{enumerate}
 \subparagraph{Conflitti permesso-divieto}\label{permdiv}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette il trasferimento dell'asset 1212 al soggetto Alice},captionpos=b]
@@ -1144,7 +1151,7 @@ Caso duale del precedente; in questo caso una delle due policy proibisce un nume
 }]
 }
 \end{lstlisting}
-In questo caso, l'azione ``transfer'', nell'ODRL Core Vocabulary, è inclusa in 2 sotto-azioni: ``give'' e ``sell''; delle 2 sotto-azioni, solamente ``sell'' è esplicitamente proibita dalla policy 0002, di conseguenza la seguente policy permette solo azioni che soddisfano entrambe le policy precedenti:\newpage
+In questo caso, l'azione \textit{transfer} è inclusa in due sotto-azioni: \textit{give} e \textit{sell}; delle due sotto-azioni, solamente \textit{sell} è esplicitamente proibita dalla policy 0002, di conseguenza la seguente policy permette solo azioni che soddisfano entrambe le policy precedenti:\newpage
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0003 consente al soggetto Alice di cedere l'asset 1212 senza richiedere un compenso e cancellando l'asset dal proprio insieme di dati},captionpos=b]
 {
 "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -1159,100 +1166,20 @@ In questo caso, l'azione ``transfer'', nell'ODRL Core Vocabulary, è inclusa in 
 }]
 }
 \end{lstlisting}
-Sono necessarie alcune valutazioni su questa casistica:
+Risulta possibile fare le seguenti valutazioni in merito a questa casistica:
 \begin{itemize}
-	\item il numero di regole all'interno della policy ottenuta per merging non è necessariamente minore rispetto al numero di regole di partenza; tale numero, dipende dal numero di sotto-azioni esistenti e da come è formulato il divieto di partenza;
-	\item è necessario un meccanismo per notificare che il le sotto-azioni presentate in realtà indicano ``tutte le sotto-azioni possibili, escluse quelle esplicitamente vietate'';
-	\item se ``prohibition'' e ``permission'' fossero invertite tra la policy 0001 e la 0002, la policy 0003 risulterebbe una policy non valida.
+	\item il numero di regole all'interno della policy ottenuta per merging non è necessariamente minore rispetto al numero di regole di partenza;
+	\item risulta necessario identificare se le sotto-azioni sono le uniche azioni atomiche possibili o se anche le azioni padre possano essere considerate atomiche; all'interno dell'implementazione è stata scelta la prima convenzione;
+	\item se \textit{prohibition} e \textit{permission} fossero invertite tra la policy 0001 e la 0002, la policy 0003 risulterebbe una policy con solo divieti.
 \end{itemize}
 \paragraph{Conflitti con strategia risolutiva indicata}\mbox{}\\
 Le strategie risolutive indicabili all'interno di ODRL utilizzando il Core Vocabulary sono le seguenti:
 \begin{enumerate}
-	\item ``perm'': tutte le ``permission'' hanno la precedenza sulle ``prohibition'';
-	\item ``prohibit'': tutte le ``prohibition'' hanno la precedenza sulle ``permission'';
-	\item ``invalid'': qualsiasi conflitto invalida la policy;
+	\item \textit{perm}: tutte le \textit{permission} hanno la precedenza sulle \textit{prohibition};
+	\item \textit{prohibit}: tutte le \textit{prohibition} hanno la precedenza sulle \textit{permission};
+	\item \textit{invalid}: qualsiasi conflitto invalida la policy;
 \end{enumerate}
-La casistica ``invalid'' è già stata trattata all'interno del paragrafo ``Conflitti senza strategia risolutiva indicata''[\ref{noStrat}].\newpage
-\subparagraph{Strategia concorde}\mbox{}\\
-\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 consente qualsiasi utilizzo dell'asset 1212 a chiunque, dando precedenza ai permessi in caso di conflitto},captionpos=b]
-{
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"conflict":{"@type": "perm"},
-"permission": [{
-"target": "http://example.com/asset:1212",
-"action": "use",
-"assigner": "http://example.com/owner:181"
-}]
-}
-\end{lstlisting}
-\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 permette la riproduzione dell'asset 1212 a chiunque, mentre ne vieta la proiezione, dando precedenza ai permessi in caso di conflitto},captionpos=b]
-{
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"conflict":{"@type": "perm"},
-"permission": [{
-"target": "http://example.com/asset:1212",
-"action": "play",
-"assigner": "http://example.com/owner:182"
-}],
-"prohibition": [{
-"target": "http://example.com/asset:1212",
-"action": "display",
-"assigner": "http://example.com/owner:181"
-}]
-}
-\end{lstlisting}
-In questo caso è possibile ricondursi alla procedura indicata nel sottoparagrafo ``Conflitti permesso-permesso''[\ref{permperm}] ignorando tutti i divieti espressi nelle policy. In seguito al merging delle policy si ottiene:
-\begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0003 risulta essere uguale ai permessi della policy 0002, più restrittiva},captionpos=b]
-{
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"conflict":{"@type": "perm"},
-"permission": [{
-"target": "http://example.com/asset:1212",
-"action": "play",
-"assigner": "http://example.com/owner:182"
-}]
-}
-\end{lstlisting}
-Dando la precedenza ai permessi, rimane comunque da tener in conto che nella policy 0002 il permesso è più ristretto rispetto a quello espresso nella policy 0001.\\
-Dualmente, nel caso di strategia di conflitto concorde di tipo ``prohibit'', ci si riconduce al caso mostrato nel sottoparagrafo ``Conflitti divieto-divieto''[\ref{divdiv}], tenendo conto solo dei divieti.
-\subparagraph{Strategia discorde}\mbox{}\\
-Utilizzando il normale sistema di ereditarietà delle policy di ODRL, una policy contenente 2 strategie di risoluzione dei conflitti dovrebbe essere considerata non valida. Questa casistica si può però ridurre al caso mostrato nel sottoparagrafo ``Conflitti permesso-divieto'' [\ref{permdiv}]. In questo modo, entrambe le policy risultano rispettate. Un'aggiunta che può essere fatta a questa casistica, rispetto a quella già mostrata, sarebbe considerare solamente i divieti o i permessi della singola policy, in base alla strategia indicata; quest'ultima opzione porterebbe ad un ibrido tra le due soluzioni precedenti.
-\paragraph{Restrizioni su regole, asset, party}\mbox{}\\
-Possono essere poste delle restrizioni sulla validità di una regola o sulla composizione di una collezione di asset o gruppo di soggetti. Anche queste restrizioni possono essere composte similarmente alle regole a sé stanti.\newpage
-\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di limite temporale per una regola, può essere composto similarmente ai limiti sull'azione regolata},captionpos=b]
-{
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Offer",
-"uid": "http://example.com/policy:6163",
-"profile": "http://example.com/odrl:profile:10",
-"permission": [{
-	"target": "http://example.com/document:1234",
-	"assigner": "http://example.com/org:616",
-	"action": "distribute",
-	"constraint": [{
-		"leftOperand": "dateTime",
-		"operator": "lt",
-		"rightOperand": 
-		  { "@value": "2018-01-01",
-		    "@type": "xsd:date" }
-		}]
-	}]
-}
-\end{lstlisting}
-Problematiche relative alla gestione di questo tipo di merging, non più necessariamente relativo a conflitti, possono essere rilevate nella grande varietà che può assumere:
-\begin{itemize}
-	\item limiti di tipo temporale;
-	\item limiti di tipo spaziale;
-	\item limiti di tipo quantitativo(numero di volte che un permesso può essere sfruttato);
-	\item limiti relativi al tipo di dato trattato(dimensione dell'immagine, durata del video).
-\end{itemize}
-A causa di questa varietà, la gestione di questo tipo di merging può facilmente esplodere. Vi è anche da contare che un ``constraint'' può essere ottenuto come operazione in logica booleana di altri ``constraint''. Questo tipo di merging non va necessariamente a risolvere conflitti nelle policy, ma può rilevare quando un numero eccessivo di constraint va a rendere la collezione di asset inutilizzabile(una policy permette l'uso di un asset solo la mattina, la seconda solo la sera, unendole l'asset risulta inutilizzabile).
+La casistica \textit{invalid} è già stata trattata all'interno del paragrafo in sezione \ref{noStrat}. Per quanto concerne le altre due casistiche, come già esposto nella sezione \ref{problematicheSec}, lo standard ODRL risulta indatto al trattamento di conflitti; questa proprietà viene quindi ignorata dal procedimento di merging.
 
 \chapter{Implementazioni}\label{implementazioniCh}
 \section{Architettura generale}
