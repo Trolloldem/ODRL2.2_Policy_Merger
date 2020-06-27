@@ -110,41 +110,41 @@
 \chapter{Introduzione}
 Questo lavoro di tesi si inserisce all'interno del contesto del progetto europeo \textit{Multi-Owner data Sharing for Analytics and Integration
 respecting Confidentiality and Owner control} (MOSAICO). Come da titolo, il progetto nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati, garantendo il rispetto delle norme vigenti in materia di privacy ed eventuali requisiti di riservatezza espressi dagli utenti finali in un ambiente multi-owner. Questa tesi si inserisce all'interno del pacchetto di lavoro \textit{Policy specifications - Data governance framework}, il quale si occupa della definizione di un linguaggio, e relativo modello, per la definizione di requisiti di privacy; questo componente risulta critico poiché interessa l'intero ciclo di vita del dato, oltre ad influenzare l'operato degli altri due \textit{work package}. Tra i candidati esaminati per la definizione di questi metadati vi è l' \textit{Open Digital Rights Language} (ODRL). Inizialmente, il lavoro di tesi si occupa di esaminare la struttura del linguaggio ed evidenziarne due problematiche all'interno del contesto di MOSAICO. La prima problematica risulta essere l'assenza di una gestione dei conflitti efficace in scenari multi-owner; la seconda problematica risulta essere l'inefficiente rappresentazione delle regole in fase di interrogazione del modello.\\
-Individuate queste problematiche, la tesi mostra quali sono le tecnologie ed i principi che hanno guidato l'implementazione di una soluzione. La soluzione proposta consiste in un tool che attua il \textit{merging} di due policy qualora queste operino sulla stessa risorsa; prima di procedere all'effettiva implementazione, sono state individuate le varie casistiche possibili ed esempi degli scenari in cui queste si presentano, al fine di caratterizzare al meglio la problematica.\\Dopo questa caratterizzazione, il lavoro di tesi espone l'architettura della soluzione implementata, mostrando schemi UML e pseudocodice Java-like per dimostrare l'efficacia e la modularità della soluzione nelle parti più importanti.\\
+Individuate queste problematiche, la tesi mostra quali sono le tecnologie ed i principi che hanno guidato l'implementazione di una soluzione. La proposta consiste in un tool che attua il \textit{merging} di due policy qualora queste operino sulla stessa risorsa; prima di procedere all'effettiva implementazione, sono state individuate le varie casistiche possibili ed esempi degli scenari in cui si presentano, al fine di caratterizzare al meglio la problematica.\\Dopo questa caratterizzazione, il lavoro di tesi espone l'architettura della soluzione implementata, mostrando schemi UML e pseudocodice Java-like per dimostrare l'efficacia e la modularità della proposta nelle parti più importanti.\\
 L'ultimo capitolo della tesi si concentra sulla valutazione dei risultati ottenuti, riassumendo quali fossero le problematiche affrontate e mostrando i vantaggi del tool creato tramite un confronto con una soluzione baseline in una serie di scenari dalla complessità crescente.
 \chapter{Il progetto MOSAICO}
 Il progetto MOSAICO nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati\cite{ProgettoMosaico}. In particolare, si inserisce nel contesto relativo alle sfide introdotte dai requisiti di privacy che è necessario garantire in queste applicazioni. Questi requisiti rappresentano ostacoli per task quali: aggregazione di dati posseduti da più attori, analisi di dati.\\
 Gli obiettivi che il progetto si pone sono:
 \begin{itemize}
 \item peremttere lo scambio di dati in sicurezza, sia per quanto concerne la protezione di informazioni personali che informazioni sensibili in ambito aziendale;
-\item dare supporto a realtà in cui vi è carenza di skills in ambito gestione dati dando la possibilità ai possessori di dati di usufruire di strumenti per la protezione, scambio ed analisi dei dati;
+\item dare supporto a realtà in cui vi è carenza di skills in ambito gestione dati, fornendo la possibilità ai possessori delle risorse di usufruire di strumenti per la protezione, scambio ed analisi dei dati;
 \item standardizzare le procedure di scambio di dati tra diverse realtà in ambito europeo.
 \end{itemize}
-Il metodo con cui si intende realizzare questi obiettivi risulta la creazione di un framework che permetta la definizione di requisiti relativi alla protezione dei dati in modo dichiarativo; tali requisiti sono poi utilizzati durante l'intero ciclo di vita del dato per mettere in atto tecniche di protezione del dato. Le procedure utilizzate devono, inoltre, risultare efficienti, scalabili ed essere realizzate con uno scenario che pone l'attenzione sulla privacy in scenari multi possessore.\\
+Il metodo con cui si intende realizzare questi obiettivi risulta essere la creazione di un framework che permetta la definizione di requisiti relativi alla protezione dei dati in modo dichiarativo; tali requisiti sono poi utilizzati durante l'intero ciclo di vita del dato per mettere in atto tecniche di protezione. Le procedure utilizzate devono, inoltre, risultare efficienti, scalabili ed essere realizzate con in mente uno scenario che pone l'attenzione sulla privacy in ambienti multi-owner.\\
 Altri aspetti che il progetto MOSAICO tiene in considerazione sono:
 \begin{itemize}
 \item implementazione adatta al deployment in sistemi reali, cercando di adottare le migliore tecniche che la ricerca ha da offrire nella tutela della privacy;
-\item indipendenza del framework dalla specifica della piattaforma in cui viene impiegato, cercado di supportare come casi d'uso principali:
+\item indipendenza del framework dalla specifica piattaforma in cui viene impiegato, cercado di supportare come casi d'uso principali:
 \begin{itemize}
 \item una sola entità che gestisce il mercato digitale e che offre strumenti di analisi dei dati;
 \item una sola entità che gestisce il mercato digitale ma che demanda l'analisi dei dati ad entità esterne.
 \end{itemize}
-\item varietà dei gradi di sicurezza garantiti in relazione al degrado di performance introdotto dalle tecniche di protezione impiegate, permettendo così agli utilizzatori di gestire un trade-off tra requisiti di privacy e valore dei dati.
+\item varietà dei gradi di sicurezza garantiti in relazione al degrado di performance introdotto dalle tecniche di protezione impiegate, permettendo così agli utilizzatori di gestire un trade-off tra certificazioni sulla privacy e valore dei dati.
 \end{itemize}
 
 \section{Architettura del progetto}
 Il progetto modella il ciclo di vita del dato individuandone tre fasi:
 \begin{enumerate}
-\item \textbf{ingestion}: il dato passa dal suo possessore al mercato digitale; in questa fase si punta a fornire tecnologie che permettano al data owner di specificare le restrizioni che devono essere rispettate sui dati inseriti nel mercato ed, inoltre, di applicare tecniche che diano garanzia del rispetto di queste richieste, al fine di supportare scenari dove chi possiede il mercato digitale non è un soggetto trusted.
-\item \textbf{storage}: il dato è conservato e gestito dall'entità che comanda il mercato digitale; le tecnologie fornite in questa fase puntano a proteggere il dato sia durante la conservazione, sia durante l'interrogazione del dato; in questa fase risulta importante garantire l'interoperabilità con altri ambienti che non fanno uso di questi strumenti. Particolare attenzione viene data all'evitare il degrado delle performance quando si opera su dati protetti.
-\item \textbf{analytics}: il dato è processatto all'interno del mercato digitale; in questa fase le tecnologie fornite permetto ai vari possessori di effettuare analisi sui dati in maniera efficiente, basandosi sull'entità richiedente e sui requisiti di protezione specificati per i dati.
+\item \textbf{ingestion}: il dato passa dal suo possessore al mercato digitale; in questa fase si punta a fornire tecnologie che permettano al data owner di specificare le restrizioni che devono essere rispettate sui dati inseriti nel mercato e, inoltre, si dà la possibilità di attuare tecniche che diano garanzie sul rispetto di questi requisiti; queste ultime tecnologie supportano scenari dove l'entità che possiede il mercato digitale non è un soggetto trusted.
+\item \textbf{storage}: il dato è conservato e gestito dall'entità che comanda il mercato digitale; le tecnologie fornite in questa fase puntano a proteggere il dato sia durante la conservazione, sia durante l'interrogazione del dato; in questa fase risulta importante garantire l'interoperabilità con altri ambienti che non fanno uso di questi strumenti. Particolare attenzione viene data all'evitare il degrado delle performance quando si opera su dati protetti con granularità fine.
+\item \textbf{analytics}: il dato è processatto all'interno del mercato digitale; in questa fase le tecnologie fornite permettono ai vari possessori di effettuare analisi sui dati in maniera efficiente, basandosi sull'entità richiedente e sui requisiti di protezione specificati per i dati.
 \end{enumerate}
 A livello implementativo il progetto è diviso in tre \textit{work package}:
 \begin{enumerate}
 \label{tesiWP}
-\item \textbf{Policy specifications - Data governance framework}: questo pacchetto di lavoro si pone come obiettivo la definizione di un framework per la gestione e la specifica di policy in scenari di aggregazione dati multi-owner. Per rendere possibile ai possessori dei dati il regolare l'uso ed il trasferimento che è possibile fare sui propri asset, MOSAICO cerca di sviluppare un modello ed un linguaggio per la dichiarazione di policy. Sia il modello che il linguaggio devono risultare flessibili, poiché i requisiti espressi devono riguardare ogni fase della vita del dato.
-\item \textbf{Data wrapping}: questo pacchetto di lavoro si preoccupa della definizione di tecniche che permettano l'accesso ai dati in modo efficiente ma che non comprometta i requisiti di protezione specificati mediante il modello fornito nel package precedente.
-\item \textbf{Data sanitisation}: quest'ultimo pacchetto di lavoro mira alla definizione di tecniche efficienti e scalabili che operino su intere collezioni di dati, al fine di offrirne una versione offuscata e/o aggregata che sia robusta ad attacchi che compromettano la privacy e confidenzialità dei dati nella collezione. Questo package mira anche a fornire tecniche che permettano di valutare il grado di protezione di un dato in relazione al valore che questo mantiene. 
+\item \textbf{Policy specifications - Data governance framework}: questo pacchetto di lavoro si pone come obiettivo la definizione di un framework per la gestione e la specifica di policy in scenari di aggregazione dati multi-owner. Il fine è rendere possibile ai possessori dei dati la regolazione dell'uso che è possibile fare sui propri asset sviluppando un linguaggio, ed un relativo modello, per la dichiarazione di policy. Sia il modello che il linguaggio devono risultare flessibili, poiché i requisiti espressi devono riguardare ogni fase della vita del dato.
+\item \textbf{Data wrapping}: questo pacchetto di lavoro si preoccupa della definizione di tecniche che permettano l'accesso ai dati in modo efficiente ma che non compromettano i requisiti di protezione specificati mediante il modello fornito nel package precedente. Particolare enfasi è data sull'evitare la re-identificazione dei dati;
+\item \textbf{Data sanitisation}: quest'ultimo pacchetto di lavoro mira alla definizione di tecniche efficienti e scalabili che operino su intere collezioni di dati, al fine di offrirne una versione offuscata e/o aggregata che sia robusta ad attacchi che mirano a compremetterne la privacy e/o la confidenzialità. Questo package mira anche a fornire tecniche che permettano di valutare il grado di protezione di un dato in relazione al valore che questo mantiene. 
 \end{enumerate}
 Tutti i tre workpackage esposti devono essere impiegabili in ogni fase del ciclo di vita del dato, come mostrato nella seguente figura:
 \begin{figure}[H]
@@ -154,46 +154,46 @@ Tutti i tre workpackage esposti devono essere impiegabili in ogni fase del ciclo
 \label{MosUses}
 \end{figure}
 \section{Scenari d'uso}
-Lo sviluppo del progetto si basa sul soddisfare i requisiti di 3 scenari individuati; in ognuno di questi scenari si prende in considerazione uno specifico tipo di attore che può prendere parte ad un mercato digitale. Come visibile anche all'interno della figura \ref{MosUses} gli scenari affrontati sono:
+Lo sviluppo del progetto si basa sul soddisfare i requisiti di tre scenari individuati; ogni caso studio prende in considerazione uno specifico tipo di attore che può prendere parte ad un mercato digitale. Come visibile anche all'interno della figura \ref{MosUses}, gli scenari affrontati sono:
 \begin{itemize}
 \item \textbf{DELL}: in questo caso d'uso si affronta la problematica dal punto di vista dei possessori di dati; per questi attori risulta cruciale la possibilità di definire requisiti di privacy e legislativi sui propri dati e poter sfruttare tecniche che assicurino questi requisiti anche in ambienti non trusted. Questi utenti sono interessati solamente dalla fase di \textit{ingestion} ma sfruttano ogni tecnologia all'interno del progetto;
-\item \textbf{MasterCard}: in questo caso d'uso si affronta la problematica dal punto di vista di un gestore di una piattaforma per l'analisi dei dati; per questi attori è cruciale il rispetto delle norme vigenti in termini di privacy ed, allo stesso tempo, poter fornire dati di qualità anche con granularità fine; questo tipo di utenti ha il controllo sull'intero ciclo di vita di un dato, con la possibilità di effettuare l'analisi dei dati ad altre entità; data la granularità del dato, non è necessario l'uso del layer di \textit{data sanitisation};
+\item \textbf{MasterCard}: in questo caso d'uso si affronta la problematica dal punto di vista di un gestore di una piattaforma per l'analisi dei dati; per questi attori è cruciale il rispetto delle norme vigenti in termini di privacy ed, allo stesso tempo, poter fornire dati di qualità anche con granularità fine; questo tipo di utenti ha il controllo sull'intero ciclo di vita di un dato, con la possibilità di far effettuare l'analisi dei dati ad altre entità; data la granularità del dato, non è necessario l'uso del layer di \textit{data sanitisation};
 \item \textbf{SAP}: in questo caso d'uso si affronta la problematica dal punto di vista di un gestore di una piattaforma per lo storage dei dati; per questi attori è cruciale il rispetto delle norme vigenti in termini di privacy e poterne misurare l'efficacia; questo tipo di utenti ha il controllo sull'intero ciclo di vita di un dato; data la granularità del dato, non è necessario l'uso del layer di \textit{data wrapping}.
 \end{itemize}
 \section{Collocamento del lavoro di tesi}
 Questa tesi si colloca all'interno degli studi effettuati per l'implementazione del pacchetto di lavoro denominato \textit{Policy specifications - Data governance framework}. In particolare viene analizzato uno dei linguaggi candidati per la modellizzazione dei requisiti di privacy: l' Open Digital Rights Language (ODRL), le cui proprietà sono trattate nel capitolo \ref{ODRLChapter}.\\
-Le motivazioni che rendono questo linguaggio un candidato interessante risultano:
+Le motivazioni per cui questo linguaggio risulta un candidato interessante sono:
 \begin{itemize}
-\item è uno standard definito dal W3C, patner del progetto ed importante risorsa per la standardizzazione delle soluzioni prodotte da MOSAICO;
-\item risulta implementabile mediante i linguaggi di definizione di metadati più diffusi, quali XML ed JSON;
-\item nasce come linguaggio per l'espressioni di policy, senza assunzioni di contesti specifici;
-\item utilizzato all'interno dell'industria del settore \textit{Digital rights management} (DRM).
+\item l'essere uno standard definito dal W3C, patner del progetto ed importante risorsa per la standardizzazione delle soluzioni prodotte da MOSAICO;
+\item la possibilità di implementazione mediante l'uso di linguaggi di definizione di metadati diffusi, quali XML ed JSON;
+\item l'essere nato come linguaggio per l'espressioni di policy, senza assunzioni di contesti specifici;
+\item l'essere utilizzato all'interno dell'industria del settore \textit{Digital rights management} (DRM).
 \end{itemize}
-Essendo questo \textit{work package} fondamentale in ogni fase di vita del dato e in tutti i casi d'uso, la definizione del modello, la comprensione dei punti di forza e delle limitazioni risultano aspetti cruciali per il progetto MOSAICO. \\
+Questo \textit{work package} è fondamentale in ogni fase di vita del dato ed, inoltre, è necessario in tutti i casi d'uso individuati; alla luce di ciò, la comprensione dei punti di forza e delle limitazioni del modello risultano aspetti cruciali per il progetto MOSAICO. \\
 ODRL soddisfa sia il requisito di flessibilità che di vicinanza alle tecnologie attualmente in essere.
 \chapter{ODRL}\label{ODRLChapter} 
 \section{Il linguaggio}
 \subsection{Definizione ed obiettivi}
-L' Open Digital Rights Language (ODRL) è un linguaggio per l'espressione di policy che definisce: un modello dell'informazione flessibile ed interoperativo, un vocabolario e un meccanismo di codifica per la rappresentazione delle istruzioni sull'uso di contenuti o servizi''\cite{ODRLinfMod}.\\
+``L' Open Digital Rights Language (ODRL) è un linguaggio per l'espressione di policy che definisce: un modello dell'informazione flessibile ed interoperativo, un vocabolario e un meccanismo di codifica per la rappresentazione delle istruzioni sull'uso di contenuti o servizi''\cite{ODRLinfMod}.\\
 Il linguaggio si pone all'interno dello scenario applicativo nel quale vi è la necessità di definire:
 \begin{itemize}
 	\item quali azioni siano permesse o proibite su una risorsa. Queste regole possono essere imposte da leggi o direttamente dal possessore dell'asset o servizio;
-	\item indicare quali attori interagiscono con le policy definite; in particolare chi può definire le policy e a chi si applicano;
-	\item indicare eventuali limiti riguardanti i permessi ed i divieti espressi;.
+	\item indicare quali attori interagiscono con le policy definite; in particolare chi può definire le policy e a chi si applicano le regole al suo interno;
+	\item indicare eventuali limiti riguardanti i permessi ed i divieti espressi.
 \end{itemize}
-Avere un modello standard per definire questi bisogni dà 2 fondamentali vantaggi:
+Avere un modello standard per definire questi bisogni dà due vantaggi:
 \begin{itemize}
-	\item chi possiede l'asset è in grado di definire in modo chiaro quali siano le azioni che un consumatore può fare, evitanto quindi usi indesiderati;
+	\item chi possiede l'asset è in grado di definire in modo chiaro quali siano le azioni che un consumatore può fare, evitandone utilizzi indesiderati;
 	\item chi usufruisce dell'asset conosce in modo preciso quali azioni può compiere, evitando così di infrangere regole o leggi.
 \end{itemize}
-ODRL definisce un modello semantico di permessi, divieti ed obblighi, che può essere usato per descrivere le modalità d'uso di un contenuto. In particolare si cerca di definire i concetti chiave per la creazione di policy machine-readable collegate direttamente all'asset al quale sono associate, permettendo all'utente finale di reperire facilmente informazioni sulla risorsa che utilizza. Quest'ultimo requisito è soddisfatto, poiché ODRL è costruito seguendo i \textit{Linked Data principles}\cite{LinkedDataInfo}:
+ODRL definisce un modello semantico di permessi, divieti ed obblighi che può essere usato per descrivere le modalità d'uso di un contenuto. In particolare cerca di definire i concetti chiave per la creazione di policy machine-readable collegate direttamente all'asset al quale sono associate: ciò permette all'utente finale di reperire facilmente informazioni sulla risorsa alla quale si accede. Quest'ultima proprietà è fondamentale per comprendere il linguaggio, poiché ODRL è costruito seguendo i \textit{Linked Data principles}\cite{LinkedDataInfo}:
 \begin{itemize}\label{linkedDataPrinc}
-\item Utilizzo di URIs come nomi per le risorse;
-\item Gli URI sono indirizzi HTTP in modo che si possano cercare informazioni sulle risorse;
-\item L'URI deve fornire informazioni utili sulla risorsa;
-\item Tra le informazioni, fornire altri URI, in modo che l'utente possa raggiungere altre informazioni.
+\item utilizzo di URIs come identificativi per le risorse;
+\item gli URI sono indirizzi HTTP, così che si possano cercare informazioni sulle risorse;
+\item l'URI deve fornire informazioni utili sulla risorsa;
+\item tra le informazioni si cerca di fornire altri URI, in modo che l'utente possa raggiungere altre risorse.
 \end{itemize}
-Nonostante questi principi siano più indicati per un'implementazione graph-based, è possibile anche definire utilizzi che non tengano conto dei link tra le varie informazioni.
+Nonostante questi principi siano più indicati per un'implementazione graph-based, è possibile anche definire utilizzi che non tengano conto dei link tra le varie informazioni inserite nel documento ODRL.
 \subsection{Il modello}\label{modello}
 \begin{figure}[H]
 	\centering
@@ -205,7 +205,7 @@ Nonostante questi principi siano più indicati per un'implementazione graph-base
 Come visibile all'interno dello schema in figura \ref{ODRLModelSchema}, il modello è basato sulle seguenti entità principali:
 \begin{itemize}
 	\item \textbf{Policy}: un gruppo di una o più regole;
-	\item \textbf{Regola}: concetto astratto che racchiude le caratteristiche comuni di \textbf{permesso}, \textbf{divieto}, \textbf{doveri};
+	\item \textbf{Regola}: concetto astratto che racchiude le caratteristiche comuni di \textbf{permesso}, \textbf{divieto} e \textbf{dovere};
 	\item \textbf{Asset}: risorsa o collezione di risorse soggette a regole;
 	\item \textbf{Azione}: operazione su un asset;
 	\item \textbf{Party}: entità o insieme di entità con un certo ruolo in una regola;
@@ -213,32 +213,32 @@ Come visibile all'interno dello schema in figura \ref{ODRLModelSchema}, il model
 \end{itemize}
 \paragraph{Vocabolari}\mbox{}\\
 \label{profili}
-``L' \textit{ODRL Vocabulary and Expression} descrive i termini usati dalle policy ODRL e come codificarle''\cite{ODRVocab}. All'interno di ODRL, i vocabolari utilizzati per definire i termini all'interno delle policy vengono detti \textbf{profili}, i quali possono essere usati per definire termini che supportano specifiche applicazioni; all'interno di un profilo è possibile, ad esempio, fornire le specifiche riguardanti nuove sottoclassi di termini già presenti nei vocabolari standard di ODRL. I 2 vocabolari principali definiti sono:
+``L' \textit{ODRL Vocabulary and Expression} descrive i termini usati dalle policy ODRL e come codificarle''\cite{ODRVocab}. All'interno di ODRL, i vocabolari utilizzati per definire i termini all'interno delle policy vengono detti \textbf{profili}, i quali possono essere usati per definire termini che supportano specifiche applicazioni; all'interno di un profilo è possibile, ad esempio, fornire le specifiche riguardanti nuove sottoclassi di termini già presenti nei vocabolari standard di ODRL. I due vocabolari principali definiti sono:
 \begin{itemize}
-	\item \textbf{ODRL Core Vocabulary}: rappresenta la minima espressione di policy supportata;
-	\item \textbf{ODRL Common Vocabulary}: arricchisce il vocabolario precedente con un gruppo di azioni generiche, nuove sottoclassi per le policy, ruoli per i party e relazioni tra gli asset.
+	\item \textbf{ODRL Core Vocabulary}: rappresenta l'insieme minimo di termini per l'espressione di policy supportato;
+	\item \textbf{ODRL Common Vocabulary}: arricchisce il vocabolario precedente con gruppi di \textit{azioni}, \textit{sottoclassi} per le policy, \textit{ruoli} per i party e \textit{relazioni} tra gli asset.
 \end{itemize}
-Una delle principali differenze tra i due vocabolari, la si ha all'interno delle \textbf{azioni} che possono essere indicate: nel primo caso si hanno a disposizione solamente 2 azioni \textbf{use} e \textbf{transfer}, nel secondo caso queste 2 azioni vengono estese da diverse azioni figlie, come mostrato in figura \ref{imgUseTransfer}
+Una delle principali differenze tra i due vocabolari, la si ha all'interno delle \textbf{azioni} che possono essere indicate: nel primo caso si hanno a disposizione solamente due azioni \textbf{use} e \textbf{transfer}, nel secondo caso queste azioni vengono estese da altre azioni figlie, come mostrato in figura \ref{imgUseTransfer}.
 
 \begin{figure}[H]
 	\centering
 	\def\svgwidth{\columnwidth}
 	\scalebox{0.35}{\includegraphics{useTree}}
 	
-	\caption{Tutte le azioni mostrate sono figlie di use, ad eccezioni di trasfer e le sue sottoazioni\cite{ODRLBestPract}\label{imgUseTransfer}}
+	\caption{Tutte le azioni mostrate sono figlie di \textbf{use}, ad eccezione di \textbf{trasfer} e le sue sottoazioni\cite{ODRLBestPract}\label{imgUseTransfer}}
 \end{figure}
 
 
 \paragraph{Policy}\mbox{}\\
 Come definito nel modello presente nella sezione \ref{modello}, una policy è un gruppo non vuoto di \textbf{regole} e, quindi, di \textbf{permessi}, \textbf{divieti} o \textbf{obblighi}. Una policy deve soddisfare i seguenti requisiti:
 \begin{itemize}
-	\item deve avere un identificativo univoco, detto \textbf{uid};
+	\item deve avere un identificativo univoco, inserito nel campo \textbf{uid};
 	\item deve avere almeno una regola;
-	\item può specificare un profilo, obbligatorio se non si usa il Core Vocabulary mostrato nella sezione \ref{profili};
+	\item può specificare un profilo; campo obbligatorio se non si usa il Core Vocabulary descritto nella sezione \ref{profili};
 	\item può specificare una policy da cui eredita le proprietà;
 	\item può specificare una strategia per la risoluzione dei conflitti.
 \end{itemize}
-Come visibile dalla figura \ref{ODRLModelSchema}, una policy ha 3 prossibili sottoclassi:
+Come visibile dalla figura \ref{ODRLModelSchema}, una policy ha tre prossibili sottoclassi:
 \begin{itemize}
 	\item \textbf{Set}: un insieme di regole che hanno effetto;
 	\item \textbf{Agreement}: regole concesse ad una entità assegnataria da una assegnatrice;
@@ -256,16 +256,14 @@ Di seguito un esempio di policy definita mediante ODRL:
  }]
 }
 \end{lstlisting}
-La policy mostrata nel listing \ref{esmpioPolicy} presenta i campi:
+Dalla policy mostrata nel listing \ref{esmpioPolicy} si può notare:
 \begin{itemize}
 	\item @type: serve ad indicarne la sottoclasse;
-	\item @context : serve ad indicare che il file deve essere conforme ad ODRL, rappresentato dall'URL da cui si può ottenere l'ODRL Common Vocabulary\cite{ODRLCV};
-	\item nel contesto sono presenti altri link per le altre proprietà, ad esempio quello per la descrizione di \textit{Set} e per \textit{use};
-	\item non usando termini fuori dai 2 vocabolari principali, non necessita la definizione di un profilo;
-	\item l'id univoco è rappresentato da un URL che porta alle informazioni relative la risorsa.
+	\item non usando termini fuori dai due vocabolari principali, non necessita la definizione di un profilo;
+	\item l'id univoco è rappresentato da un URL che conduce ad informazioni relative alla risorsa.
 \end{itemize}
 \paragraph{Asset}\mbox{}\\
-Come definito nel modello presente nella sezione \ref{modello}, un asset è una risorsa o una collezione di risorse soggette a regole. Un asset può essere una qualunque risorsa identificabile. Ha \textbf{AssetCollection} come sottoclasse, la quale rappresenta una collezione di asset. La classe asset può avere:
+Come definito nel modello presente nella sezione \ref{modello}, un asset è una risorsa o una collezione di risorse soggette a regole. Un asset può essere una qualsiasi entità identificabile. Ha \textbf{AssetCollection} come sottoclasse, la quale rappresenta una collezione di asset. La classe asset può avere:
 \begin{itemize}
 \item un identificativo univoco, il quale può essere omesso se l'asset è fornito direttamente con la policy; le specifiche di ODRL, pur supportando questo caso d'uso, sconsigliano questa pratica;
 \item una o più proprietà denominate \textbf{partOf}: identifica le collezioni di cui fa parte l'asset, il quale può essere a sua volta una collezione.
@@ -278,17 +276,18 @@ Esempio di utilizzo in una regola:
  "uid": "http://example.com/policy:3333",
  "profile": "http://example.com/odrl:profile:02",
  "permission": [{
-	"target": "http://example.com/asset:3333",
+	"target": "http://example.com/archive1011",
 	"action": "display",
 	"assigner": "http://example.com/party:0001"
  }]
 }
 \end{lstlisting}
-La sottoclasse \textbf{AssetCollection} può avere i seguenti 2 campi aggiuntivi:
+La sottoclasse \textbf{AssetCollection} può avere i seguenti campi aggiuntivi:
 \begin{itemize}
-	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe AssetCollection all'interno di un \textbf{refinement};
-	\item una o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
+	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe \textit{AssetCollection} all'interno di un \textbf{refinement};
+	\item uno o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
 \end{itemize}
+\newpage
 Esempio di utilizzo della proprietà \textbf{partOf}:
 \begin{lstlisting}[language=json,firstnumber=1,caption={L'asset definito è parte del target presente nel listing \ref{esempioAsset}},captionpos=b,label=esempioAssetColl]
 {
@@ -300,13 +299,13 @@ Esempio di utilizzo della proprietà \textbf{partOf}:
 	...
 }
 \end{lstlisting}
-In quest'ultimo esempio si ha che l'asset con id ``\url{http://example.com/asset:111.doc}'' è definito come parte della collezione ``\url{http://example.com/archive1011}''. Questa definizione ha come effetto l'applicarsi della policy presente nel listing \ref{esempioAsset} anche all'asset che fa parte della collezione.
+In quest'ultimo esempio si ha che l'asset con id \\``\url{http://example.com/asset:111.doc}''\\è definito come parte della collezione\\``\url{http://example.com/archive1011}''\\Questa definizione ha come effetto l'applicarsi della policy presente nel listing \ref{esempioAsset} anche all'asset figlio.
 \paragraph{Party}\mbox{}\\
-Come definito nel modello presente nella sezione \ref{modello}, un party è una entità o una collezione di entità con una funzione determinata in una regola. Un party può essere un qualunque soggetto con un ruolo attivo nelle regole o che produce un effetto specifico, ad esempio controlla che le azione relative ad un dovere vengano effettuate. Ha \textbf{PartyCollection} come sottoclasse, la quale rappresenta una collezione di entità. La classe party può avere:
+Come definito nel modello presente nella sezione \ref{modello}, un party è una entità o una collezione di entità con funzione di assegnatario o assegnatore in una regola. Un party può essere un qualunque soggetto con un ruolo attivo nelle regole o che produce un effetto specifico; ad esempio può essere chi controlla che le azione relative ad un dovere vengano rispettate. Presenta \textbf{PartyCollection} come sottoclasse, la quale rappresenta una collezione di entità. La classe party può avere:
 \begin{itemize}
 	\item un identificativo univoco, il quale può essere omesso se è possibile definire in altro modo l'entità; le specifiche di ODRL, pur supportando questo caso d'uso, sconsigliano questa pratica;
 	\item una o più proprietà denominate \textbf{partOf}: identifica le collezioni di cui fa parte l'entità, la quale può essere a sua volta una collezione.
-\end{itemize}
+\end{itemize}\newpage
 Esempio di utilizzo in una regola:
 \begin{lstlisting}[language=json,firstnumber=1,caption={Utilizzo di party nelle proprietà \textbf{assigner} ed \textbf{assignee} di una regola},captionpos=b,label=esempioParty]
 {
@@ -322,10 +321,10 @@ Esempio di utilizzo in una regola:
 }]
 }  
 \end{lstlisting}
-La sottoclasse \textbf{PartyCollection} può avere i seguenti 2 campi aggiuntivi:
+La sottoclasse \textbf{PartyCollection} può avere i seguenti campi aggiuntivi:
 \begin{itemize}
 	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe PartyCollection all'interno di un \textbf{refinement};
-	\item una o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
+	\item uno o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di entità al suo interno.
 \end{itemize}
 Esempio di utilizzo della proprietà \textbf{partOf}:
 \begin{lstlisting}[language=json,firstnumber=1,caption={L'entità definita è parte di una PartyCollection},captionpos=b,label=esempioPartyColl]
@@ -339,9 +338,9 @@ Esempio di utilizzo della proprietà \textbf{partOf}:
 ...
 }
 \end{lstlisting}
-In quest'ultimo esempio si ha che l'entità con id ``\url{http://example.com/person/murphy}'' è definita come parte della collezione ``\url{http://example.com/team/A}''. Questa definizione ha come effetto l'affidare le funzioni di quest'ultima collezione anche alla singola entità che ne fa parte.
+In quest'ultimo esempio si ha che l'entità con id \\``\url{http://example.com/person/murphy}''\\è definita come parte della collezione\\``\url{http://example.com/team/A}''. Questa definizione ha come effetto l'affidare le funzioni di quest'ultima anche alla singola entità.
 \paragraph{Action}\mbox{}\\
-Come definito nel modello presente nella sezione \ref{modello}, \textbf{action} è una classe che rappresenta un'operazione che può essere esercitata su un asset, al quale viene associata mediante la propietà \textbf{action} di una regola. Nell' ODRL Core Vocabulary sono presenti 2 azioni principali:
+Come definito nel modello presente nella sezione \ref{modello}, \textbf{action} è una classe che rappresenta un'operazione che può essere esercitata su un asset, al quale viene associata mediante la propietà \textbf{action} di una regola. Nell' ODRL Core Vocabulary sono presenti due azioni principali:
 \begin{itemize}
 	\item use: un qualsiasi utilizzo dell'asset;
 	\item transfer: una qualsiasi azione che preveda il trasferimento di proprietà dell'asset;
@@ -350,27 +349,25 @@ Un'azione può avere le seguenti proprietà:
 \begin{itemize}\label{includesProp}
 	\item refinement: raffinamenti semantici sull'azione, come ad esempio l'ammontare di un pagamento, il luogo nel quale l'azione può essere eseguita o il tempo massimo di esecuzione;
 	\item includedIn: esprime l'azione padre; la conseguenza di questa dichiarazione risulta essere che tutte le regole applicate all'azione padre, devono valere anche per l'azione figlia;
-	\item implies: esprime un'azione che non deve essere vietata per permettere l'azione con questa proprietà, ma le 2 azioni non hanno una relazione espressa tramite \textit{includedIn}\footnote{attualmente né l'ODRL Core Vocabulary né l'ODRL Common Vocabulary presentano azioni con questa proprietà}. 
+	\item implies: esprime un'azione che non deve essere vietata per permettere l'azione con questa proprietà; le due azioni non hanno una relazione espressa tramite \textit{includedIn}\footnote{attualmente né l'ODRL Core Vocabulary né l'ODRL Common Vocabulary presentano azioni con questa proprietà}. 
 \end{itemize}
 Come anticipato nel paragrafo \ref{profili} relativo ai profili, l'ORDL Common Vocabulary utilizza la proprietà \textit{includedIn} per aggiungere azioni figlie sia ad \textit{use} che \textit{transfer}, come già mostrato nella figura \ref{imgUseTransfer}.\\
 Di seguito un esempio di azione in una regola:
 \begin{lstlisting}[language=json,firstnumber=1,caption={L'azione \textbf{play} è presente nella proprietà \textbf{action} della regola},captionpos=b,label=esempioAction]
-
 {
-	"@context": "http://www.w3.org/ns/odrl.jsonld",
-	"@type": "Offer",
-	"uid": "http://example.com/policy:1012",
-	"profile": "http://example.com/odrl:profile:06",
-	"permission": [{
-		"target": "http://example.com/music:1012",
-		"assigner": "http://example.com/org:abc",
-		"action": "play"
-	}]
-}
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Offer",
+ "uid": "http://example.com/policy:1012",
+ "profile": "http://example.com/odrl:profile:06",
+ "permission": [{
+  "target": "http://example.com/music:1012",
+  "assigner": "http://example.com/org:abc",
+  "action": "play"
+ }]}
 \end{lstlisting}
 \label{ConstraintODRL}
 \paragraph{Constraint e Logical Constraint}\mbox{}\\
-Come definito nel modello presente nella sezione \ref{modello}, \textbf{constraint} è una classe usata per comparare 2 espressioni che non sono constraint a loro volta, utilizzando un operatore relazionale. Rappresentano una limitazione tramite un confronto, la quale può essere soddisfatta o non soddisfatta. La classe presenta le seguenti proprietà:
+Come definito nel modello presente nella sezione \ref{modello}, \textbf{constraint} è una classe usata per comparare due espressioni che non sono constraint a loro volta, utilizzando un operatore relazionale. Rappresentano una limitazione tramite un confronto, la quale può essere soddisfatta o non soddisfatta. La classe presenta le seguenti proprietà:
 \begin{itemize}
 	\item uno o nessun identificativo univoco, qualora si volesse riutilizzare l'espressione di confronto definita;
 	\item un \textbf{leftOperand}: elemento a sinistra dell'operatore di confronto;
@@ -378,17 +375,17 @@ Come definito nel modello presente nella sezione \ref{modello}, \textbf{constrai
 	\item uno tra: 
 	\begin{itemize}
 		\item \textbf{rightOperand}: elemento a destra dell'operatore di confronto, identificato direttamente;
-		\item \textbf{rightOperand}: elemento a destra dell'operatore di confronto, identificato con un riferimento; 
+		\item \textbf{rightOperandReference}: elemento a destra dell'operatore di confronto, identificato con un riferimento; 
 	\end{itemize} 
 	\item uno o nessun \textbf{dataType}: definisce il tipo dell'operando di destra;
 	\item una o nessuna \textbf{unit}: unità di misura dell'operando di destra;
-	\item uno o nessun \textbf{status}: per l'elemento di sinistra.
+	\item uno o nessun \textbf{status}: valore iniziale per l'elemento di sinistra.
 \end{itemize}
-Oltre ai normali constraint, il modello definisce anche dei logical constraint, ovvero operazioni logiche su altri constraint già definiti. In questo caso le proprietà sono:
+Oltre ai normali \textit{constraint}, il modello definisce anche dei \textit{logical constraint}, ovvero operazioni logiche su altri constraint. In questo caso le proprietà sono:
 \begin{itemize}
-	\item uno o nessun identificativo univoco, qualora si volesse riutilizzare l'espressione di confronto definita;
+	\item uno o nessun identificativo univoco, qualora si volesse riutilizzare l'espressione logica definita;
 	\item un sottotipo di \textbf{operand}: operatore logico tra i constraint espressi come lista al suo interno.
-\end{itemize}
+\end{itemize}\newpage
 Esempi di utilizzi dei constraint: 
 \begin{lstlisting}[language=json,firstnumber=1,caption={Constraint su azione: l'azione \textbf{print} è permessa solo per risoluzioni minori di 1200 dpi},captionpos=b,label=esempioRef]
 {
@@ -405,12 +402,15 @@ Esempi di utilizzi dei constraint:
   		"leftOperand": "resolution",
   		"operator": "lteq",
   		"rightOperand": { "@value": "1200", "@type": "xsd:integer" },
-  		"unit": "http://dbpedia.org/resource/Dots_per_inch"
+  		"unit": 
+  		"http://dbpedia.org/resource/
+                 Dots_per_inch"
     	}]
  	}]
   }]
 }
 \end{lstlisting}
+\newpage
 \begin{lstlisting}[language=json,firstnumber=1,caption={Constraint logico su azione: l'azione \textbf{reproduce} è permessa solo nella forma di uno dei due constraint listati},captionpos=b,label=esempioLogRef]
 {
  "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -433,6 +433,7 @@ Esempi di utilizzi dei constraint:
  }]
 }
 \end{lstlisting}
+\newpage
 \begin{lstlisting}[language=json,firstnumber=1,caption={Constraint su asset: l'azione \textbf{play} è permessa solo sui target di durata strettamente inferiore a 60 minuti},captionpos=b,label=esempioConAss]
 {
 "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -451,13 +452,14 @@ Esempi di utilizzi dei constraint:
  		 "@value": "60",
  		 "@type": "xsd:integer"
  		 },
- 		"unit": "http://qudt.org/vocab/unit/MinuteTime"
+ 	   "unit": "http://qudt.org/vocab/unit/MinuteTime"
  	}]
  },
  "action": "play"
 }]
 }
 \end{lstlisting}
+\newpage
 \begin{lstlisting}[language=json,firstnumber=1,caption={Constraint su party: l'azione \textbf{view} è permessa solo alle entità con età strettamente superiore a 17 anni},captionpos=b,label=esempioConParty]
 {
 "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -484,13 +486,13 @@ Esempi di utilizzi dei constraint:
 }
 \end{lstlisting}
 \paragraph{Rule}\label{ODRLRulePara}\mbox{}\\
-Come definito nel modello presente nella sezione \ref{modello}, \textbf{rule} è una classe astratta che raccoglie gli aspetti comuni della classi  \textbf{permission}, \textbf{prohibition}, and \textbf{duty}. Rappresenta una delle regole all'interno della policy. Presenta le seguenti proprietà:
+Come definito nel modello presente nella sezione \ref{modello}, \textbf{rule} è una classe astratta che raccoglie gli aspetti comuni della classi  \textbf{permission}, \textbf{prohibition}, e \textbf{duty}. Rappresenta una delle regole all'interno della policy ed è caratterizzata dalle seguenti proprietà:
 \begin{itemize}
 	\item una \textbf{action}: azione regolamentata;
 	\item una o nessuna \textbf{relation}: asset sul quale si applica la regola;
 	\item una, nessuna o più \textbf{function}: funzioni che un party può avere all'interno di una regola;
 	\item uno, nessuno o più \textbf{constraint }: limiti applicati alla validità della regola;
-	\item uno o nessun identificativo univoco, necessario solo qualora si usare la regola per ereditarne le proprietà;
+	\item uno o nessun identificativo univoco, necessario solo qualora si usasse la regola per ereditarne le proprietà.
 \end{itemize}
 Le sottoclassi sono così definite:
 \begin{itemize}
@@ -500,8 +502,7 @@ Le sottoclassi sono così definite:
 \end{itemize}
 Esempi di regole all'interno di policy:
 \begin{lstlisting}[language=json,firstnumber=1,caption={La regola esprime il permesso di eseguire l'azione \textbf{play} sul target fino al giorno 2017-12-31 compreso},captionpos=b,label=esempioPerm]
-{
- "@context": "http://www.w3.org/ns/odrl.jsonld",
+{"@context": "http://www.w3.org/ns/odrl.jsonld",
  "@type": "Offer",
  "uid": "http://example.com/policy:9090",
  "profile": "http://example.com/odrl:profile:07",
@@ -514,8 +515,7 @@ Esempi di regole all'interno di policy:
         "operator": "lteq",
         "rightOperand": { "@value": "2017-12-31", "@type": "xsd:date" }
     }]
-  }]
-}
+  }]}
 \end{lstlisting}
 \begin{lstlisting}[language=json,firstnumber=1,caption={La regola esprime il divieto di eseguire l'azione \textbf{archive} sul target},captionpos=b,label=esempioPro]
 {
@@ -552,51 +552,49 @@ Esempi di regole all'interno di policy:
      "rightOperand": { "@value": "500.00", "@type": "xsd:decimal" },
      "unit": "http://dbpedia.org/resource/Euro"
    }]
-  }]
- }]
-}
+  }] }]}
 \end{lstlisting}
 \subsection{Problematica trattata}\label{problematiche}
 \paragraph{Gestione dei conflitti}\mbox{}\\
-La trattazione fatta fino ad ora per ODRL prende in considerazione la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che il linguaggio punta a soddisfare ed, in particolare, non rispecchia i casi d'uso definiti in MOSAICO, dove è naturale che vi sia un numero molto alto di policy definite.\\
+La trattazione di ORDL fatta fino ad ora considera la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che MOSAICO che emergono daii casi: in questi scenari è naturale che ogni \textit{data owner} sia interessato a definire la propria policy sulla propria porzione asset.\\
 ODRL propone già alcuni elementi per permettere la definizione di più policy in modo agevole, ad esempio: 
 \begin{itemize}
 	\item è possibile utilizzare la proprietà \textbf{inheritFrom} per permettere ad una policy di ereditare tutte le regole definite in un'altra policy;
-	\item è possibile utilizzare la proprietà \textbf{conflict} definire una strategia di risoluzione dei conflitti; le strategia attualmente definite nel modello sono le seguenti:
+	\item è possibile utilizzare la proprietà \textbf{conflict} per definire una strategia di risoluzione dei conflitti; le possibili strategie di risoluzione attualmente definite sono:
 	\begin{itemize}
 		\item \textbf{perm}: le regole di tipo \textbf{permission} hanno la priorità in caso di conflitto;
 		\item \textbf{prohibit}: le regole di tipo \textbf{prohibition} hanno la priorità in caso di conflitto;
-		\item \textbf{invalid}: in caso di conflitto, la policy risulta non valida nella sua interezza; è il valore di default se non definito esplicitamente.
+		\item \textbf{invalid}: in caso di conflitto, la policy risulta non valida nella sua interezza; questa è la procedura di default se non si valorizza la proprietà.
 	\end{itemize}
 \end{itemize}
-Questo sistema di gestione dei conflitti risulta avere però una problematica fondamentale all'interno dei casi d'uso di MOSAICO: si riferisce a conflitti all'interno di una singola policy o che avvengono in seguito all'utilizzo della proprietà \textbf{inheritFrom}; risulta possibile notare che in uno scenario multi-owner, come quello di MOSAICO, l'utilizzo della proprietà \textbf{conflict} risulta inadatto, ad esempio:
+Questo sistema di gestione dei conflitti risulta avere una problematica fondamentale all'interno degli scenari di MOSAICO: si riferisce a conflitti all'interno di una singola policy e che, solitamente, avvengono in seguito all'utilizzo della proprietà \textbf{inheritFrom}; risulta possibile notare che in uno scenario multi-owner, l'utilizzo della proprietà \textbf{conflict} risulta inadatto. Si prenda come esempio il seguente scenario:
 \begin{enumerate}
 	\item si supponga che un ospedale, indicato come A, voglia rendere disponibili i propri dati di ricerca in un mercato come quello di MOSAICO;
 	\item risulta plausibile che la collezione di dati di questo ospedale venga inserita in una raccolta di referti medici, i cui owner sono vari ospedali situati in stati diversi;
 	\item il dato fornito da A viene accompagnato da una policy ODRL, la quale può utilizzare la proprietà \textbf{inheritFrom} per inserire nella propria policy le regole richieste da normative europee;
 	\item oltre a questo, A inserisce nella policy anche regole relative a norme sulla privacy vigenti nel proprio paese, settando la proprietà \textbf{conflict} a \textbf{prohibit}, al fine di proteggere i dati sensibili degli utenti trattati dalla propria collezione dati.
 \end{enumerate}
-Se si considera lo scenario mostrato in esempio non multi-owner, ODRL riesce perfettamente ad soddisfare le esigenze dell'owner della collezione di dati, permettendogli di aderire alle normative europee ed, allo stesso tempo, di tutelare la privacy dei propri pazienti in conformità con le normative vigenti nel suo paese.\\
-Nel caso in cui, la collezione di dati medici appartenga a più ospedali, questa soluzione non risulta più adatta, in particolare nel seguente caso:
+Se si considera lo scenario mostrato in un contesto single-owner, ODRL riesce perfettamente ad soddisfare le esigenze dell'owner della collezione di dati: l'utente è in grado di aderire alle normative europee ed, allo stesso tempo, di tutelare la privacy dei propri pazienti in conformità con le leggi vigenti nel suo paese.\\
+Nel caso in cui la collezione di dati medici appartenga a più ospedali, questa soluzione non risulta più adatta, in particolare nel seguente caso:
 \begin{enumerate}
-	\item un secondo ospedale, indicato come B, segue il medesimo procedimento ma lascia la proprietà \textbf{conflict} uguale ad \textbf{invalid};
+	\item un secondo ospedale, indicato come B, segue il medesimo procedimento ma lascia la proprietà \textbf{conflict} settata come \textbf{invalid};
 	\item se le norme dei paesi di A e B non sono le stesse, entrambe le policy vengono invalidate nella loro totalità, anche se in disaccordo solo su un sottoinsieme di regole;
-	\item questo comportamento risulta deleterio sia per quanto concerne il mercato, poiché scoraggia degli owner a partecipare ad una collezione; \item il comportamento mostrato risulta dannoso anche per quanto concerne i soggetti dei dati, non più tutelati da regole poiché invalidate.
+	\item questo comportamento risulta deleterio sia per quanto concerne il mercato, poiché scoraggia i possessori dei dati a partecipare ad una collezione; \item il comportamento mostrato risulta dannoso anche per quanto concerne i soggetti trattati dai dati, non più tutelati da regole poiché invalidate.
 \end{enumerate}
-Una possibile soluzione a questo problema è attuare il merging delle varie policy che targettano la collezione di dati, rendendo l'azione sulle varie regole più granulare; prendendo ad esempio l'ultimo scenario mostrato:
+Una possibile soluzione a questo problema è attuare il merging delle varie policy che hanno come target la collezione di dati, rendendo l'azione sulle varie regole più granulare; prendendo ad esempio l'ultimo scenario mostrato:
 \begin{enumerate}
 	\item avendo due strategie di conflitto differenti, nessuna delle due viene considerata;
 	\item per ogni regola in conflitto, si tengono solamente le regole di divieto, seguendo l'obiettivo di MOSAICO di tutela della privacy;
-	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo d MOSAICO di portare un dato di qualità ed accessibile;
-	\item per ogni regola definita come permessa solo in una policy, la si invalida, poiché la seconda policy non si esprime in merito.
+	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo d MOSAICO di mantenimento della qualità ed accessibilità dei dati;
+	\item per ogni azione permessa solo in una policy, si invalida la relativa, poiché solo uno dei due attori coinvolti si esprime in merito.
 \end{enumerate}
-Questo procedimento è solo uno dei possibili, in base alle casistiche di conflitto possibili e risulta in linea con i requisiti che MOSAICO punta a soddisfare, poiché a differenza di quanto definito in ODRL:
+Questo procedimento è solo uno dei tanti possibili in base alle casistiche di conflitto che possono presentarsi; questo metodo risulta in linea con i requisiti che MOSAICO punta a soddisfare, poiché a differenza di quanto definito in ODRL:
 \begin{itemize}
-	\item porta ad una diminuzione della qualità del dato graduale, anziché ad una invalidazione totale della policy al primo conflitto;
-	\item durante la diminuzione della qualità del dato, preserva comunque il maggior grado di tutela della privacy che le policy definite possono offrire, poiché permette sempre e solo azioni che hanno una regola esplicita che le riguarda.
+	\item porta ad una diminuzione della qualità del dato graduale, anziché ad una invalidazione completa della policy per conflitti anche solamente parziali;
+	\item nonostante la diminuzione della qualità del dato, preserva comunque il maggior grado di tutela della privacy indicato dalle policy interessate dal processo, poiché permette sempre e solo azioni che hanno una regola esplicita che le riguarda e nessun divieto.
 \end{itemize}
 \paragraph{Controllo inefficiente}\mbox{}\\
-Uno dei requisiti fondamentali che MOSAICO punta a soddisfare è l'efficienza. Utilizzando il modello finora espresso, questo requisito viene meno, poiché si è sempre costretti a controllare tutte le regole all'interno di una policy: ciò accade a causa della proprietà \textit{includedIn} di un'azione. Di seguito un esempio della problematica:
+Uno dei requisiti fondamentali che MOSAICO punta a soddisfare è l'efficienza. Utilizzando il modello ODRL come mostrato fino ad ora non soddisfa questo requisito, poiché si è sempre costretti a controllare tutte le regole all'interno di una policy: ciò è causato della proprietà \textit{includedIn}. Di seguito un esempio della problematica:
 \begin{itemize}
 \item all'interno di una policy sono presenti le seguenti 2 regole:
 \begin{itemize}
@@ -606,101 +604,101 @@ Uno dei requisiti fondamentali che MOSAICO punta a soddisfare è l'efficienza. U
 \item oltre alle regole espresse, ne sono presenti altre;
 \item come visibile nella figura \ref{imgUseTransfer}, l'azione \textbf{transfer} include le azioni \textbf{sell} e \textbf{give}; 
 \item un utente desidera eseguire l'azione \textbf{give} sull'asset interessato dalla policy;
-\item un eventuale algoritmo di controllo, non può limitarsi a notare che l'azione \textbf{transfer} sia permessa, risulta costretto a controllare anche che \textbf{give} non sia vietato.
+\item un algoritmo di controllo, non può limitarsi al recupero del permesso relativo all'azione \textbf{give} ma risulta costretto a controllare anche che \textbf{transfer} non sia vietata.
 \end{itemize}
 Una possibile soluzione a questa problematica può essere implementata mediante i seguenti passi:
 \begin{enumerate}
 \item invalidare i permessi che comprendono al loro interno un'azione proibita;
 \item esprimere i divieti mediante i loro permessi complementari.
 \end{enumerate}
-Nella casistica mostrata, questa soluzione si andrebbe a tradurre come:
+Nella casistica mostrata, questa soluzione si andrebbe a tradurre in:
 \begin{enumerate}
-\item il divieto sull'azione \textbf{sell}, poiché presente insieme al permesso su \textbf{transfer}, produce il permesse sull'effettuare \textbf{give};
-\item il permesso sull'azione \textbf{transfer} viene rimosso dalla policy.
+\item il divieto sull'azione \textbf{sell}, poiché presente insieme al permesso su \textbf{transfer}, produce il permesso solo su \textbf{give};
+\item il permesso sull'azione \textbf{transfer} viene rimosso dalla policy\footnote{Si ipotizza che le azioni più generiche non siano atomiche, in caso contrario non è necessario invalidare}.
 \end{enumerate}
-Come è possibile notare, un eventuale controllo sulle regole prodotte può fermarsi al primo permesso che trova, anziché controllare anche tutti i divieti presenti nella policy.
+Attuando questa procedura è possibile notare come un algoritmo di controllo possa fermarsi al primo permesso che trova, anziché controllare anche tutti i divieti presenti nella policy; inoltre non è più necessario recuperare la gerarchia completa dell'azione e può limitarsi a controlli puntuali.
 \chapter{Tecnologie utilizzate}
-All'interno di questo capitolo sono trattate le varie tecnologie e paradigmi utilizzati per implementare una soluzione alle problematiche mostrate nella sezione \ref{problematiche}. Tale problematica necessita lo sviluppo di una componente che attui la semantica necessaria al merging di 2 policy e che mostri il risultato in un formato non ambiguo; al fine di realizzare questo componente, è stato necessario effettuare una ricerca per quanto concerne:
+All'interno di questo capitolo sono trattate le varie tecnologie e paradigmi utilizzati per implementare una soluzione alle problematiche mostrate nella sezione \ref{problematiche}. Tali problematica necessitano lo sviluppo di una componente che attui la semantica necessaria al merging di due policy e che produca un risultato in un formato non ambiguo; al fine di realizzare questo componente, è stato necessario effettuare una ricerca per quanto concerne:
 \begin{itemize}
 	\item tool già sviluppati per il trattamento di policy ODRL;
 	\item tool per interrogare un documento ODRL;
 	\item tool per realizzare un documento ODRL.
 \end{itemize}
 \section{Tool già esistenti}
-I risultati relativi della ricerca di tool già realizzati hanno portato le seguenti conclusioni:
+I risultati relativi della ricerca di tool già realizzati hanno portato alle seguenti conclusioni:
 \begin{itemize}
-	\item gran parte dei tool già sviluppati, non lavorano sull'attuale versione di ODRL\footnote{La versione utilizzata durante la stesura del lavoro di tesi è ODRL v2.2 }, come è possibile notare anche dalla pagina del progetto\cite{ODRLPage};
+	\item gran parte dei tool già sviluppati, non lavorano sull'attuale versione di ODRL\footnote{La versione utilizzata durante la stesura del lavoro di tesi è ODRL 2.2 }, come è possibile notare anche dalla pagina del progetto\cite{ODRLPage};
 	\item in particolare, gli unici tool documentati ufficialmente sono:
 	\begin{itemize}
-		\item alcuni valutatori di stato di una regola all'interno di una policy\cite{evalStatus}, attualmente in sviluppo;
+		\item alcuni valutatori dello stato di una regola all'interno di una policy\cite{evalStatus}, attualmente in sviluppo;
 		\item un validatore di policy ODRL\cite{validator}, attualmente in sviluppo;
 		\item un editor di policy ODRL\cite{editor};
-		\item API per la rappresentazione tramite Java di policy ODRL\cite{api}, supporta ODRL 2.0.
+		\item API per la rappresentazione tramite Java di policy ODRL\cite{api} ma supportano ODRL 2.0.
 	\end{itemize}
 \end{itemize}
-Risulta possibile notare che le problematiche di merging e rappresentazione non efficiente delle regole non sono affrontate direttamente dai tool sviluppati, i quali tendono invece ad avere un carattere più generale. Sempre grazie allo scouting è possibile quindi dedurre che l'implementazione di un nuovo tool può non reimplementare i seguenti procedimenti:
+Le problematiche di merging e rappresentazione non efficiente delle regole non sono affrontate direttamente dai tool già sviluppati, i quali tendono invece ad avere un carattere più formale anziché applicativo. Sempre grazie allo scouting è stato possibile dedurre che l'implementazione di un nuovo tool può non reimplementare i seguenti procedimenti:
 \begin{itemize}
-	\item eventuali documenti di policy presentati in ingresso possono essere validati in precedenza;
-	\item non necessita di informazioni sullo stato attuale di asset ed attori coinvolti, in quanto lo stato di questi può essere valutato;
+	\item i documenti utilizzati come input possono essere considerati già validati;
+	\item lo stato attuale degli asset può essere tralasciato, in quanto valutatori di stato sono già in sviluppo;
 	\item non deve supportare nella creazione della policy l'utente.
 \end{itemize}
-Le uniche componenti relative ai tool già esistenti che nel lavoro esposto sono state reimplementate risultano essere le API per la rappresentazione di policy ODRL in Java: quelle già esistenti sono relative ad una versione di ODRL non attuale e non forniscono interfacce utili al procedimento di merging di 2 policy. 
+Le uniche componenti relative ai tool già esistenti che nel lavoro di tesi sono state reimplementate sono le API per la rappresentazione di policy ODRL in Java: quelle già esistenti fanno riferimento ad una versione di ODRL non attuale e non forniscono interfacce utili al procedimento di merging di due policy. 
 \section{Interrogazione e produzione documenti ODRL}
-Le ricerche relative al parsing ed alla produzione di un documento ODRL, hanno portato al framework Apache Jena\cite{Jena}, utilizzato per creare applicazioni secondo i modelli  ``Semantic web''\cite{SemanticWeb} e  ``Linked Data''. Il framework ed i modelli di cui supporta la creazione, sono descritti nelle sezioni seguenti.
+Le ricerche relative a strumenti per il parsing ed la produzione di documenti ODRL, hanno portato al framework Apache Jena\cite{Jena}, utilizzato per creare applicazioni secondo i principi del ``Semantic web''\cite{SemanticWeb} e dei ``Linked Data''. Il framework ed i modelli di cui supporta la creazione, sono descritti nelle sezioni che seguono.
 \subsection{Semantic Web}
-Il Semantic Web è definita come un'estensione del World Wide Web, nel quale i dati all'interno della rete \textit{machine-readable}. In particolare ``nel contesto del Semantic Web, il termine semantico assume la valenza di
+Il Semantic Web è definito come un'estensione del World Wide Web, nel quale i dati all'interno della rete sono \textit{machine-readable}. In particolare ``nel contesto del Semantic Web, il termine semantico assume la valenza di
 "elaborabile dalla macchina" e non intende fare riferimento alla semantica del 
-linguaggio naturale e alle tecniche di intelligenza artificiale. Il Semantic Web è, come l’
+linguaggio naturale o alle tecniche di intelligenza artificiale. Il Semantic Web è, come l’
 XML, un ambiente dichiarativo, in cui si specifica il significato dei dati, e non il modo
 in cui si intende utilizzarli''\cite{introSem}. Alla base dell'idea del Semantic Web vi sono:
 \begin{itemize}
 	\item le risorse, non necessariamente interpretabili da una macchina;
 	\item i metadati connessi alle risorse, i quali sono machine-readable.
 \end{itemize}
-Per realizzare quest'idea, risulta necessario poter standardizzare i metadati collegati alle risorse, specificandone semantica e sintassi.\\
-Il formato sintattico scelto come standard è il modello Resource Description Framework (RDF)\cite{RDF}, mentre invece si lascia libertà sulla semantica, la quale può venir specificata mediante vocabolari relativi al dominio, utilizzando RDF Schema\cite{RDFS}. Sia RDF che RDFS sono descritti in dettaglio nelle prossime sezioni.\\
-Prendendo come esempio il listing \ref{esempioAsset}, risulta possibile notare:
+Per realizzare quest'idea risulta necessario poter standardizzare i metadati collegati alle risorse, specificandone semantica e sintassi.\\
+Il formato sintattico scelto come standard è il modello Resource Description Framework (RDF)\cite{RDF} mentre, invece, si lascia libertà sulla semantica, la quale può venir definita mediante vocabolari specifici rispetto al dominio di utilizzo realizzati mediante RDF Schema (RDFS)\cite{RDFS}. Sia RDF che RDFS sono descritti in dettaglio nelle prossime sezioni.\\
+Utilizzando come esempio il listing \ref{esempioAsset}, risulta possibile notare:
 \begin{itemize}
 	\item il documento ODRL è la rappresentazione machine-readable di un documento di specifica dei requisiti d'accesso ad una risorsa;
 	\item la sintassi è standard ed è in formato RDF;
 	\item la semantica è stata definita per gli scopi necessari ad ODRL, esplicitandone gli elementi nel \textbf{contesto};
-	\item la risorsa alla quale è collegato il metadato non è specificata, ma il metadato dà informazioni utili su tutte le risorse presenti, fornendo un'informazione non centralizzata poiché recuperabile con query relative a varie risorse o semplicemente allegando il metadato a più risorse.
+	\item la risorsa alla quale è collegato il metadato non è specificata, ma il metadato dà modo di recuperare informazioni utili su tutte le risorse trattate; l'informazione fornita risulta quindi non centralizzata poiché recuperabile con query su varie risorse o semplicemente allegando il metadato a più risorse.
 \end{itemize}
 \subsection{Linked Data}
-Fino ad ora, si è mostrato i principi scelti come base per rendere ogni risorsa machine-readable, permettendo ad una macchina di ottenere maggiori informazioni sulla risorsa.\\
-Il Semantic Web non cerca solamente di migliorare la qualità dell'informazione sulla singola risorsa, bensì di fornire ad un applicativo la possibilità di consultare informazioni relative anche a risorse collegate a quella iniziale.\\
-Questo secondo obiettivo viene attuato mediante i 4 principi dei Linked Data, già enunciati nella sezione \ref{linkedDataPrinc}.\\
+I principi mostrati fino ad ora forniscono linee guida su come rendere ogni risorsa \textit{machine-readable}, permettendo ad una macchina di ottenere maggiori informazioni sul dato.\\
+Il Semantic Web non cerca solamente di migliorare la qualità dell'informazione di una singola risorsa; un ulteriore obiettivo è fornire ad un applicativo la possibilità di consultare informazioni relative anche a risorse collegate a quella iniziale.\\
+Questo secondo fine viene attuato mediante i quatrro principi dei Linked Data, già enunciati nella sezione \ref{linkedDataPrinc}.\\
 Un importate risultato raggiunto in questo ambito risulta essere DBPedia\cite{dbpedia}, progetto che permette:
 \begin{itemize}
 	\item di consultare Wikipedia in formato RDF;
-	\item collega gli articoli Wikipedia a risorse presenti al di fuori del sito, permettendo così di effettuare query che recuperano informazioni da più fonti. 
+	\item collega gli articoli Wikipedia a risorse presenti al di fuori del sito, permettendo così di effettuare query che interrogano più fonti. 
 \end{itemize}
 Come già citato, questo modello è ben visibile all'interno di ODRL, per esempio nel listing \ref{esmpioPolicy} è possibile notare:
 \begin{itemize}
-	\item che la policy ha un proprio URI, risulta quindi sia un metadato, che una risorsa consultabile a sé;
-	\item in quanto risorsa consultabile, ha al suo interno diversi URI relativi ad altre risorse, come ad esempio:
+	\item un URI proprio della policy, la quale risulta, quindi, sia un metadato che una risorsa consultabile;
+	\item essendo un documento ODRL una risorsa consultabile, ha al suo interno diversi URI relativi ad altre risorse, come ad esempio:
 	\begin{itemize}
 		\item l'URI relativo all'asset target della policy;
-		\item l'URI relativo al contesto del documento, il quale contiene a suo volta informazioni utili per leggere correttamente una policy;
+		\item l'URI relativo al contesto del documento, il quale contiene a suo volta informazioni utili per interpretare correttamente una policy;
 	\end{itemize}
 \end{itemize}
 \subsection{RDF}
 ``RDF, o \textit{Resource Description Framework}, si pone alle fondamenta del processing di metadati; fornisce interoperabilità tra applicazioni che si scambiano infromazioni machine-readable nel Web. RDF enfatizza procedure per abilitare l'elaborazione automatica per risorse web''\cite{RDF}. Tra i casi d'uso supportati da RDF vi sono:
 \begin{itemize}
 \item recupero di risorse web per ottenere migliori motori di ricerca;
-\item catalogazione di contenuto ed espressione di relazioni tra varie fonti nel Web;
+\item catalogazione di contenuti ed espressione di relazioni tra varie fonti nel Web;
 \item rappresentazione di proprietà intellettuale e diritti relativi ad una risorsa Web.
 \end{itemize}
-RDF inoltre, condivide la visione per la quale un metadato può essere a sua volta un dato, poiché per all'interno del framework è si definisce come risorsa qualsiasi entità identificabile mediante un URI.\\
-Tra le caratteristiche di RDF vi è il proporre una sintassi che per descrivere risorse che sia indipendente dal dominio di applicazione: 
+RDF, inoltre, condivide la visione per la quale un metadato può essere a sua volta un dato, poiché all'interno del framework è definita come risorsa qualsiasi entità identificabile mediante un URI.\\
+Tra le caratteristiche di RDF vi è il proporre una sintassi che per descrivere risorse indipendente dal dominio applicativo: 
 \begin{itemize}
-\item non vi sono assunzioni specifiche di dominio applicativo;
+\item non vi sono assunzioni specifiche sull'area di applicazione;
 \item non vi sono restrizioni di semantica, definibile in base al dominio.
 \end{itemize}
-La sintassi mostrata, fa riferimento a ciò che è definito come \textit{serialization syntax}: formato XML per la rappresentazione del modello RDF. Tale sintassi non è l'unica possibile né l'unica valida:
+La sintassi mostrata di seguito fa riferimento a ciò che è definito come \textit{serialization syntax}: formato XML per la rappresentazione del modello RDF. Tale sintassi non è l'unica possibile né l'unica valida:
 \begin{itemize}
-\item la \textit{serialization syntax} si riferisce al lavoro che la W3C sta svolgendo in questo ambito per affinare il modello RDF;
-\item altre rappresentazioni possono essere più utili in base allo scenario applicativo, per esempio nel caso in cui il documento debba essere anche leggibile da persone.
+\item la \textit{serialization syntax} si riferisce al lavoro che la W3C sta svolgendo in questo ambito per raffinare il modello RDF;
+\item altre rappresentazioni possono essere più utili in base allo scenario applicativo, per esempio nel caso in cui il documento debba essere anche leggibile dagli utenti finali.
 \end{itemize}
 \paragraph{Il modello RDF}\mbox{}\\
 Il modello RDF è definito come segue\cite{RDF}:
@@ -709,11 +707,11 @@ Il modello RDF è definito come segue\cite{RDF}:
 \item sia un sottoinsieme di N, detto \textit{PropertyTypes}, definito come P;
 \item sia un insieme di triple, definito come T, i cui elementi vengono informarmalmente chiamati proprietà. Il primo elemento di ogni tripla è un elemento di P, il secondo un elemento di N ed il terzo può essere un elemento di N o un valore atomico, ad esempio una stringa Unicode.
 \end{enumerate}
-La rappresentazione del modello equivale ad un grafo orientato, i cui nodi sono le risorse descritte o i valori che le descrivono; gli archi che collegano i nodi presentano come label i nomi dei \textit{PropertyTypes} che li collegano. Per esempio:
+La rappresentazione del modello equivale ad un grafo orientato, i cui nodi sono le risorse descritte o i valori che le descrivono; gli archi che collegano i nodi presentano come label i nomi dei \textit{PropertyTypes} all'interno della tripla. Per esempio:
 \begin{enumerate}
-\item la frase \\``Ora Lassila" è l' "autore" della pagina web ``http://www.w3.org/People/Lassila''''
-\item è serializzata come \\ \{autore, [http://www.w3.org/People/Lassila], "Ora Lassila"\}
-\item dalla definizio del modello, è possibile dedurre che la label \textit{autore} è il nome di un nodo appartenente a P;
+\item la frase \\\textit{\textbf{Ora Lassila} è l'\textbf{autore} della pagina web \textbf{http://www.w3.org/People/Lassila}}
+\item è serializzata tramite la tripla \\ \{autore, [http://www.w3.org/People/Lassila], "Ora Lassila"\}
+\item dalla definizione del modello, è possibile dedurre che la label \textit{autore} è il nome di un nodo appartenente a P;
 \item tale nodo, identificato con X,avrà a sua volta le seguenti serializzazioni:
 \begin{enumerate}
 \item \{PropName,  X, author\}
@@ -722,33 +720,34 @@ La rappresentazione del modello equivale ad un grafo orientato, i cui nodi sono 
 \end{enumerate}
 
 \end{enumerate}
-Nell'esempio precedente, si è mostrato il tipo di asserzione più semplice che RDF è in grado di supportare; quanto segue mostra come si possano creare relazioni tra le varie risorse:
+Nell'esempio precedente, si è mostrato il tipo di asserzione più semplice supportato da RDF; quanto segue mostra come si possano creare relazioni tra le varie risorse:
 \begin{enumerate}
-\item la frase \\``Ralph crede che il documento 'L'origine delle specie' abbia come autore Charles Darwin''
-\item è serializzata come \\ \{crede, "Ralph", Statement1\}
+\item la frase \\\textit{Ralph crede che il libro ``L'origine delle specie'' abbia come autore Charles Darwin}
+\item è serializzata come \\ \{crede, "Ralph", \textit{Statement1}\}\newpage
 \item le serializzazioni relative al nodo di \textit{crede}, identificato con X, sono:
 \begin{enumerate}
 \item \{PropName,  X, crede\}
 \item \{PropObj,   X, Ralph\}
-\item \{PropValue, X, Statement1\}
+\item \{PropValue, X, \textit{Statement1}\}
 \end{enumerate}
 \item \textit{Statement1} è un elemento di T, ovvero un tripla;
 \item le serializzazioni relative a Statement1 sono:
 \begin{enumerate}
-\item \{PropName, Statement1, autore\}
-\item \{PropObj, Statement1, [http://loc.gov/Books/OrigineSpecie]\}
-\item \{PropValue, Statement1, Charles Darwin\}
+\item \{PropName, \textit{Statement1}, autore\}
+\item \{PropObj, \textit{Statement1}, [http://loc.gov/Books/OrigineSpecie]\}
+\item \{PropValue, \textit{Statement1}, Charles Darwin\}
 \end{enumerate}
 \end{enumerate}
-Dagli esempi mostrati, risulta possibile denotare che il cuore del modello RDF siano quindi le triple che si definiscono, dove in ognuna è possibile individuare:
+Dagli esempi mostrati, risulta possibile denotare che il cuore del modello RDF siano quindi le triple che definite all'interno del documento. In ogni tripla è possibile individuare:
 \begin{itemize}
 \item \textbf{predicato}: nodo appartente a P;
-\item \textbf{oggetto}: nodo sorgente dello statement; appartiene a P ed è il nodo a cui si applica il predicato;
-\item \textbf{valore}: nodo destinazione dello statement; appartiene a P, T, o è un valore atomico ed è il valore del predicato.
+\item \textbf{oggetto}: nodo sorgente dello statement; appartiene a N ed è il nodo a cui si applica il predicato;
+\item \textbf{valore}: nodo destinazione dello statement; appartiene a N, T, o è un valore atomico ed è il valore del predicato.
 \end{itemize}
+\newpage
 \paragraph{Grammatica RDF e rappresentazione grafica}\mbox{}\\
-Il seguente codice mostra un frammento di descrizione di dati conforme al modello RDF tramite XML:
-\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioXML]
+Il seguente codice mostra un frammento di descrizione di dati conforme al modello RDF utilizzando XML come linguaggio:
+\begin{lstlisting}[language=xml,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioXML]
 <?namespace 
 	href="http://docs.r.us.com/bibliography-info"
 	as="bib"?> 
@@ -767,7 +766,7 @@ Risulta possibile notare i seguenti tag:
 \item \textbf{assertions}: indica un'effettiva tripla all'interno del modello, i cui elementi sono individuati nei tag:
 \begin{itemize}
 \item \textbf{href} nel tag assertions: indica l'oggetto della tripla;
-\item \textbf{prefix:PropertyName}: tag definito dall'applicazione che indica il predicato della tripla; il valore di quest elemento XML indica invece il valore del predicato.
+\item \textbf{prefix:PropertyName}: tag definito dall'applicazione che indica il predicato della tripla; il valore di questo elemento XML indica invece il valore della tripla.
 \end{itemize}
 \end{itemize}
 Di seguito la rappresentazione grafica del grafo codificato:
@@ -776,14 +775,13 @@ Di seguito la rappresentazione grafica del grafo codificato:
 \includegraphics[scale=.50]{../immagini/RDFXML.jpg}
 \caption{Rappresentazione grafica del grafo codificato nel listing \ref{esempioXML}}
 \label{imgEsempioXML}
-\end{figure}
+\end{figure}\newpage
 Nell'esempio che segue è invece possibile notare come sfruttare uno statement come valore di una tipla:
-\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioComplexXML]
+\begin{lstlisting}[language=xml,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioComplexXML]
 <?namespace 
   href="http://docs.r.us.com/bibliography-info"
   as="bib"?> 
-<?namespace 
-  href="http://www.w3.org/schemas/rdf-schema"
+<?namespace href="http://www.w3.org/schemas/rdf-schema"
   as="RDF"?> 
 <RDF:serialization> 
   <RDF:assertions href="http://www.bar.com/some.doc"> 
@@ -798,26 +796,23 @@ Nell'esempio che segue è invece possibile notare come sfruttare uno statement c
 </RDF:serialization>
 \end{lstlisting}
 Risulta possibile anche ottenere una scrittura più modulare, sfruttando la proprietà \textit{id} del tag \textit{resource}:
-\begin{lstlisting}[language=json,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioIdXML]
-<?namespace 
-	href="http://docs.r.us.com/bibliography-info" 
-	as="bib"?> 
-<?namespace 
-	href="http://www.w3.org/schemas/rdf-schema"
-	as="RDF"?> 
+\begin{lstlisting}[language=xml,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioIdXML]
+<?namespace href=
+  "http://docs.r.us.com/bibliography-info" as="bib"?> 
+<?namespace href=
+  "http://www.w3.org/schemas/rdf-schema"as="RDF"?> 
 <RDF:serialization> 
   <RDF:assertions href="http://www.bar.com/some.doc"> 
     <bib:author href="#John_Smith"/> 
   </RDF:assertions> 
 </RDF:serialization>
-
 <RDF:resource id="John_Smith"> 
   <bib:name>John Smith</bib:name> 
   <bib:email>john@smith.com</bib:email> 
   <bib:phone>+1 (555) 123-4567</bib:phone> 
 </RDF:resource> 
 \end{lstlisting}
-Entrambi gli esempi mostrati nei listing \ref{esempioComplexXML} e \ref{esempioIdXML}, si riconducono alla seguente rappresentazione grafica:
+Entrambi gli esempi mostrati nei listing \ref{esempioComplexXML} e \ref{esempioIdXML} hanno la seguente rappresentazione grafica:
 \begin{figure}[H]
 \centering
 \includegraphics[scale=.50]{../immagini/complexXML.jpg}
@@ -825,23 +820,23 @@ Entrambi gli esempi mostrati nei listing \ref{esempioComplexXML} e \ref{esempioI
 \label{imgEsempioComplexXML}
 \end{figure}
 \paragraph{Tag namespace}\mbox{}\\
-Il tag \textit{namespace} è un'estensione alla specifica RDF attualmente non mandatorio. Tale tag è stato introdotto per rendere la sintassi relativa alla semantica di un tag specifico di dominio meno prolissa:
+Il tag \textit{namespace} è un'estensione alla specifica RDF attualmente non obbligatorio. Questo tag è stato introdotto per rendere la sintassi di un tag specifico al dominio applicativo meno prolissa:
 \begin{itemize}
  \item \textbf{as}: proprietà del tag che indica il nome del namespace;
- \item \textbf{href}: porzione di identificativo da sostituire alla proprietà \textit{as} quando la si incontra.
+ \item \textbf{href}: porzione di identificativo da sostituire al valore della proprietà \textit{as} quando lo si incontra.
 \end{itemize} 
-Prendendo ad esempio il listing \ref{esempioComplexXML}: il tag \textit{bib:name} è da interpretare come: \\\url{http://docs.r.us.com/bibliography-info/name}\\ quest'ultimo risulta infatti essere l'URI che identifica la proprietà, inoltre è un riferimento a dove è possibile recuperare informazioni su di essa.\\
-Il suo utilizzo è denotabile all'interno di ODRL, come ad esempio nel listing \ref{esempioParty}, dove il tag \textit{@context} svolge un ruolo simile: fa riferimento ad un file RDF all'interno del quale sono definite tutte le abbreviazioni utili ad ODRL tramite le seguenti linee di codice:
+Prendendo ad esempio il listing \ref{esempioComplexXML}: il tag \textit{bib:name} è da interpretare come: \\\url{http://docs.r.us.com/bibliography-info/name}\\ il valore così ottenuto risulta essere l'URI che identifica la proprietà; è anche un riferimento a dove è possibile recuperare informazioni su di essa.\\
+L'utilizzo di questa pratica è diffuso anche in ODRL, come visibile, ad esempio, nel listing \ref{esempioParty} dove il tag \textit{@context} svolge un ruolo simile: fa riferimento ad un file RDF nel quale sono definite tutte le abbreviazioni utili ad ODRL tramite le seguenti linee di codice:
 \begin{lstlisting}[language=json,firstnumber=1,caption={Estratto context ODRL\cite{ODRLContext}},captionpos=b,label=contextJSONLD]
 "odrl":       "http://www.w3.org/ns/odrl/2/",
 "Permission": "odrl:Permission",
 "permission": {"@type": "@id", "@id": "odrl:permission"}
 \end{lstlisting}
-Come è possibile notare, il formato di serializzazione utilizzato nel listing \ref{contextJSONLD} non è XML, bensì JSON-LD, così come anche nei vari listing presentati nel capitolo \ref{ODRLChapter} relativo ad ODRL.\\
+Il formato di serializzazione utilizzato nel listing \ref{contextJSONLD} non è XML, bensì JSON-LD, lo stesso utilizzato nei vari esempi presentati nel capitolo \ref{ODRLChapter} relativo ad ODRL.\\
 All'interno del lavoro di tesi, le serializzazioni utilizzate sono:
 \begin{itemize}
 \item JSON-LD: utilizzato negli esempi ed in input al processo di merging;
-\item Turtle\cite{Turtle}: utilizzato come output del processo di merging, tale decisione è stata presa poiché risulta essere la serializzazione più matura nel framework Jena.
+\item Turtle\cite{Turtle}: utilizzato come output del processo di merging, tale decisione è stata presa poiché risulta essere la serializzazione più matura supportata dal framework Jena.
 \end{itemize}
 \subsection{RDFS}
 Come esposto in precedenza, il modello RDF fornisce la sintassi necessaria per creare metadati in grado di rappresentare relazioni tra le varie risorse, lasciando libertà assoluta sul significato che queste relazioni possono avere. RDFS è ``un'estensione semantica''\cite{RDFS} di RDF che permette di descrivere gruppi di risorse correlate e le relazioni tra le varie risorse. RDFS basa il suo funzionamento sulla definizione di 2 termini:
