@@ -1058,14 +1058,14 @@ Nonostante le due policy si riferiscano allo stesso asset anche in questo caso n
 }]
 }
 \end{lstlisting}
-In questo caso le regole espresse dalle due policy sarebbero in conflitto, poiché \textit{use}, permesso dalla prima policy, comprende al suo interno anche \textit{play}, proibito dalla seconda. Siccome però le due regole sono applicate a due soggetti diversi,un eventuale merging delle policy avrebbe due regole distinte uguali a quelle di partenza. Questa casistica non è stata ulteriormente esplorata all'interno del lavoro di tesi poiché:
+In questo caso le regole espresse dalle due policy sarebbero in conflitto, poiché \textit{use}, permesso dalla prima policy, comprende al suo interno anche \textit{play}, proibito dalla seconda. Siccome però le due regole sono applicate a due soggetti diversi, un eventuale merging delle policy avrebbe due regole distinte uguali a quelle di partenza. Questa casistica non è stata ulteriormente esplorata all'interno del lavoro di tesi poiché:
 \begin{itemize}
-\item la procedura di merging implementata utilizza come semplificazione regole riferite ad \textbf{EveryOne}; questo poiché il procetto MOSAICO ha il suo focus sui dati;
+\item la procedura di merging implementata utilizza come semplificazione regole riferite ad \textbf{EveryOne}; questo perché il progetto MOSAICO ha il suo focus sui dati;
 \item un'eventuale procedura che tenga conto anche degli utenti aggiungerebbe solo un filtraggio preliminare sulle entità cui si riferiscono le regole.
 \end{itemize}
 \label{noStrat}
 \paragraph{Conflitti senza strategia risolutiva indicata}\label{noStrat}\mbox{}\\
-Nel caso due policy siano conflitto quando non viene indicato alcun processo di risoluzione dei conflitti ODRL invalida entrambe le policy. Attuando policy merging è possibile formulare una terza policy che racchiude entrambi i requisiti espressi dai documenti originali.
+Nel caso due policy siano in conflitto quando non viene indicato alcun processo di risoluzione dei conflitti, ODRL invalida entrambe le policy. Attuando policy merging è possibile formulare una terza policy che racchiude entrambi i requisiti espressi dai documenti originali.
 \subparagraph{Conflitti permesso-permesso}\label{permperm}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
 {
@@ -1092,7 +1092,7 @@ Nel caso due policy siano conflitto quando non viene indicato alcun processo di 
 La seconda policy risulta in conflitto con la prima, poiché quest'ultima permette un numero maggiore di utilizzi. Seguendo la procedura standard, entrambe le due policy dovrebbero essere considerate non valide. Nella realtà dei fatti, facendo policy merging, si otterrebbe solamente la policy più restrittiva, ovvero la seconda. La procedura di policy merging in questione sarebbe quindi: 
 \begin{enumerate}
 	\item invalidare le policy 0001 e 0002;
-	\item creare una terza policy 0003, uguale alla 0002(la più restrittiva delle due), al fine di segnalare il processo di merging avvenuto.
+	\item creare una terza policy 0003, uguale alla 0002 (la più restrittiva delle due), al fine di segnalare il processo di merging avvenuto.
 \end{enumerate}
 \subparagraph{Conflitti divieto-divieto}\label{divdiv}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 proibisce un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
@@ -1195,7 +1195,7 @@ L'architettura generale è una semplice pipeline di componenti: il processo impl
 \item esprime le regole in un formato non ambiguo per l'interrogazione puntuale.
 \end{itemize}
 Queste processo viene attuato all'interno del componente denominato \textit{Logica Merging}, il quale si occupa di aggiungere la semantica necessaria al modello ODRL.\\
-Il primo componente della pipeline si occupa invece di estrarre le informazioni di rilievo dalle policy in ingresso mentre il componente in coda ha il roulo di produttore di documenti conformi ad ODRL.
+Il primo componente della pipeline si occupa di estrarre le informazioni di rilievo dalle policy in ingresso mentre il componente in coda ha il roulo di produttore di documenti conformi ad ODRL.
 \section{Parser}\label{parsingSection}
 Il primo componente della pipeline è il parser di documenti ODRL. Il suo ruolo è estrarre le informazioni utili alla procedura di merging. Questo componente sfrutta il framework Apache Jena esposto nella sezione \ref{apacheJenaSec}. Le interfacce esposte da questa porzione della soluzione sono:
 \begin{itemize}
