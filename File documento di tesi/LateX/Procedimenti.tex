@@ -108,12 +108,11 @@
 \maketitle
 \tableofcontents
 \chapter{Introduzione}
-Questo lavoro di tesi si inserisce all'interno del contesto del progetto europeo \textit{Multi-Owner data Sharing for Analytics and Integration
-respecting Confidentiality and Owner control} (MOSAICO). Come da titolo, il progetto nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati, garantendo il rispetto delle norme vigenti in materia di privacy ed eventuali requisiti di riservatezza espressi dagli utenti finali in un ambiente multi-owner. Questa tesi si inserisce all'interno del pacchetto di lavoro \textit{Policy specifications - Data governance framework}, il quale si occupa della definizione di un linguaggio, e relativo modello, per la definizione di requisiti di privacy; questo componente risulta critico poiché interessa l'intero ciclo di vita del dato, oltre ad influenzare l'operato degli altri due \textit{work package}. Tra i candidati esaminati per la definizione di questi metadati vi è l' \textit{Open Digital Rights Language} (ODRL). Inizialmente, il lavoro di tesi si occupa di esaminare la struttura del linguaggio ed evidenziarne due problematiche all'interno del contesto di MOSAICO. La prima problematica risulta essere l'assenza di una gestione dei conflitti efficace in scenari multi-owner; la seconda problematica risulta essere l'inefficiente rappresentazione delle regole in fase di interrogazione del modello.\\
+Questo lavoro di tesi si inserisce all'interno del contesto del progetto europeo \textit{Multi-Owner data Sharing for Analytics and Integration respecting Confidentiality and OWNer control} (MOSAICrOWN). Come da titolo, il progetto nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati, garantendo il rispetto delle norme vigenti in materia di privacy ed eventuali requisiti di riservatezza espressi dagli utenti finali in un ambiente multi-owner. Questa tesi si inserisce all'interno del pacchetto di lavoro \textit{Policy specifications - Data governance framework}, il quale si occupa della definizione di un linguaggio, e relativo modello, per la definizione di requisiti di privacy; questo componente risulta critico poiché interessa l'intero ciclo di vita del dato, oltre ad influenzare l'operato degli altri due \textit{work package}. Tra i candidati esaminati per la definizione di questi metadati vi è l' \textit{Open Digital Rights Language} (ODRL). Inizialmente, il lavoro di tesi si occupa di esaminare la struttura del linguaggio ed evidenziarne due problematiche all'interno del contesto di MOSAICrOWN. La prima problematica risulta essere l'assenza di una gestione dei conflitti efficace in scenari multi-owner; la seconda problematica risulta essere l'inefficiente rappresentazione delle regole in fase di interrogazione del modello.\\
 Individuate queste problematiche, la tesi mostra quali sono le tecnologie ed i principi che hanno guidato l'implementazione di una soluzione. La proposta consiste in un tool che attua il \textit{merging} di due policy qualora queste operino sulla stessa risorsa; prima di procedere all'effettiva implementazione, sono state individuate le varie casistiche possibili ed esempi degli scenari in cui si presentano, al fine di caratterizzare al meglio la problematica.\\Dopo questa caratterizzazione, il lavoro di tesi espone l'architettura della soluzione implementata, mostrando schemi UML e pseudocodice Java-like per dimostrare l'efficacia e la modularità della proposta nelle parti più importanti.\\
 L'ultimo capitolo della tesi si concentra sulla valutazione dei risultati ottenuti, riassumendo quali fossero le problematiche affrontate e mostrando i vantaggi del tool creato tramite un confronto con una soluzione baseline in una serie di scenari dalla complessità crescente.
-\chapter{Il progetto MOSAICO}
-Il progetto MOSAICO nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati\cite{ProgettoMosaico}. In particolare, si inserisce nel contesto relativo alle sfide introdotte dai requisiti di privacy che è necessario garantire in queste applicazioni. Questi requisiti rappresentano ostacoli per task quali: aggregazione di dati posseduti da più attori, analisi di dati.\\
+\chapter{Il progetto MOSAICrOWN}
+Il progetto MOSAICrOWN nasce come risposta all'esigenza di ricercare metodi per la realizzazione di mercati digitali relativi allo scambio di dati\cite{ProgettoMosaico}. In particolare, si inserisce nel contesto relativo alle sfide introdotte dai requisiti di privacy che è necessario garantire in queste applicazioni. Questi requisiti rappresentano ostacoli per task quali: aggregazione di dati posseduti da più attori, analisi di dati.\\
 Gli obiettivi che il progetto si pone sono:
 \begin{itemize}
 \item peremttere lo scambio di dati in sicurezza, sia per quanto concerne la protezione di informazioni personali che informazioni sensibili in ambito aziendale;
@@ -121,7 +120,7 @@ Gli obiettivi che il progetto si pone sono:
 \item standardizzare le procedure di scambio di dati tra diverse realtà in ambito europeo.
 \end{itemize}
 Il metodo con cui si intende realizzare questi obiettivi risulta essere la creazione di un framework che permetta la definizione di requisiti relativi alla protezione dei dati in modo dichiarativo; tali requisiti sono poi utilizzati durante l'intero ciclo di vita del dato per mettere in atto tecniche di protezione. Le procedure utilizzate devono, inoltre, risultare efficienti, scalabili ed essere realizzate con in mente uno scenario che pone l'attenzione sulla privacy in ambienti multi-owner.\\
-Altri aspetti che il progetto MOSAICO tiene in considerazione sono:
+Altri aspetti che il progetto MOSAICrOWN tiene in considerazione sono:
 \begin{itemize}
 \item implementazione adatta al deployment in sistemi reali, cercando di adottare le migliore tecniche che la ricerca ha da offrire nella tutela della privacy;
 \item indipendenza del framework dalla specifica piattaforma in cui viene impiegato, cercado di supportare come casi d'uso principali:
@@ -150,7 +149,7 @@ Tutti i tre workpackage esposti devono essere impiegabili in ogni fase del ciclo
 \begin{figure}[H]
 \centering
 \includegraphics[scale=.65]{../immagini/MOSAICOUSES.png}
-\caption{Caratterizzazione dei casi d'uso presi in considerazione da MOSAICO\cite{ProgettoMosaico}}
+\caption{Caratterizzazione dei casi d'uso presi in considerazione da MOSAICrOWN\cite{ProgettoMosaico}}
 \label{MosUses}
 \end{figure}
 \section{Scenari d'uso}
@@ -164,12 +163,12 @@ Lo sviluppo del progetto si basa sul soddisfare i requisiti di tre scenari indiv
 Questa tesi si colloca all'interno degli studi effettuati per l'implementazione del pacchetto di lavoro denominato \textit{Policy specifications - Data governance framework}. In particolare viene analizzato uno dei linguaggi candidati per la modellizzazione dei requisiti di privacy: l' Open Digital Rights Language (ODRL), le cui proprietà sono trattate nel capitolo \ref{ODRLChapter}.\\
 Le motivazioni per cui questo linguaggio risulta un candidato interessante sono:
 \begin{itemize}
-\item l'essere uno standard definito dal W3C, patner del progetto ed importante risorsa per la standardizzazione delle soluzioni prodotte da MOSAICO;
+\item l'essere uno standard definito dal W3C, patner del progetto ed importante risorsa per la standardizzazione delle soluzioni prodotte da MOSAICrOWN;
 \item la possibilità di implementazione mediante l'uso di linguaggi di definizione di metadati diffusi, quali XML ed JSON;
 \item l'essere nato come linguaggio per l'espressioni di policy, senza assunzioni di contesti specifici;
 \item l'essere utilizzato all'interno dell'industria del settore \textit{Digital rights management} (DRM).
 \end{itemize}
-Questo \textit{work package} è fondamentale in ogni fase di vita del dato ed, inoltre, è necessario in tutti i casi d'uso individuati; alla luce di ciò, la comprensione dei punti di forza e delle limitazioni del modello risultano aspetti cruciali per il progetto MOSAICO. \\
+Questo \textit{work package} è fondamentale in ogni fase di vita del dato ed, inoltre, è necessario in tutti i casi d'uso individuati; alla luce di ciò, la comprensione dei punti di forza e delle limitazioni del modello risultano aspetti cruciali per il progetto MOSAICrOWN. \\
 ODRL soddisfa sia il requisito di flessibilità che di vicinanza alle tecnologie attualmente in essere.
 \chapter{ODRL}\label{ODRLChapter} 
 \section{Il linguaggio}
@@ -179,7 +178,7 @@ Il linguaggio si pone all'interno dello scenario applicativo nel quale vi è la 
 \begin{itemize}
 	\item quali azioni siano permesse o proibite su una risorsa. Queste regole possono essere imposte da leggi o direttamente dal possessore dell'asset o servizio;
 	\item indicare quali attori interagiscono con le policy definite; in particolare chi può definire le policy e a chi si applicano le regole al suo interno;
-	\item indicare eventuali limiti riguardanti i permessi ed i divieti espressi.
+	\item indicare eventuali vincoli riguardanti i permessi ed i divieti espressi.
 \end{itemize}
 Avere un modello standard per definire questi bisogni dà due vantaggi:
 \begin{itemize}
@@ -209,7 +208,7 @@ Come visibile all'interno dello schema in figura \ref{ODRLModelSchema}, il model
 	\item \textbf{Asset}: risorsa o collezione di risorse soggette a regole;
 	\item \textbf{Azione}: operazione su un asset;
 	\item \textbf{Party}: entità o insieme di entità con un certo ruolo in una regola;
-	\item \textbf{Limiti}: espressione logica o booleana imposta su azioni, party, asset o regole.
+	\item \textbf{Vincoli}: espressione logica o booleana imposta su azioni, party, asset o regole.
 \end{itemize}
 \paragraph{Vocabolari}\mbox{}\\
 \label{profili}
@@ -276,7 +275,7 @@ Esempio di utilizzo in una regola:
  "uid": "http://example.com/policy:3333",
  "profile": "http://example.com/odrl:profile:02",
  "permission": [{
-	"target": "http://example.com/archive1011",
+	"target": "http://example.com/archive:1011",
 	"action": "display",
 	"assigner": "http://example.com/party:0001"
  }]
@@ -285,7 +284,7 @@ Esempio di utilizzo in una regola:
 La sottoclasse \textbf{AssetCollection} può avere i seguenti campi aggiuntivi:
 \begin{itemize}
 	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe \textit{AssetCollection} all'interno di un \textbf{refinement};
-	\item uno o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
+	\item uno o più \textbf{refinement}: vincoli riguardanti la collezione che identificano solamente un sottogruppo di asset al suo interno.
 \end{itemize}
 \newpage
 Esempio di utilizzo della proprietà \textbf{partOf}:
@@ -295,7 +294,7 @@ Esempio di utilizzo della proprietà \textbf{partOf}:
 	"@id": "http://example.com/asset:111.doc",
 	"dc:title": "Annual Report",
 	...
-	"odrl:partOf": "http://example.com/archive1011",
+	"odrl:partOf": "http://example.com/archive:1011",
 	...
 }
 \end{lstlisting}
@@ -324,7 +323,7 @@ Esempio di utilizzo in una regola:
 La sottoclasse \textbf{PartyCollection} può avere i seguenti campi aggiuntivi:
 \begin{itemize}
 	\item \textbf{source}: sostituisce il campo \textbf{uid} nelle classe PartyCollection all'interno di un \textbf{refinement};
-	\item uno o più \textbf{refinement}: limiti riguardanti la collezione che identificano solamente un sottogruppo di entità al suo interno.
+	\item uno o più \textbf{refinement}: vincoli riguardanti la collezione che identificano solamente un sottogruppo di entità al suo interno.
 \end{itemize}
 Esempio di utilizzo della proprietà \textbf{partOf}:
 \begin{lstlisting}[language=json,firstnumber=1,caption={L'entità definita è parte di una PartyCollection},captionpos=b,label=esempioPartyColl]
@@ -491,14 +490,14 @@ Come definito nel modello presente nella sezione \ref{modello}, \textbf{rule} è
 	\item una \textbf{action}: azione regolamentata;
 	\item una o nessuna \textbf{relation}: asset sul quale si applica la regola;
 	\item una, nessuna o più \textbf{function}: funzioni che un party può avere all'interno di una regola;
-	\item uno, nessuno o più \textbf{constraint }: limiti applicati alla validità della regola;
+	\item uno, nessuno o più \textbf{constraint }: vincoli applicati alla validità della regola;
 	\item uno o nessun identificativo univoco, necessario solo qualora si usasse la regola per ereditarne le proprietà.
 \end{itemize}
 Le sottoclassi sono così definite:
 \begin{itemize}
-	\item \textbf{permission}: permette un'azione sull'asset specificato, con tutti i \textbf{refinement} di quest'ultima soddisfatti; inoltre l'azione può essere eseguita solo se tutti i limiti della regola sono soddisfatti e ogni dovere espresso come \textbf{duty} è stato rispettato. Un permesso rende obbligatoria la \textbf{relation} denominata \textbf{target};
-	\item \textbf{prohibition}: vieta un'azione sull'asset specificato, con tutti i \textbf{refinement} di quest'ultima soddisfatti; inoltre l'azione non può essere eseguita solo se tutti i limiti della regola sono soddisfatti; se si infrange il divieto, ogni dovere espresso come \textbf{remedy} deve essere eseguito. Un divieto rende obbligatoria la \textbf{relation} denominata \textbf{target};
-	\item \textbf{duty}: obbligo di eseguire un'azione, con tutti i \textbf{refinement} di quest'ultima soddisfatti; un dovere è compiuto se tutti i suoi limiti sono soddisfatti e la sua azione effettuata, con tutti i \textbf{refinement} definiti. Se un dovere non è stato compiuto, bisogna eseguirne le \textbf{consequences}, ovvero altri doveri da compiere.
+	\item \textbf{permission}: permette un'azione sull'asset specificato, con tutti i \textbf{refinement} di quest'ultima soddisfatti; inoltre l'azione può essere eseguita solo se tutti i vincoli della regola sono soddisfatti e ogni dovere espresso come \textbf{duty} è stato rispettato. Un permesso rende obbligatoria la \textbf{relation} denominata \textbf{target};
+	\item \textbf{prohibition}: vieta un'azione sull'asset specificato, con tutti i \textbf{refinement} di quest'ultima soddisfatti; inoltre l'azione non può essere eseguita solo se tutti i vincoli della regola sono soddisfatti; se si infrange il divieto, ogni dovere espresso come \textbf{remedy} deve essere eseguito. Un divieto rende obbligatoria la \textbf{relation} denominata \textbf{target};
+	\item \textbf{duty}: obbligo di eseguire un'azione, con tutti i \textbf{refinement} di quest'ultima soddisfatti; un dovere è compiuto se tutti i suoi vincoli sono soddisfatti e la sua azione effettuata, con tutti i \textbf{refinement} definiti. Se un dovere non è stato compiuto, bisogna eseguirne le \textbf{consequences}, ovvero altri doveri da compiere.
 \end{itemize}
 Esempi di regole all'interno di policy:
 \begin{lstlisting}[language=json,firstnumber=1,caption={La regola esprime il permesso di eseguire l'azione \textbf{play} sul target fino al giorno 2017-12-31 compreso},captionpos=b,label=esempioPerm]
@@ -557,7 +556,7 @@ Esempi di regole all'interno di policy:
 \label{problematicheSec}
 \subsection{Problematica trattata}\label{problematiche}
 \paragraph{Gestione dei conflitti}\mbox{}\\
-La trattazione di ORDL fatta fino ad ora considera la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che MOSAICO che emergono daii casi: in questi scenari è naturale che ogni \textit{data owner} sia interessato a definire la propria policy sulla propria porzione asset.\\
+La trattazione di ORDL fatta fino ad ora considera la definizione di una singola policy per volta. Questo caso non rispecchia però le necessità reali che MOSAICrOWN che emergono dai casi: in questi scenari è naturale che ogni \textit{data owner} sia interessato a definire la propria policy sulla propria porzione asset.\\
 ODRL propone già alcuni elementi per permettere la definizione di più policy in modo agevole, ad esempio: 
 \begin{itemize}
 	\item è possibile utilizzare la proprietà \textbf{inheritFrom} per permettere ad una policy di ereditare tutte le regole definite in un'altra policy;
@@ -568,9 +567,9 @@ ODRL propone già alcuni elementi per permettere la definizione di più policy i
 		\item \textbf{invalid}: in caso di conflitto, la policy risulta non valida nella sua interezza; questa è la procedura di default se non si valorizza la proprietà.
 	\end{itemize}
 \end{itemize}
-Questo sistema di gestione dei conflitti risulta avere una problematica fondamentale all'interno degli scenari di MOSAICO: si riferisce a conflitti all'interno di una singola policy e che, solitamente, avvengono in seguito all'utilizzo della proprietà \textbf{inheritFrom}; risulta possibile notare che in uno scenario multi-owner, l'utilizzo della proprietà \textbf{conflict} risulta inadatto. Si prenda come esempio il seguente scenario:
+Questo sistema di gestione dei conflitti risulta avere una problematica fondamentale all'interno degli scenari di MOSAICrOWN: si riferisce a conflitti all'interno di una singola policy e che, solitamente, avvengono in seguito all'utilizzo della proprietà \textbf{inheritFrom}; risulta possibile notare che in uno scenario multi-owner, l'utilizzo della proprietà \textbf{conflict} risulta inadatto. Si prenda come esempio il seguente scenario:
 \begin{enumerate}
-	\item si supponga che un ospedale, indicato come A, voglia rendere disponibili i propri dati di ricerca in un mercato come quello di MOSAICO;
+	\item si supponga che un ospedale, indicato come A, voglia rendere disponibili i propri dati di ricerca in un mercato come quello di MOSAICrOWN;
 	\item risulta plausibile che la collezione di dati di questo ospedale venga inserita in una raccolta di referti medici, i cui owner sono vari ospedali situati in stati diversi;
 	\item il dato fornito da A viene accompagnato da una policy ODRL, la quale può utilizzare la proprietà \textbf{inheritFrom} per inserire nella propria policy le regole richieste da normative europee;
 	\item oltre a questo, A inserisce nella policy anche regole relative a norme sulla privacy vigenti nel proprio paese, settando la proprietà \textbf{conflict} a \textbf{prohibit}, al fine di proteggere i dati sensibili degli utenti trattati dalla propria collezione dati.
@@ -580,22 +579,22 @@ Nel caso in cui la collezione di dati medici appartenga a più ospedali, la solu
 \begin{enumerate}
 	\item un secondo ospedale, indicato come B, segue il medesimo procedimento ma lascia la proprietà \textbf{conflict} settata come \textbf{invalid};
 	\item se le norme dei paesi di A e B non sono le stesse, entrambe le policy vengono invalidate nella loro totalità, anche se in disaccordo solo su un sottoinsieme di regole;
-	\item questo comportamento risulta deleterio sia per quanto concerne il mercato, poiché scoraggia i possessori dei dati a partecipare ad una collezione; \item il comportamento mostrato risulta dannoso anche per quanto concerne i soggetti trattati dai dati, non più tutelati da regole poiché invalidate.
+	\item questo comportamento risulta deleterio per quanto concerne il mercato, poiché scoraggia i possessori dei dati a partecipare ad una collezione; \item il comportamento mostrato risulta dannoso anche per quanto concerne i soggetti trattati dai dati, non più tutelati da regole poiché invalidate.
 \end{enumerate}
 Una possibile soluzione a questo problema è attuare il merging delle varie policy che hanno come target la collezione di dati, rendendo l'azione sulle varie regole più granulare; prendendo ad esempio l'ultimo scenario mostrato:
 \begin{enumerate}
 	\item avendo due strategie di conflitto differenti, nessuna delle due viene considerata;
-	\item per ogni regola in conflitto, si tengono solamente le regole di divieto, seguendo l'obiettivo di MOSAICO di tutela della privacy;
-	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo di MOSAICO di mantenimento della qualità ed accessibilità dei dati;
+	\item per ogni regola in conflitto, si tengono solamente le regole di divieto, seguendo l'obiettivo di MOSAICrOWN di tutela della privacy;
+	\item per ogni regola non in conflitto, la regola viene mantenuta, seguendo l'obiettivo di MOSAICrOWN di mantenimento della qualità ed accessibilità dei dati;
 	\item per ogni azione permessa solo in una policy, si invalida la relativa, poiché solo uno dei due attori coinvolti si esprime in merito.
 \end{enumerate}
-Questo procedimento è solo uno dei tanti possibili in base alle casistiche di conflitto che possono presentarsi; questo metodo risulta in linea con i requisiti che MOSAICO punta a soddisfare, poiché a differenza di quanto definito in ODRL:
+Questo procedimento è solo uno dei tanti possibili in base alle casistiche di conflitto che possono presentarsi; questo metodo risulta in linea con i requisiti che MOSAICrOWN punta a soddisfare, poiché a differenza di quanto definito in ODRL:
 \begin{itemize}
 	\item porta ad una diminuzione della qualità del dato graduale, anziché ad una invalidazione completa della policy per conflitti anche solamente parziali;
 	\item nonostante la diminuzione della qualità del dato, preserva comunque il maggior grado di tutela della privacy indicato dalle policy interessate dal processo, poiché permette sempre e solo azioni che hanno una regola esplicita che le riguarda e nessun divieto.
 \end{itemize}
 \paragraph{Controllo inefficiente}\mbox{}\\
-Uno dei requisiti fondamentali che MOSAICO punta a soddisfare è l'efficienza. Utilizzando il modello ODRL come mostrato fino ad ora non soddisfa questo requisito, poiché si è sempre costretti a controllare tutte le regole all'interno di una policy: ciò è causato della proprietà \textit{includedIn}. Di seguito un esempio della problematica:
+Uno dei requisiti fondamentali che MOSAICrOWN punta a soddisfare è l'efficienza. Utilizzando il modello ODRL come mostrato fino ad ora non soddisfa questo requisito, poiché si è sempre costretti a controllare tutte le regole all'interno di una policy: ciò è causato della proprietà \textit{includedIn}. Di seguito un esempio della problematica:
 \begin{itemize}
 \item all'interno di una policy sono presenti le seguenti 2 regole:
 \begin{itemize}
@@ -777,7 +776,7 @@ Di seguito la rappresentazione grafica del grafo codificato:
 \caption{Rappresentazione grafica del grafo codificato nel listing \ref{esempioXML}}
 \label{imgEsempioXML}
 \end{figure}\newpage
-Nell'esempio che segue è invece possibile notare come sfruttare uno statement come valore di una tipla:
+Nell'esempio che segue è invece possibile notare come sfruttare uno statement come valore di una tripla:
 \begin{lstlisting}[language=xml,firstnumber=1,caption={Esempio di metadato conforme ad RDF in XML},captionpos=b,label=esempioComplexXML]
 <?namespace 
   href="http://docs.r.us.com/bibliography-info"
@@ -886,7 +885,7 @@ Questa porzione del framework offre interfacce per l'interazione con il modello 
 \item \textbf{property}: il predicato dello statement;
 \item \textbf{value}: il valore dello statement, il quale può essere a sua volta una risorsa.
 \end{itemize}
-L'interfaccia principale fornita da questo componente è denominata \textit{Model} edenota un intero grafo RDF. Questa interfaccia è utilizzata per operazioni con alto livello di astrazione sull'intero modello, come per esempio:
+L'interfaccia principale fornita da questo componente è denominata \textit{Model} e denota un intero grafo RDF. Questa interfaccia è utilizzata per operazioni con alto livello di astrazione sull'intero modello, come per esempio:
 \begin{itemize}
 \item specificare su quale file o collezione di file RDF sta lavorando;
 \item aggiungere, recuperare e rimuovere nodi dal grafo;
@@ -953,7 +952,7 @@ Il risultato della query nel listing \ref{SPARQLQuery} sono le tuple:
 (\textbf{name} = "Johnny Lee Outlaw", \textbf{mbox} = <mailto:jlow@example.com>)\\
 (\textbf{name} = "Peter Goodguy",	\textbf{mbox} = <mailto:peter@example.org>)
 \end{center}
-Risulta possibile notare che l'ultima tripla presente nel listing \ref{SPARQLRDF2} non sia stata utilizzata per costruire il risultato della query, poiché l'oggetto \textit{\_:c} non ha la proprietà \textit{foaf:mbox}.\\
+Risulta possibile notare che l'ultima tripla presente nel listing \ref{SPARQLRDF2} non sia stata utilizzata per costruire il risultato della query, poiché l'oggetto \textit{\_:c} non ha la proprietà \textit{foaf:name}.\\
 Il ruolo che hanno le API ARQ all'interno di del progetto è di collegamente tra le query e le \textit{CORE RDF API}; introducono anche una semplificazione della sintassi evitando il costrutto \textit{PREFIX} dove è noto il modello sul quale si eseguono le query.
 \newpage
 \paragraph{Modulo I/O}\mbox{}
@@ -981,13 +980,13 @@ Il modello espresso mediante \textit{CORE RDF API} ottenuto da questi moduli è 
 
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1010 permette di riprodurre l'asset 9898.movie a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Set",
-"uid": "http://example.com/policy:1010",
-"permission": [{
-"target": "http://example.com/asset:9898.movie",
-"action": "play"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Set",
+ "uid": "http://example.com/policy:1010",
+ "permission": [{
+   "target": "http://example.com/asset:9898.movie",
+   "action": "play"
+ }]
 }
 
 \end{lstlisting}
@@ -995,72 +994,72 @@ Il modello espresso mediante \textit{CORE RDF API} ottenuto da questi moduli è 
 
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1011 consente la riproduzione dell'asset 1349.mp3 a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Set",
-"uid": "http://example.com/policy:1011",
-"permission": [{
-"target": "http://example.com/asset:1349.mp3",
-"action": "play"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Set",
+ "uid": "http://example.com/policy:1011",
+ "permission": [{
+   "target": "http://example.com/asset:1349.mp3",
+   "action": "play"
+ }]
 }
 \end{lstlisting}
 Le due policy mostrate si riferiscono ad asset differenti, farne il merging porta semplicemente ad una policy avente entrambe le \textit{permission} già enunciate.
-\subparagraph{Rule incompatibili}\mbox{}\\
+\subparagraph{Rule indipendenti}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1010 consente la riproduzione dell'asset 9898.movie a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Set",
-"uid": "http://example.com/policy:1010",
-"permission": [{
-"target": "http://example.com/asset:9898.movie",
-"action": "play"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Set",
+ "uid": "http://example.com/policy:1010",
+ "permission": [{
+   "target": "http://example.com/asset:9898.movie",
+   "action": "play"
+ }]
 }
 \end{lstlisting}
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 1011 proibisce la distribuzione dell'asset 9898.movie a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Set",
-"uid": "http://example.com/policy:1011",
-"prohibition": [{
-"target": "http://example.com/asset:9898.movie",
-"action": "distribute"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Set",
+ "uid": "http://example.com/policy:1011",
+ "prohibition": [{
+   "target": "http://example.com/asset:9898.movie",
+   "action": "distribute"
+ }]
 }
 \end{lstlisting}
-Nonostante le due policy si riferiscano allo stesso asset anche in questo caso non è possibile combinare le due regole, poiché si riferiscono a regole tra loro scollegate. Un eventuale merging delle due policy avrebbe due regole distinte uguali a quelle di partenza.\newpage
+Nonostante le due policy si riferiscano allo stesso asset anche in questo caso non è possibile combinare le due regole, poiché si riferiscono ad azioni tra loro scollegate. Un eventuale merging delle due policy avrebbe due regole distinte uguali a quelle di partenza.\newpage
 \subparagraph{Attori designati differenti}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 da parte del soggetto Billie},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"permission": [{
-	"target": "http://example.com/asset:1212",
-	"action": "use",
-	"assigner": "http://example.com/owner:181",
-	"assignee": 
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0001",
+ "permission": [{
+   "target": "http://example.com/asset:1212",
+   "action": "use",
+   "assigner": "http://example.com/owner:181",
+   "assignee": 
 	   "http://example.com/party:person:billie"
-}]
+ }]
 }
 \end{lstlisting}
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 proibisce la riproduzione dell'asset 1212 da parte del soggetto Alice},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0002",
-"prohibition": [{
-"target": "http://example.com/asset:1212",
-"action": "play",
-"assigner": "http://example.com/owner:181",
-"assignee": 
-"http://example.com/party:person:alice"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0002",
+ "prohibition": [{
+   "target": "http://example.com/asset:1212",
+   "action": "play",
+   "assigner": "http://example.com/owner:181",
+   "assignee": 
+        "http://example.com/party:person:alice"
+ }]
 }
 \end{lstlisting}
 In questo caso le regole espresse dalle due policy sarebbero in conflitto, poiché \textit{use}, permesso dalla prima policy, comprende al suo interno anche \textit{play}, proibito dalla seconda. Siccome però le due regole sono applicate a due soggetti diversi, un eventuale merging delle policy avrebbe due regole distinte uguali a quelle di partenza. Questa casistica non è stata ulteriormente esplorata all'interno del lavoro di tesi poiché:
 \begin{itemize}
-\item la procedura di merging implementata utilizza come semplificazione regole riferite ad \textbf{EveryOne}; questo perché il progetto MOSAICO ha il suo focus sui dati;
+\item la procedura di merging implementata utilizza come semplificazione regole riferite ad \textbf{EveryOne}; questo perché il progetto MOSAICrOWN ha il suo focus sui dati;
 \item un'eventuale procedura che tenga conto anche degli utenti aggiungerebbe solo un filtraggio preliminare sulle entità cui si riferiscono le regole.
 \end{itemize}
 \label{noStrat}
@@ -1069,24 +1068,24 @@ Nel caso due policy siano in conflitto quando non viene indicato alcun processo 
 \subparagraph{Conflitti permesso-permesso}\label{permperm}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"permission": [{
-"target": "http://example.com/asset:1212",
-"action": "play"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0001",
+ "permission": [{
+   "target": "http://example.com/asset:1212",
+   "action": "play"
+ }]
 }
 \end{lstlisting}
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 permette la riproduzione dell'asset 1212 a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0002",
-"permission": [{
-"target": "http://example.com/asset:1212",
-"action": "display"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0002",
+ "permission": [{
+    "target": "http://example.com/asset:1212",
+    "action": "display"
+ }]
 }
 \end{lstlisting}
 La seconda policy risulta in conflitto con la prima, poiché quest'ultima permette un numero maggiore di utilizzi. Seguendo la procedura standard, entrambe le due policy dovrebbero essere considerate non valide. Nella realtà dei fatti, facendo policy merging, si otterrebbe solamente la policy più restrittiva, ovvero la seconda. La procedura di policy merging in questione sarebbe quindi: 
@@ -1097,24 +1096,24 @@ La seconda policy risulta in conflitto con la prima, poiché quest'ultima permet
 \subparagraph{Conflitti divieto-divieto}\label{divdiv}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 proibisce un qualsiasi utilizzo dell'asset 1212 a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"prohibition": [{
-"target": "http://example.com/asset:1212",
-"action": "play"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0001",
+ "prohibition": [{
+    "target": "http://example.com/asset:1212",
+    "action": "play"
+ }]
 }
 \end{lstlisting}
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 proibisce la riproduzione dell'asset 1212 a chiunque},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0002",
-"prohibition": [{
-"target": "http://example.com/asset:1212",
-"action": "display"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0002",
+ "prohibition": [{
+    "target": "http://example.com/asset:1212",
+    "action": "display"
+ }]
 }
 \end{lstlisting}
 Caso duale del precedente; in questo caso una delle due policy proibisce un numero maggiore di utilizzi rispetto all'altra. La procedura da seguire risulta essere:
@@ -1125,45 +1124,45 @@ Caso duale del precedente; in questo caso una delle due policy proibisce un nume
 \subparagraph{Conflitti permesso-divieto}\label{permdiv}\mbox{}\\
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0001 permette il trasferimento dell'asset 1212 al soggetto Alice},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0001",
-"permission": [{
-"target": "http://example.com/asset:1212",
-"assigner": "http://example.com/owner:181",
-"assignee": 
-"http://example.com/party:person:alice",
-"action": "transfer"
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0001",
+ "permission": [{
+   "target": "http://example.com/asset:1212",
+   "assigner": "http://example.com/owner:181",
+   "assignee": 
+     "http://example.com/party:person:alice",
+   "action": "transfer"
 }]
 }
 \end{lstlisting}
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0002 proibisce la vendita dell'asset 1212 al soggetto Alice},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0002",
-"prohibition": [{
-"target": "http://example.com/asset:1212",
-"assigner": "http://example.com/owner:181",
-"assignee": 
-"http://example.com/party:person:alice",
-"action": "sell"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0002",
+ "prohibition": [{
+   "target": "http://example.com/asset:1212",
+   "assigner": "http://example.com/owner:181",
+   "assignee": 
+     "http://example.com/party:person:alice",
+   "action": "sell"
+ }]
 }
 \end{lstlisting}
 In questo caso, l'azione \textit{transfer} è inclusa in due sotto-azioni: \textit{give} e \textit{sell}; delle due sotto-azioni, solamente \textit{sell} è esplicitamente proibita dalla policy 0002, di conseguenza la seguente policy permette solo azioni che soddisfano entrambe le policy precedenti:\newpage
 \begin{lstlisting}[language=json,firstnumber=1,caption={La policy 0003 consente al soggetto Alice di cedere l'asset 1212 senza richiedere un compenso e cancellando l'asset dal proprio insieme di dati},captionpos=b]
 {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "Policy",
-"uid": "http://example.com/policy:0002",
-"permission": [{
-"target": "http://example.com/asset:1212",
-"assigner": "http://example.com/owner:181",
-"assignee": 
-"http://example.com/party:person:alice",
-"action": "give"
-}]
+ "@context": "http://www.w3.org/ns/odrl.jsonld",
+ "@type": "Policy",
+ "uid": "http://example.com/policy:0002",
+ "permission": [{
+   "target": "http://example.com/asset:1212",
+   "assigner": "http://example.com/owner:181",
+   "assignee": 
+     "http://example.com/party:person:alice",
+   "action": "give"
+ }]
 }
 \end{lstlisting}
 Risulta possibile fare le seguenti valutazioni in merito a questa casistica:
@@ -1179,9 +1178,9 @@ Le strategie risolutive indicabili all'interno di ODRL utilizzando il Core Vocab
 	\item \textit{prohibit}: tutte le \textit{prohibition} hanno la precedenza sulle \textit{permission};
 	\item \textit{invalid}: qualsiasi conflitto invalida la policy;
 \end{enumerate}
-La casistica \textit{invalid} è già stata trattata all'interno del paragrafo in sezione \ref{noStrat}. Per quanto concerne le altre due casistiche, come già esposto nella sezione \ref{problematicheSec}, lo standard ODRL risulta indatto al trattamento di conflitti; questa proprietà viene quindi ignorata dal procedimento di merging.
+La casistica \textit{invalid} è già stata trattata all'interno del paragrafo in sezione \ref{noStrat}. Per quanto concerne le altre due casistiche, come già esposto nella sezione \ref{problematicheSec}, lo standard ODRL risulta inadatto al trattamento di conflitti; questa proprietà viene quindi ignorata dal procedimento di merging.
 
-\chapter{Implementazioni}\label{implementazioniCh}
+\chapter{Implementazione}\label{implementazioniCh}
 \section{Architettura generale}
 \begin{figure}[htp]
 \centering
@@ -1195,7 +1194,7 @@ L'architettura generale è una semplice pipeline di componenti: il processo impl
 \item esprime le regole in un formato non ambiguo per l'interrogazione puntuale.
 \end{itemize}
 Queste processo viene attuato all'interno del componente denominato \textit{Logica Merging}, il quale si occupa di aggiungere la semantica necessaria al modello ODRL.\\
-Il primo componente della pipeline si occupa di estrarre le informazioni di rilievo dalle policy in ingresso mentre il componente in coda ha il roulo di produttore di documenti conformi ad ODRL.
+Il primo componente della pipeline si occupa di estrarre le informazioni di rilievo dalle policy in ingresso mentre il componente in coda ha il ruolo di produttore di documenti conformi ad ODRL.
 \section{Parser}\label{parsingSection}
 Il primo componente della pipeline è il parser di documenti ODRL. Il suo ruolo è estrarre le informazioni utili alla procedura di merging. Questo componente sfrutta il framework Apache Jena esposto nella sezione \ref{apacheJenaSec}. Le interfacce esposte da questa porzione della soluzione sono:
 \begin{itemize}
@@ -1338,7 +1337,7 @@ Uno dei fondamenti dell'implementazione sono le \textbf{Action}, ovvero gli util
 \caption{Struttura dell'enumerativo Action}
 \label{imgActionEnum}
 \end{figure}
-All'interno dell'enumerativo è presente il nome che ha all'interno dell' ODRL Common Vocabulary, la lista delle azioni figlie e l'azione padre se esiste. Questa struttura è assimilabile a quella di un nodo in una struttura dati al albero. L'enumerativo è provvisto dei metodi \textit{get} per il recupero delle informazioni presentate.
+All'interno dell'enumerativo è presente il nome che ha all'interno dell' ODRL Common Vocabulary, la lista delle azioni figlie e l'azione padre se esiste. Questa struttura è assimilabile a quella di un nodo in una struttura ad albero. L'enumerativo è provvisto dei metodi \textit{get} per il recupero delle informazioni presentate.
 \subsection{Rappresentazione delle Regole}\label{ruleRappr}
 Il secondo focus principale dell'implementazione sono le \textbf{Rule}, il cui stato all'interno della policy è gestito mediante un albero di regole. Questo è reso possibile sfruttando le relazioni tra le azioni espresse mediante l'enumerativo definito in figura \ref{imgActionEnum}. Per ottenere un maggior incapsulamento delle funzioni si è deciso di dividere la logica della struttura ad albero in due compenenti:
 \begin{itemize}
@@ -1676,7 +1675,7 @@ Come visibile all'interno del listing \ref{algoRecoverHierarchyComm} il componen
 Entrambe le policy originarie hanno un loro \textbf{gestore della gerarchia} che si occupa di recuperare la policy di ogni nodo. Questa procedura è stata già presentata nella sezione \ref{recuperoPolicy}.\\
 L'output di questo passo sono due mappe che legano l'URI di una risorsa alla regole presenti nel documento in cui l'asset con quell'identificativo si presenta. 
 \subparagraph{Esecuzione del merging e propagazione}\mbox{}\\
-Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di mergin desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
+Gli ultimi due passi della procedura sono svolti iterando il set di chiavi della mappa \textbf{finalAssets} ottenuta in precedenza e recuperando entrambe le policy relative all'URI dell'asset dalle mappe ricavate al passo precedente. Risulta quindi possibile effettuare l'operazione di merging desiderata, seguendo il corrispondente procedimento presentanto in sezione \ref{policyRappr} per poi propagare ogni policy lungo la gerarchia finale, come presentato nella sezione \ref{propagation}.\\
 Il risultato finale è quindi un \text{Gestore gerarchia} dal quale possono essere recuperate tutte le policy finali relative agli asset. Queste policy vengono poi utilizzate dal produttore di policy per generare il documento ODRL relativo alle regole ottenute.
 \subparagraph{Estensione per propagazione solo su asset comuni}\mbox{}\\ \label{estensioneAlg}
 I passi descritti fino ad ora sono relativi alla procedura di merging che effettua un override dell'ambiente delle singole policy, di conseguenza:
@@ -1745,10 +1744,10 @@ Il documento RDF finale prodotto ha le seguenti proprietà:
 \chapter{Valutazione dei risultati}
 I principali obiettivi che questo lavoro di tesi si è posto sono stati esposti nella sezione \ref{problematiche} e riguardano due aree principali:
 \begin{enumerate}
-\item l'assenza da parte di ODRL di un metodo per trattare policy conflittuali all'interno dei casi d'uso individuati da MOSAICO;
+\item l'assenza da parte di ODRL di un metodo per trattare policy conflittuali all'interno dei casi d'uso individuati da MOSAICrOWN;
 \item controllo ineficciente di una regola, poiché con query puntuali sul documento ODRL è possibile ottenere informazioni non corrette sulla regolamentazione di un'azione. Attualmente risulta necessario controllare l'intero file per avere certezze su quanto è permesso su di un asset.
 \end{enumerate}
-Il tool sviluppato affronta e risolve entrambe queste problematiche nel caso di azioni prive di \textbf{constraint}. La soluzione proposta non è applicabile solamente ai casi d'uso di MOSAICO, come quelli relativi a mercati digitali dove gli asset possono avere più possessori, ma anche a scenari più tradizionali, come la definizione di policy d'accesso a risorse in un sistema operativo.\\
+Il tool sviluppato affronta e risolve entrambe queste problematiche nel caso di azioni prive di \textbf{constraint}. La soluzione proposta non è applicabile solamente ai casi d'uso di MOSAICrOWN, come quelli relativi a mercati digitali dove gli asset possono avere più possessori, ma anche a scenari più tradizionali, come la definizione di policy d'accesso a risorse in un sistema operativo.\\
 Per risolvere la prima problematica il focus principale è stato lo sviluppo di procedure che supportassero le operazioni di merging \textbf{unione} ed \textbf{intersezione}. Tali operazioni identificano i principali ambienti dove è possibile definire policy d'accesso: \textbf{collaborativo} e \textbf{non collaborativo}.\\
 La seconda problematica è stata affrontata su più livelli:
 \begin{itemize}
@@ -1946,7 +1945,7 @@ Questa casistica risulta la maggiormente interessante poiché:
 \item l'intersezione di ambienti collaborativi in questa situazione produce come risultato la propagazione della policy della radice a tutti i nodi. Questo è causato dall'operazione di unione preliminare poi seguita da quella di intersezione;
 \item i casi relativi all'unione di policy sono poco interessanti, poiché non avviene alcun filtraggio particolare delle regole.
 \end{itemize}
-Un'ulteriore motivazione d'interesse verso questa casistica è il fatto che può essere considerata una prima modellizzazione degli scenari d'interesse di MOSAICO: un eventuale utente che possiede l'\textit{asset child 1}, qualora volesse modificare la propria policy d'accesso, scatenerebbe questa casistica(salvo la propagazione dell'intersezione verso gli altri asset).\\
+Un'ulteriore motivazione d'interesse verso questa casistica è il fatto che può essere considerata una prima modellizzazione degli scenari d'interesse di MOSAICrOWN: un eventuale utente che possiede l'\textit{asset child 1}, qualora volesse modificare la propria policy d'accesso, scatenerebbe questa casistica(salvo la propagazione dell'intersezione verso gli altri asset).\\
 In questo caso il tool sviluppato porta i medesimi vantaggi già mostrati nel caso precedente, aggiungendo i seguenti:
 \begin{itemize}
 \item in questo caso risulta necessaria un'ulteriore query da parte della baseline per recuperare la gerarchia relativa all'asset interessato dall'accesso;
@@ -2080,7 +2079,7 @@ La tabella \ref{finalDAGNoProp} mostra invece quello che è l'effetto desiderato
 La procedura per ottenere gli effetti esposti nelle tabelle \ref{finalDAGProp} e \ref{finalDAGNoProp} sono riassunti nella figura \ref{DAGResult}. 
 
 Lo scenario mostrato risulta interessante poiché è possibile notare quali siano gli effetti dati dalla più ampia variaretà di casistiche possibile. Lo strumento risulta in grado di trattare queste casistiche, dando una base per l'interrogazione efficiente anche con relazioni complesse tra gli asset. \\
-Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOSAICO, la cui caratterizzazione sarebbe la seguente:
+Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOSAICrOWN, la cui caratterizzazione sarebbe la seguente:
 \begin{itemize}
 \item ambienti iniziali non collaborativi, avendo collezioni multi owner;
 \item intersezione di policy, avendo collezioni multi owner;
@@ -2088,7 +2087,7 @@ Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOS
 \item aggiunta o modifica di una foglia rappresentante la collezione dati dell'owner che vuole aggiungersi al mercato;
 \item risulta necessario l'utilizzo della procedura di merging estesa.
 \end{itemize}
-Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine per MOSAICO risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devo avere effetti su dati sui quali non può definire regole.
+Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine per MOSAICrOWN risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devo avere effetti su dati sui quali non può definire regole.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=.80]{../immagini/DAGExampleRES.pdf}
@@ -2102,7 +2101,7 @@ In questa sezione si discutono quelli che possono essere gli sviluppi futuri del
 \item supporto alle gestione della cronologia delle operazioni;
 \item supporto ad azioni con \textbf{constraint}.
 \end{itemize}
-I primi due temi non sono stati approfonditi durante la stesura della tesi poiché non direttamente inerenti al merging di policy. L'ultimo tema, invece, non è stato trattato poiché la generalizzazione dei limiti relativi ad un'azione dipende dai vari domini possibili. 
+I primi due temi non sono stati approfonditi durante la stesura della tesi poiché non direttamente inerenti al merging di policy. L'ultimo tema, invece, non è stato trattato poiché la generalizzazione dei vincoli relativi ad un'azione dipende dai vari domini possibili. 
 \paragraph{Possibile deployment del tool}\mbox{}\\
 Per sfruttare completamente i vantaggi portati dalla procedura sviluppata risulta necessario effettuare il merging di policy solo all'inserimento di un documento ODRL all'interno del mercato digitale. Tra le possibili serializzazioni RDF vi è il formato JSON-LD. Questo formato può essere sfruttato all'interno di basi di dati NoSQL come ad esempio MongoDB.\\
 Per quanto concerne l'effettivo inserimento di un documento ODRL all'interno della base di dati del mercato digitale si potrebbe esporre un REST Service dove il corpo delle richieste è un documento JSON avente i seguenti campi:
@@ -2141,9 +2140,9 @@ Come mostrato all'interno della sezione \ref{ConstraintODRL}, ODRL permette la d
 \end{itemize}
 Alla luce di queste problematiche per riuscire ad utilizzare questi costrutti all'interno di un mercato digitale risulta necessario discretizzare il \textit{range} utilizzabile in queste proprietà. Questo procedimento andrebbe a ridurre la flessibilità del linguaggio ma, allo stesso tempo, permetterebbe di attuare logiche di merging anche su questa porzione di ODRL.  
 \chapter{Conclusione}
-La soluzione implementata risolve le problematiche individuate in ODRL in molteplici scenari, compresi quelli individuati in MOSAICO. Tali problemi riguardavano l'assenza di politiche per risolvere conflitti tra policy in un contesto multi-owner e l'inefficienza del linguaggio in fase di interrogazione della policy. Queste problematiche sono state affrontate mediante lo sviluppo di una procedura di \textit{merging} di due policy. Questo processo produce in output una nuova policy che soddisfa i requisiti espressi da entrambi i documenti in input. Il \textit{merging} può essere attuato secondo due modalità: \textit{intersezione} ed \textit{unione}. Questa decisione permette di supportare sia scenari collaborativi che non collaborativi. Lo strumento prodotto non si occupa solamente del \textit{merging} di policy relative a singole risorse ma anche della propagazione dell'operazione sull'intera gerarchia degli asset regolati dalle policy.\\
+La soluzione implementata risolve le problematiche individuate in ODRL in molteplici scenari, compresi quelli individuati in MOSAICrOWN. Tali problemi riguardavano l'assenza di politiche per risolvere conflitti tra policy in un contesto multi-owner e l'inefficienza del linguaggio in fase di interrogazione della policy. Queste problematiche sono state affrontate mediante lo sviluppo di una procedura di \textit{merging} di due policy. Questo processo produce in output una nuova policy che soddisfa i requisiti espressi da entrambi i documenti in input. Il \textit{merging} può essere attuato secondo due modalità: \textit{intersezione} ed \textit{unione}. Questa decisione permette di supportare sia scenari collaborativi che non collaborativi. Lo strumento prodotto non si occupa solamente del \textit{merging} di policy relative a singole risorse ma anche della propagazione dell'operazione sull'intera gerarchia degli asset regolati dalle policy.\\
 Il processo di \textit{merging}, essendo uno sforzo eseguito una tantum, produce in output un documento riutilizzabile che permette un'iterrogazione del modello efficiente in tutti gli scenari d'utilizzo possibili. L'unico lato negativo del processo risulta essere il costo di storage di questa nuova policy prodotta. I vantaggi dal punto di vista computazionale sono stati dimostrati mediante un confronto con un metodo baseline in grado di utilizzare solamente le policy originarie per controllare lo stato di una regola.\\
-La soluzione prodotta non introduce modifiche ad ODRL e risulta in linea con il requisito di MOSAICO di standardizzazione ed applicabilità dei risultati ottenuti. Questo è possibile anche grazie all'implementazione delle componenti per il \textit{parsing} e la \textit{produzione} mediante il framework \textit{Apache Jena}. Il documento prodotto in output risulta infatti essere conforme allo standard ODRL in ogni sua parte. 
+La soluzione prodotta non introduce modifiche ad ODRL e risulta in linea con il requisito di MOSAICrOWN di standardizzazione ed applicabilità dei risultati ottenuti. Questo è possibile anche grazie all'implementazione delle componenti per il \textit{parsing} e la \textit{produzione} mediante il framework \textit{Apache Jena}. Il documento prodotto in output risulta infatti essere conforme allo standard ODRL in ogni sua parte. 
 \bibliography{cit}{}
 \bibliographystyle{plain}
 \end{document}
