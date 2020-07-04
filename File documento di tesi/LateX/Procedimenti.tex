@@ -1483,8 +1483,8 @@ Lo scenario di utilizzo di un \textbf{Asset} si compone delle seguenti fasi:
 \item il gestore si occupa di settare la policy per il nodo interessato e propagarla ai figli secondo la modalità indicata.
 \end{enumerate}
 \paragraph{Propagazione delle policy}\label{propagation}\mbox{}\\
-La propagazione di una policy avviene dopo che questa è stata settata dal gestore della gerarchia degli asset. Il gestore si occupa quindi il nodo interessato dalla policy; per questa prima operazione si utilizza una ricerca in profondità data la natura ricorsiva dell'operazione di propagazione. Un'alternativa possibile è l'utilizzo di una ricerca in ampiezza, mantenendo il medesimo caso peggiore data l'assenza di cicli.\\
-Dopo il recupero del nodo interessato dalla policy, si attua l'effettiva propagazione ad ogni nodo figlio, fino ad arrivare alle foglie. Per nodi senza policy, viene settata quella del nodo padre.\\
+La propagazione di una policy avviene dopo che questa è stata settata dal gestore della gerarchia degli asset. Il gestore effettua come primo passo il recupero del nodo interessato dalla policy; per questa prima operazione si utilizza una ricerca in profondità data la natura ricorsiva dell'operazione di propagazione. Un'alternativa possibile è l'utilizzo di una ricerca in ampiezza, mantenendo il medesimo caso peggiore data l'assenza di cicli.\\
+Dopo questo primo passo si attua l'effettiva propagazione ad ogni nodo figlio, fino ad arrivare alle foglie. Per nodi senza policy, viene settata quella del nodo padre.\\
 Di seguito alcuni esempi:
 \begin{figure}[H]
 \centering
@@ -1498,9 +1498,9 @@ Di seguito alcuni esempi:
 \caption{Esempio di propagazione di una intersezione di policy}
 \label{imgAssetPropIntersect}
 \end{figure}
-Un processo analogo a quanto mostrato nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect} può sfruttare anche operazioni di unione. nella figura \ref{imgAssetPropIntersect} è possibile notare che se un asset figlio non ha una policy eredita in modo completo quella del nodo padre.
+Un processo analogo a quanto mostrato nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect} può sfruttare anche operazioni di unione. Nella figura \ref{imgAssetPropIntersect} è possibile notare che se un asset figlio non ha una policy eredita in modo completo quella del nodo padre.
 \paragraph{Recupero policy in seguito alla propagazione}\label{recuperoPolicy}\mbox{}\\
-La policy relativa ad un nodo ai livelli più bassi può cambiare drasticamente in seguito ad una operazione di propagazione, come mostrato nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect}. Il gestore della gerarchia degli asset implementa una procedura di recupero policy di uno specifico nodo: si percorre in ampiezza l'intera gerarchia, recuperando ogni policy. Questa procedura restituisce una mappa che collega l'URI di ogni risorsa nella gerarchia alla sua policy. nel set di chiavi sono presenti anche i nodi non aventi una policy.
+La policy relativa ad un nodo ai livelli più bassi può cambiare drasticamente in seguito ad una operazione di propagazione, come mostrato nelle figure \ref{imgAssetPropSet} e \ref{imgAssetPropIntersect}. Il gestore della gerarchia degli asset implementa una procedura di recupero policy di uno specifico nodo: si percorre in ampiezza l'intera gerarchia, recuperando ogni policy. Questa procedura restituisce una mappa che collega l'URI di ogni risorsa nella gerarchia alla sua policy. Nel set di chiavi sono presenti anche i nodi non aventi una policy.
 \subsection{Gestore procedura di merging}
 Tutte le componenti fino ad ora mostrate si concentrano in modo atomico su una singola porzione della procedura di merging, supportando operazioni di intersezione ed unione. Tutte le componenti lavorano però su un singolo documento ODRL. Il componente mostrato in questa sezione si occupa di supervisionare l'intera procedura. Di seguito il diagramma delle componenti che interessano il processo:
 \begin{figure}[H]
