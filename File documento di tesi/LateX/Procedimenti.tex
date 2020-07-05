@@ -1639,7 +1639,7 @@ public Map<String, AssetCollection> mergeHierarchyCommon(
 
   
 \end{lstlisting}
-Nel listing \ref{algoRecoverHierarchyComm} è possibile notare come all'interno della gerarchia è inserito l'asset definito come \textbf{EveryAsset}. Questa è risorsa fittizia alla quale non viene mai assegnata una policy. Il suo ruolo è fungere da nodo sorgente per la ricerca degli asset poiché viene settata come nodo padre di ogni risorsa senza padre.\newpage
+Nel listing \ref{algoRecoverHierarchyComm} è possibile notare come all'interno della gerarchia è inserito l'asset definito come \textbf{EveryAsset}. Questa è una risorsa fittizia alla quale non viene mai assegnata una policy. Il suo ruolo è fungere da nodo sorgente per la ricerca degli asset poiché viene settata come nodo padre di ogni risorsa senza padre.\newpage
 Il passo sucessivo è l'elaborazione degli asset non in comune alle policy:\\
 \begin{lstlisting}[language=java,firstnumber=1,caption={L'algoritmo ha prestazioni lineari in proporzione al numero di asset},label=algoRecoverHierarchyNotComm,captionpos=b]
 public Map<String, AssetCollection> mergeHierarchyUniq(
@@ -1745,13 +1745,13 @@ Il documento RDF finale prodotto ha le seguenti proprietà:
 I principali obiettivi che questo lavoro di tesi si è posto sono stati esposti nella sezione \ref{problematiche} e riguardano due aree principali:
 \begin{enumerate}
 \item l'assenza da parte di ODRL di un metodo per trattare policy conflittuali all'interno dei casi d'uso individuati da MOSAICrOWN;
-\item controllo ineficciente di una regola, poiché con query puntuali sul documento ODRL è possibile ottenere informazioni non corrette sulla regolamentazione di un'azione. Attualmente risulta necessario controllare l'intero file per avere certezze su quanto è permesso su di un asset.
+\item controllo ineficiente di una regola, poiché con query puntuali sul documento ODRL è possibile ottenere informazioni non corrette sulla regolamentazione di un'azione. Attualmente risulta necessario controllare l'intero file per avere certezze su quanto è permesso su di un asset.
 \end{enumerate}
 Il tool sviluppato affronta e risolve entrambe queste problematiche nel caso di azioni prive di \textbf{constraint}. La soluzione proposta non è applicabile solamente ai casi d'uso di MOSAICrOWN, come quelli relativi a mercati digitali dove gli asset possono avere più possessori, ma anche a scenari più tradizionali, come la definizione di policy d'accesso a risorse in un sistema operativo.\\
 Per risolvere la prima problematica il focus principale è stato lo sviluppo di procedure che supportassero le operazioni di merging \textbf{unione} ed \textbf{intersezione}. Tali operazioni identificano i principali ambienti dove è possibile definire policy d'accesso: \textbf{collaborativo} e \textbf{non collaborativo}.\\
 La seconda problematica è stata affrontata su più livelli:
 \begin{itemize}
-\item a livello di \textbf{singola} policy: durante la lettura di un documento ODRL che definisce una policy d'accesso il framework si occupa di inferire quelli che sono le \textbf{implicazioni} tra le regole seguendo le definizioni date dall' \textit{ODRL Common Vocabulary}. In questo modo si impediscono ambiguità su regole interne alla policy dove una sottoazione è permessa ma non l'azione padre è invece vietata;
+\item a livello di \textbf{singola} policy: durante la lettura di un documento ODRL che definisce una policy d'accesso il framework si occupa di inferire quelli che sono le \textbf{implicazioni} tra le regole seguendo le definizioni date dall' \textit{ODRL Common Vocabulary}. In questo modo si impediscono ambiguità su regole interne alla policy dove una sottoazione è permessa ma l'azione padre è invece vietata;
 \item a livello di \textbf{asset}: durante la lettura del documento di ODRL il framework si occupa di inferire in base all'ambiente specificato per la policy le regole che un asset eredita dai propri parent. Ottenute queste regole si attua la procedura vista per policy singola.
 \end{itemize}
 Entrambi i procedimenti appena esposti vengono attuati dall'architettura osservabile in figura \ref{procMergin} i cui componenti sono stati esposti in dettaglio all'interno del capitolo \ref{implementazioniCh} relativo all'implementazione della soluzione. L'output della pipeline è un nuovo documento di policy ODRL che rappresenta il risultato dell'operazione desiderata.\\
@@ -1949,7 +1949,7 @@ Un'ulteriore motivazione d'interesse verso questa casistica è il fatto che può
 In questo caso il tool sviluppato porta i medesimi vantaggi già mostrati nel caso precedente, aggiungendo i seguenti:
 \begin{itemize}
 \item in questo caso risulta necessaria un'ulteriore query da parte della baseline per recuperare la gerarchia relativa all'asset interessato dall'accesso;
-\item a seconda della tipologia di nodo, risulterà quindi necessario recuperare anche lo stato dell'azione all'interno della gerarchia dell'asset, tenendo conto del fatto che non è stata attuato alcun tipo di propagazione nei documenti originali;
+\item a seconda della tipologia di nodo, risulterà quindi necessario recuperare anche lo stato dell'azione all'interno della gerarchia dell'asset, tenendo conto del fatto che non è stato attuato alcun tipo di propagazione nei documenti originali;
 \item il costo dell'esecuzione dell'approccio baseline in questo caso si avvicina molto a quello che si ha per attuare il merging di policy, rendendo evidente il vantaggio portato dalla produzione di una policy output;
 \item l'approccio implementato permetterebbe ad un owner degli asset di valutare la perdita di valore introdotta da una modifica alla propria policy d'accesso.
 \end{itemize}
