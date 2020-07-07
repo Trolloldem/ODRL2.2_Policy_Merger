@@ -1748,7 +1748,7 @@ I principali obiettivi che questo lavoro di tesi si è posto sono stati esposti 
 \item controllo ineficiente di una regola, poiché con query puntuali sul documento ODRL è possibile ottenere informazioni non corrette sulla regolamentazione di un'azione. Attualmente risulta necessario controllare l'intero file per avere certezze su quanto è permesso su di un asset.
 \end{enumerate}
 Il tool sviluppato affronta e risolve entrambe queste problematiche nel caso di azioni prive di \textbf{constraint}. La soluzione proposta non è applicabile solamente ai casi d'uso di MOSAICrOWN, come quelli relativi a mercati digitali dove gli asset possono avere più possessori, ma anche a scenari più tradizionali, come la definizione di policy d'accesso a risorse in un sistema operativo.\\
-Per risolvere la prima problematica il focus principale è stato lo sviluppo di procedure che supportassero le operazioni di merging \textbf{unione} ed \textbf{intersezione}. Tali operazioni identificano i principali ambienti dove è possibile definire policy d'accesso: \textbf{collaborativo} e \textbf{non collaborativo}.\\
+Per risolvere la prima problematica il focus principale è stato lo sviluppo di procedure a supporto delle operazioni di merging \textbf{unione} ed \textbf{intersezione}. Tali operazioni identificano i principali ambienti dove è possibile definire policy d'accesso: \textbf{collaborativo} e \textbf{non collaborativo}.\\
 La seconda problematica è stata affrontata su più livelli:
 \begin{itemize}
 \item a livello di \textbf{singola} policy: durante la lettura di un documento ODRL che definisce una policy d'accesso il framework si occupa di inferire quelli che sono le \textbf{implicazioni} tra le regole seguendo le definizioni date dall' \textit{ODRL Common Vocabulary}. In questo modo si impediscono ambiguità su regole interne alla policy dove una sottoazione è permessa ma l'azione padre è invece vietata;
@@ -1940,7 +1940,7 @@ Dalla tabella \ref{tableTreeFinal} si nota che:
 \item una policy sulla root mantiene i suoi permessi solo se presenti in entrambe le policy intersecate, per effetto dell'operazione di \textbf{intersezione};
 \item una policy su un nodo figlio mantiene i suoi permessi se presenti in entrambe le policy intersecate e se anche la policy finale del nodo padre presenta tali permessi, quest'ultimo effetto è dato dall'ambiente \textbf{non collaborativo}.
 \end{itemize}
-Questa casistica risulta la maggiormente interessante poiché:
+Questa casistica risulta di maggiore interesse poiché:
 \begin{itemize}
 \item l'intersezione di ambienti collaborativi in questa situazione produce come risultato la propagazione della policy della radice a tutti i nodi. Questo è causato dall'operazione di unione preliminare poi seguita da quella di intersezione;
 \item i casi relativi all'unione di policy sono poco interessanti, poiché non avviene alcun filtraggio particolare delle regole.
@@ -1967,7 +1967,7 @@ In questo scenario, le 2 policy operano su gerarchie parzialmente sovrapposte. L
 \caption{Procedura seguita per l'intersezione di 2 policy in ambiente collaborativo con l'aggiunta di nuovi nodi padre e foglia}
 \label{treeNewNodeExample}
 \end{figure}
-Questa casistica assume maggiore interesse rispetto allo scenario precedente, poiché l'aggiunta di nuovi parent all'interno della gerarchia modifica quello che è il comportamento dell'unione seguita da intersezione: nel caso precedente questo portava alla replica dell'intersezione dei nodi negli altri nodi; in questo caso le differenze nella gerarchia fanno in modo che cambi il punto dal quale inizia la replica. Si noti che le operazioni a cui fa riferimento la figura \ref{treeNewNodeExample} sono relative ai permessi delle policy, che vengono ``mascherati'' dalla sequenza unione-intersezione. Eventuali i divieti delle policy non visibili in figura sono comunque propagati lungo l'albero.\\
+Questa casistica assume maggiore interesse rispetto allo scenario precedente, poiché l'aggiunta di nuovi parent all'interno della gerarchia modifica quello che è il comportamento dell'unione seguita da intersezione: nel caso precedente questo portava alla replica dell'intersezione dei nodi negli altri nodi; in questo caso le differenze nella gerarchia fanno in modo che cambi il punto dal quale inizia la replica. Si noti che le operazioni a cui fa riferimento la figura \ref{treeNewNodeExample} sono relative ai permessi delle policy, che vengono ``mascherati'' dalla sequenza unione-intersezione. Eventuali divieti delle policy non visibili in figura sono comunque propagati lungo l'albero.\\
 I vantaggi introdotti in questo caso sono analoghi a quelli dello scenario precedente, poiché si tratta semplicemente di un'estensione a livello logico delle stesse casistiche. 
 \subsection{Merging di policy relative ad asset con gerarchia complessa}
 Quest'ultimo scenario mostrato risulta essere il più complesso dal punto di vista della gerarchia degli asset rappresentata da un DAG anziché da un albero. L'esempio è caratterizzato dalle seguenti proprietà:
@@ -1976,7 +1976,7 @@ Quest'ultimo scenario mostrato risulta essere il più complesso dal punto di vis
 \item intersezione di policy;
 \item aggiunta di parent da parte di una policy;
 \item aggiunta di una nuova foglia da parte di una policy;
-\item valutazione dei risultati utilizzando sia l'algoritmo senza e con l'estensione introdotta nella sezione \ref{estensioneAlg}.
+\item valutazione dei risultati utilizzando l'algoritmo senza e con l'estensione introdotta nella sezione \ref{estensioneAlg}.
 \end{itemize}
 La struttura precedente al merging è visibile nella figura sottostante:
 \begin{figure}[H]
@@ -2072,7 +2072,7 @@ Come risulta possibile notare dalla tabella \ref{finalDAGProp} forzare l'ambient
 All'interno dello strumento viene comunque lasciata questa possibilità poiché questo caso d'uso può avere comunque delle applicazioni.\\
 La tabella \ref{finalDAGNoProp} mostra invece quello che è l'effetto desiderato nella maggior parte dei casi applicativi:
 \begin{itemize}
-\item solamente l'asset \textit{Child 2} perde le i permessi che potrebbe mantenere in ambiente collaborativo, ovvero \textit{anonymize};
+\item solamente l'asset \textit{Child 2} perde i permessi che potrebbe mantenere in ambiente collaborativo, ovvero \textit{anonymize};
 \item le risorse restanti mantengono le policy in ambiente collaborativo;
 \item i nodo figlio di \textit{Child 2}, pur non essendo interessato direttamente dall'operazione di intersezione, risulta in ambiente non collaborativo.
 \end{itemize}
@@ -2087,7 +2087,7 @@ Quest'ultimo caso d'uso non è però l'effettiva casistica presa in esame da MOS
 \item aggiunta o modifica di una foglia rappresentante la collezione dati dell'owner che vuole aggiungersi al mercato;
 \item risulta necessario l'utilizzo della procedura di merging estesa.
 \end{itemize}
-Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine per MOSAICrOWN risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devo avere effetti su dati sui quali non può definire regole.
+Questa casistica risulta però più limitata da un punto di vista della presentazione dei risultati raggiunti: non vi è un cambiamento di ambiente e la gerarchia può essere espressa mediante un albero. Infine per MOSAICrOWN risulta interessante solamente l'utilizzo dell'algoritmo esteso: cambiamenti portati da un owner non devono avere effetti su dati sui quali non può definire regole.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=.80]{../immagini/DAGExampleRES.pdf}
@@ -2122,7 +2122,7 @@ La rappresentazione che viene proposta è riassunta nella seguente immagine:
 \end{figure}
 Questa rappresentazione può essere attuata seguendo due metodi:
 \begin{itemize}
-\item arricchendo la sintassi ODRL inserendo termini relativi al processo di merging. In questo modo si seguono i princici dei \textit{Linked Data} poiché da una policy è possibile raggiungere i vari documenti che hanno contribuito alla sua creazione;
+\item arricchendo la sintassi ODRL inserendo termini relativi al processo di merging. In questo modo si seguono i principi dei \textit{Linked Data} poiché da una policy è possibile raggiungere i vari documenti che hanno contribuito alla sua creazione;
 \item inserendo in una base di dati record relativi alle operazioni intraprese su una policy. Questo approccio risulta attuabile anche in database relazionali ma è meno vicino ai principi di sviluppo di ODRL.
 \end{itemize}
 In ognuno dei due casi se una delle policy originali venisse rimossa o modificata l'unica operazione necessaria per aggiornare i documenti finali sarebbe ripercorrere l'albero delle operazioni. Prendendo ad esempio la figura \ref{historyFirst}: se si volesse rimuovere la policy B si seguirebbe il procedimento riassunto nella seguente figura:
@@ -2138,7 +2138,7 @@ Come mostrato all'interno della sezione \ref{ConstraintODRL}, ODRL permette la d
 \item i dati contenuti in queste proprietà possono essere poco strutturati. Si prenda come esempio il listing \ref{esempioRef} dove la proprietà \textit{unit} è definibile attraverso un link che spiega quale sia l'unità di misura utilizzata. Questo comporta la definizione di procedure specifiche rispetto al dominio e quindi poco generalizzabili;
 \item come visibile all'interno dell'\textit{ODRL Information Model}\cite{ODRLinfMod} la struttura relativa ai \textit{Constraint} è soggetta a cambiamenti; per esempio risultano tra i pochi punti di non compatibilità con le vecchie versioni di ODRL. Per ottenere uno strumento il più stabile possibile si è preferito non lavorare su questa porzione del linguaggio che risulta in fase di definizione. 
 \end{itemize}
-Alla luce di queste problematiche per riuscire ad utilizzare questi costrutti all'interno di un mercato digitale risulta necessario discretizzare il \textit{range} utilizzabile in queste proprietà. Questo procedimento andrebbe a ridurre la flessibilità del linguaggio ma, allo stesso tempo, permetterebbe di attuare logiche di merging anche su questa porzione di ODRL.  
+Alla luce di tali problematiche per riuscire ad utilizzare questi costrutti all'interno di un mercato digitale risulta necessario discretizzare il \textit{range} utilizzabile nei vincoli. Il procedimento proposto andrebbe a ridurre la flessibilità del linguaggio ma, allo stesso tempo, permetterebbe di attuare logiche di merging anche su questa porzione di ODRL.  
 \chapter{Conclusione}
 La soluzione implementata risolve le problematiche individuate in ODRL in molteplici scenari, compresi quelli individuati in MOSAICrOWN. Tali problemi riguardavano l'assenza di politiche per risolvere conflitti tra policy in un contesto multi-owner e l'inefficienza del linguaggio in fase di interrogazione della policy. Queste problematiche sono state affrontate mediante lo sviluppo di una procedura di \textit{merging} di due policy. Questo processo produce in output una nuova policy che soddisfa i requisiti espressi da entrambi i documenti in input. Il \textit{merging} può essere attuato secondo due modalità: \textit{intersezione} ed \textit{unione}. Questa decisione permette di supportare sia scenari collaborativi che non collaborativi. Lo strumento prodotto non si occupa solamente del \textit{merging} di policy relative a singole risorse ma anche della propagazione dell'operazione sull'intera gerarchia degli asset regolati dalle policy.\\
 Il processo di \textit{merging}, essendo uno sforzo eseguito una tantum, produce in output un documento riutilizzabile che permette un'iterrogazione del modello efficiente in tutti gli scenari d'utilizzo possibili. L'unico lato negativo del processo risulta essere il costo di storage di questa nuova policy prodotta. I vantaggi dal punto di vista computazionale sono stati dimostrati mediante un confronto con un metodo baseline in grado di utilizzare solamente le policy originarie per controllare lo stato di una regola.\\
@@ -2148,7 +2148,7 @@ Nel finale di questo lavoro di tesi ci tengo a ringraziare per primo il Professo
 Un ringraziamento speciale va a Chiara Cavalieri, compagna di vita che mi ha sostenuto durante il percorso universitario sia durante le fatiche date dagli studi, sia nelle soddisfazioni che ne seguono.\\
 Ringrazio anche la mia famiglia per la fiducia riposta in me durante questi anni di studio, sperando di poter dare quante più soddisfazioni possibili grazie a quanto appreso fino ad oggi.\\
 Non possono inoltre mancare i ringraziamenti alle amicizie strette e consolidate in questi ultimi anni, sia tra i banchi di università che non: grazie per i confronti, gli svaghi ed il supporto che avete saputo darmi.\\
-Un ultimo, ma non meno importante, ringraziamento va a mio nonno Armando Oldani che, purtroppo, è venuto a mancare prima di potermi vedere discutere questo lavoro di tesi; lo ringrazio per l'importante motivazione che è stato per me in questo percorso di studi.\\
+Un ultimo, ma non meno importante, ringraziamento va a mio nonno Armando Oldani che purtroppo è venuto a mancare prima di potermi vedere discutere questo lavoro di tesi; lo ringrazio per l'importante motivazione che è stato per me in questo percorso di studi.\\
 Tutti sono stati fondamentali poiché senza di loro non sarei lo studente e la persona che è stata in grado di portare questo lavoro a termine.
 
 \bibliography{cit}{}
